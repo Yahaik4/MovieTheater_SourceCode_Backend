@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "AuthenticationGrpc";
+
+package Authentication;
+
+service AuthenticationGrpcService {
+	rpc Login(LoginGprcRequestDTO) returns (LoginGprcReplyDTO);
+}
+
+message LoginGprcRequestDTO {
+	string Email = 1;
+	string Password = 2;
+}
+
+message LoginGprcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	LoginGprcReplyDataDTO Data = 3;
+}
+
+message LoginGprcReplyDataDTO {
+	string AccessToken = 1;
+	string RefreshToken = 2;
+}
