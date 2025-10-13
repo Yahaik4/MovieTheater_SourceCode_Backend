@@ -4,12 +4,6 @@
     {
         public bool Result {  get; set; }
         public string Message { get; set; }
-        public List<MessageDetail> MessageDetail { get; set; } = new List<MessageDetail>();
-    }
-
-    public class MessageDetail
-    {
-        public string Code { get; set; }
-        public string Desc { get; set; }
+        public int StatusCode { get; set; }
     }
 }

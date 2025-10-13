@@ -31,11 +31,12 @@ namespace src.Controllers
                 {
                     Result = result.Result,
                     Message = result.Message,
+                    StatusCode = result.StatusCode,
                     Data = result.Data == null ? null : new LoginDataResult
                     {
                         AccessToken = result.Data.AccessToken,
                         RefreshToken = result.Data.RefreshToken
-                    }
+                    },
                 };
 
                 if (result.Result)
@@ -95,6 +96,7 @@ namespace src.Controllers
                 {
                     Result = result.Result,
                     Message = result.Message,
+                    StatusCode = result.StatusCode,
                     Data = new RefreshTokenDataResult
                     {
                         AccessToken = result.Data.AccessToken,
@@ -128,7 +130,7 @@ namespace src.Controllers
                     return new LogoutResultDTO
                     {
                         Result = false,
-                        Message = "Missing refresh token"
+                        Message = "Missing refresh token",
                     };
                 }
 
@@ -137,7 +139,8 @@ namespace src.Controllers
                 var dataResult = new LogoutResultDTO
                 {
                     Result = result.Result,
-                    Message = result.Message
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
                 };
 
                 if (result.Result)

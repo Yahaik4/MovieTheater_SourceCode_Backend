@@ -36,6 +36,7 @@ namespace src.DomainLogic
                 {
                     Result = false,
                     Message = "Email is not registered",
+                    StatusCode = Common.StatusCodeEnum.NotFound,
                     Data = null
                 };
             }
@@ -68,6 +69,7 @@ namespace src.DomainLogic
             {
                 Result = true,
                 Message = "Login successfully",
+                StatusCode = Common.StatusCodeEnum.Success,
                 Data = new LoginDataResult
                 {
                     AccessToken = accessToken,

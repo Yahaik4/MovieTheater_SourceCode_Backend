@@ -18,7 +18,8 @@ message LoginGrpcRequestDTO {
 message LoginGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
-	LoginGrpcReplyDataDTO Data = 3;
+	int32 StatusCode = 3;
+	LoginGrpcReplyDataDTO Data = 4;
 }
 
 message LoginGrpcReplyDataDTO {
@@ -33,7 +34,8 @@ message RefreshTokenGrpcRequestDTO {
 message RefreshTokenGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
-	RefreshTokenGrpcReplyDataDTO Data = 3;
+	int32 StatusCode = 3;
+	RefreshTokenGrpcReplyDataDTO Data = 4;
 }
 
 message RefreshTokenGrpcReplyDataDTO {
@@ -43,4 +45,5 @@ message RefreshTokenGrpcReplyDataDTO {
 message LogoutGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
+	int32 StatusCode = 3;
 }

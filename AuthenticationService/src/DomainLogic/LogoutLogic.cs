@@ -34,6 +34,7 @@ namespace src.DomainLogic
                 {
                     Result = false,
                     Message = "Invalid refresh token",
+                    StatusCode = Common.StatusCodeEnum.BadRequest,
                 };
             }
 
