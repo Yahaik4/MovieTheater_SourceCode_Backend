@@ -66,5 +66,36 @@ namespace src.Helper
 
             return new JwtSecurityTokenHandler().WriteToken(refreshToken);
         }
+
+        public string? VerifyRefreshToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_configuration["JwtSettings:RefreshTokenKey"]);
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _configuration["JwtSettings:Issuer"],
+                ValidAudience = _configuration["JwtSettings:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ClockSkew = TimeSpan.Zero
+            };
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
+                var sessionId = principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sid)?.Value;
+
+                return sessionId;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
     }
 }

@@ -42,6 +42,8 @@ void RegisterRepository()
     services.AddScoped<ISessionRepository, SessionRepository>();
     services.AddSingleton<JwtToken>();
     services.AddScoped<LoginLogic>();
+    services.AddScoped<RefreshTokenLogic>();
+    services.AddScoped<LogoutLogic>();
 }
 
 void RegisterGrpcServicePublish()

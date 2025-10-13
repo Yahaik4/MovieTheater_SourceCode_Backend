@@ -12,7 +12,7 @@ namespace src.ServiceConnector.AuthServiceConnector
             _serviceConnectorConfig = GetServiceConnectorConfig();
         }
 
-        public async Task<LoginGprcReplyDTO> Login(string email, string password, string ipAddress, string device)
+        public async Task<LoginGrpcReplyDTO> Login(string email, string password, string ipAddress, string device)
         {
             using var channel = GetAuthenticationServiceChannel();
             var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
@@ -23,7 +23,7 @@ namespace src.ServiceConnector.AuthServiceConnector
                 {"device", device}
             };
                 
-            var request = new LoginGprcRequestDTO
+            var request = new LoginGrpcRequestDTO
             {
                 Email = email,
                 Password = password
@@ -31,5 +31,32 @@ namespace src.ServiceConnector.AuthServiceConnector
 
             return await client.LoginAsync(request, headers);
         }
+
+        public async Task<RefreshTokenGrpcReplyDTO> RefreshToken(string refreshToken)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new RefreshTokenGrpcRequestDTO
+            {
+                RefreshToken = refreshToken
+            };
+
+            return await client.RefreshTokenAsync(request);
+        }
+
+        public async Task<LogoutGrpcReplyDTO> Logout(string refreshToken)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new RefreshTokenGrpcRequestDTO
+            {
+                RefreshToken = refreshToken
+            };
+
+            return await client.LogoutAsync(request);
+        }
+
     }
 }

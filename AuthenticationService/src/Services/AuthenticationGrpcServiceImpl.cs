@@ -10,14 +10,18 @@ namespace src.Services
     {
         private readonly IMapper _mapper;
         private readonly LoginLogic _loginLogic;
+        private readonly RefreshTokenLogic _refreshTokenLogic;
+        private readonly LogoutLogic _logoutLogic;
 
-        public AuthenticationGrpcServiceImpl(IMapper mapper, LoginLogic loginLogic) 
+        public AuthenticationGrpcServiceImpl(IMapper mapper, LoginLogic loginLogic, RefreshTokenLogic refreshTokenLogic, LogoutLogic logoutLogic) 
         {
             _mapper = mapper;
             _loginLogic = loginLogic;
+            _refreshTokenLogic = refreshTokenLogic;
+            _logoutLogic = logoutLogic;
         }
 
-        public override async Task<LoginGprcReplyDTO> Login (LoginGprcRequestDTO request, ServerCallContext context)
+        public override async Task<LoginGrpcReplyDTO> Login(LoginGrpcRequestDTO request, ServerCallContext context)
         {
             var ipAddress = context.Peer;
             var userAgent = context.RequestHeaders.FirstOrDefault(x => x.Key == "user-agent")?.Value;
@@ -29,14 +33,28 @@ namespace src.Services
                 IpAddress = ipAddress,
                 Device = userAgent,
             });
-            if (result.Result)
-            {
-                var httpContext = context.GetHttpContext();
-                httpContext.Response.Cookies.Append("access_token", result.Data.AccessToken, new CookieOptions { HttpOnly = true });
-                httpContext.Response.Cookies.Append("refresh_token", result.Data.RefreshToken, new CookieOptions { HttpOnly = true });
-            }
 
-            return _mapper.Map<LoginGprcReplyDTO>(result);
+            return _mapper.Map<LoginGrpcReplyDTO>(result);
+        }
+
+        public override async Task<RefreshTokenGrpcReplyDTO> RefreshToken(RefreshTokenGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _refreshTokenLogic.Execute(new RefreshTokenParam
+            {
+                RefreshToken = request.RefreshToken,
+            });
+
+            return _mapper.Map<RefreshTokenGrpcReplyDTO>(result);
+        }
+
+        public override async Task<LogoutGrpcReplyDTO> Logout(RefreshTokenGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _logoutLogic.Execute(new RefreshTokenParam
+            {
+                RefreshToken = request.RefreshToken,
+            });
+
+            return _mapper.Map<LogoutGrpcReplyDTO>(result);
         }
     }
 }

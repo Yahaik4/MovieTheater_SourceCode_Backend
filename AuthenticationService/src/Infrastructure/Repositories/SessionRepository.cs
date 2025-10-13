@@ -1,4 +1,5 @@
-﻿using src.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using src.Data;
 using src.Infrastructure.EF.Models;
 using src.Infrastructure.Repositories.Interfaces;
 
@@ -11,6 +12,11 @@ namespace src.Infrastructure.Repositories
         public SessionRepository(AuthDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<Session?> GetSessionById(Guid sessionId)
+        {
+            return await _context.Sessions.FirstOrDefaultAsync(s => s.SessionId == sessionId);
         }
 
         public async Task<Session> CreateSession(Session session)

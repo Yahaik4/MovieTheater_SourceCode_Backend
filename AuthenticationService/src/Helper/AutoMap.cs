@@ -8,8 +8,15 @@ namespace src.Helper
     {
         public AutoMap() 
         {
-            CreateMap<LoginResultData, LoginGprcReplyDTO>();
-            CreateMap<LoginDataResult, LoginGprcReplyDataDTO>();
+            // LoginMapping
+            CreateMap<LoginResultData, LoginGrpcReplyDTO>();
+            CreateMap<LoginDataResult, LoginGrpcReplyDataDTO>();
+
+            // RefreshTokenMapping
+            CreateMap<RefreshTokenResultData, RefreshTokenGrpcReplyDTO>();
+            CreateMap<RefreshTokenDataResult, RefreshTokenGrpcReplyDataDTO>();
+
+            CreateMap<LogoutResultData, LogoutGrpcReplyDTO>();
         }
     }
 }

@@ -5,21 +5,42 @@ option csharp_namespace = "AuthenticationGrpc";
 package Authentication;
 
 service AuthenticationGrpcService {
-	rpc Login(LoginGprcRequestDTO) returns (LoginGprcReplyDTO);
+	rpc Login(LoginGrpcRequestDTO) returns (LoginGrpcReplyDTO);
+	rpc RefreshToken(RefreshTokenGrpcRequestDTO) returns (RefreshTokenGrpcReplyDTO);
+	rpc Logout(RefreshTokenGrpcRequestDTO) returns (LogoutGrpcReplyDTO);
 }
 
-message LoginGprcRequestDTO {
+message LoginGrpcRequestDTO {
 	string Email = 1;
 	string Password = 2;
 }
 
-message LoginGprcReplyDTO {
+message LoginGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
-	LoginGprcReplyDataDTO Data = 3;
+	LoginGrpcReplyDataDTO Data = 3;
 }
 
-message LoginGprcReplyDataDTO {
+message LoginGrpcReplyDataDTO {
 	string AccessToken = 1;
 	string RefreshToken = 2;
+}
+
+message RefreshTokenGrpcRequestDTO {
+	string RefreshToken = 1;
+}
+
+message RefreshTokenGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	RefreshTokenGrpcReplyDataDTO Data = 3;
+}
+
+message RefreshTokenGrpcReplyDataDTO {
+	string AccessToken = 1;
+}
+
+message LogoutGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
 }
