@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Grpc.Core;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using Shared.Utils;
 using src.DataTransferObject.Parameter;
 using src.DataTransferObject.ResultData;
 using src.ServiceConnector.AuthServiceConnector;
@@ -62,13 +64,16 @@ namespace src.Controllers
 
                 return dataReturn;
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                Log.Error($"Login Error: {ex.ToString()}");
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
                 return new LoginResultDTO
                 {
                     Result = false,
-                    Message = ex.Message,
+                    Message = message,
+                    StatusCode = (int) statusCode
                 };
             }
         }
@@ -106,13 +111,16 @@ namespace src.Controllers
                 return dataResult;
 
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                Log.Error($"Login Error: {ex.ToString()}");
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
                 return new RefreshTokenResultDTO
                 {
                     Result = false,
-                    Message = ex.Message,
+                    Message = message,
+                    StatusCode = (int)statusCode
                 };
             }
         }
@@ -151,13 +159,16 @@ namespace src.Controllers
                 return dataResult;
 
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                Log.Error($"Login Error: {ex.ToString()}");
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
                 return new LogoutResultDTO
                 {
                     Result = false,
-                    Message = ex.Message,
+                    Message = message,
+                    StatusCode = (int)statusCode
                 };
             }
         }

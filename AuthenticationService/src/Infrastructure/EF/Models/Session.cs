@@ -1,4 +1,4 @@
-﻿using Shared.Shared.Infrastructure;
+﻿using Shared.Infrastructure;
 
 namespace src.Infrastructure.EF.Models
 {

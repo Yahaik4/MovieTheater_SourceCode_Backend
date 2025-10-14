@@ -1,8 +1,9 @@
-﻿using src.DataTransferObject.Parameter;
+﻿using Shared.Contracts.Exceptions;
+using Shared.Contracts.Interfaces;
+using src.DataTransferObject.Parameter;
 using src.DataTransferObject.ResultData;
 using src.Helper;
 using src.Infrastructure.Repositories.Interfaces;
-using Shared.Contracts.Interfaces;
 
 namespace src.DomainLogic
 {
@@ -30,22 +31,13 @@ namespace src.DomainLogic
 
             var session = await _sessionRepository.GetSessionById(Guid.Parse(sessionId));
 
-            if (session == null) {
-                return new RefreshTokenResultData
-                {
-                    Result = false,
-                    Message = "Invalid refresh token",
-                    Data = null
-                };
+            if (session == null) 
+            {
+                throw new UnauthorizedException("Invalid refresh token.");
             }
 
             if (session.IsRevoked || session.ExpiresAt <= DateTime.UtcNow) {
-                return new RefreshTokenResultData
-                {
-                    Result = false,
-                    Message = "Invalid refresh token",
-                    Data = null
-                };
+                throw new UnauthorizedException("Invalid refresh token.");
             }
 
             var user = await _userRepository.GetUserById(session.UserId);

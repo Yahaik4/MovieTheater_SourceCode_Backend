@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.Shared.Infrastructure
+namespace Shared.Infrastructure
 {
     public abstract class BaseEntity
     {

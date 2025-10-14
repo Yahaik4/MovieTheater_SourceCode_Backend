@@ -4,6 +4,7 @@ using src.Helper;
 using src.Infrastructure.Repositories.Interfaces;
 using Shared.Contracts.Interfaces;
 using Shared.Contracts.Enums;
+using Shared.Contracts.Exceptions;
 
 namespace src.DomainLogic
 {
@@ -21,7 +22,7 @@ namespace src.DomainLogic
         {
             if (param == null)
             {
-                throw new ArgumentNullException(nameof(param));
+                throw new ValidationException("Param cannot be blank.");
             }
 
             Console.WriteLine($"[RefreshTokenLogic] sessionId: {param.RefreshToken}");
@@ -31,12 +32,7 @@ namespace src.DomainLogic
 
             if (session == null)
             {
-                return new LogoutResultData
-                {
-                    Result = false,
-                    Message = "Invalid refresh token",
-                    StatusCode = StatusCodeEnum.BadRequest,
-                };
+                throw new UnauthorizedException("Invalid refresh token.");
             }
 
             session.IsRevoked = true;

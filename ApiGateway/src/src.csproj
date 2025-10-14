@@ -22,4 +22,10 @@
 	    <Protobuf Include="ServiceConnector\Protos\Authentication.proto" GrpcServices="Client" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="Shared">
+        <HintPath>C:\Users\admin\Desktop\Shared.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

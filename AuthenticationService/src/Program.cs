@@ -5,6 +5,7 @@ using src.Helper;
 using src.Infrastructure.Repositories;
 using src.Infrastructure.Repositories.Interfaces;
 using src.Services;
+using Shared.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ var services = builder.Services;
     services.AddGrpc(options =>
     {
         options.EnableDetailedErrors = true;
+        options.Interceptors.Add<BaseExceptionInterceptor>();
     });
 }
 

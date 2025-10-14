@@ -1,12 +1,13 @@
-﻿using src.DataTransferObject.Parameter;
+﻿using Shared.Contracts.Enums;
+using Shared.Contracts.Exceptions;
+using Shared.Contracts.Interfaces;
+using src.DataTransferObject.Parameter;
 using src.DataTransferObject.ResultData;
 using src.Helper;
 using src.Infrastructure.EF.Models;
 using src.Infrastructure.Repositories.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
-using Shared.Contracts.Interfaces;
-using Shared.Contracts.Enums;
 
 namespace src.DomainLogic
 {
@@ -27,20 +28,18 @@ namespace src.DomainLogic
         {
             if (param == null)
             {
-                throw new ArgumentNullException(nameof(param));
+                throw new ValidationException("Param cannot be blank.");
             }
 
             var user = await _userRepository.GetUserByEmail(param.Email);
 
             if (user == null)
             {
-                return new LoginResultData
-                {
-                    Result = false,
-                    Message = "Email is not registered",
-                    StatusCode = StatusCodeEnum.NotFound,
-                    Data = null
-                };
+                throw new NotFoundException("Email is not registered");
+            }
+
+            if (user.IsDeleted) {
+                throw new UnauthorizedException("Account locked.");
             }
 
             //if (!VerifyPassword(param.Password, user.Password))
