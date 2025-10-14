@@ -1,4 +1,4 @@
-﻿namespace src.DataTransferObject.ResultData
+﻿namespace Shared.Contracts.Interfaces
 {
     public interface IResultData
     {

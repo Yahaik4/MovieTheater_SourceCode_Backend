@@ -1,8 +1,9 @@
 ﻿using src.DataTransferObject.Parameter;
 using src.DataTransferObject.ResultData;
 using src.Helper;
-using src.Infrastructure.Repositories;
 using src.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Interfaces;
+using Shared.Contracts.Enums;
 
 namespace src.DomainLogic
 {
@@ -34,7 +35,7 @@ namespace src.DomainLogic
                 {
                     Result = false,
                     Message = "Invalid refresh token",
-                    StatusCode = Common.StatusCodeEnum.BadRequest,
+                    StatusCode = StatusCodeEnum.BadRequest,
                 };
             }
 

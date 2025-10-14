@@ -16,12 +16,12 @@ namespace src.Data
         {
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasKey(u => u.UserId).HasName("PK_Users");
+                entity.HasKey(u => u.Id).HasName("PK_Users");
             });
 
             modelBuilder.Entity<Session>(entity =>
             {
-                entity.HasKey(s => s.SessionId).HasName("PK_Sessions");
+                entity.HasKey(s => s.Id).HasName("PK_Sessions");
 
                 entity.HasOne(s => s.User)
                     .WithMany(u => u.Sessions)

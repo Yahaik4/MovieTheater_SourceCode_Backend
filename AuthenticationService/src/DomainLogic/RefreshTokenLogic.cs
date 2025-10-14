@@ -1,8 +1,8 @@
 ﻿using src.DataTransferObject.Parameter;
 using src.DataTransferObject.ResultData;
 using src.Helper;
-using src.Infrastructure.Repositories;
 using src.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Interfaces;
 
 namespace src.DomainLogic
 {
@@ -56,7 +56,7 @@ namespace src.DomainLogic
                 Message = "Refresh Token Successfully",
                 Data = new RefreshTokenDataResult
                 {
-                    AccessToken = _jwtToken.GenerateAccessToken(user.UserId, user.Email, user.Role)
+                    AccessToken = _jwtToken.GenerateAccessToken(user.Id, user.Email, user.Role)
                 }
             };
 

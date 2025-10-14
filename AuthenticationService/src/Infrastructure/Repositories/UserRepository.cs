@@ -30,7 +30,7 @@ namespace src.Infrastructure.Repositories
 
         public async Task<User> GetUserById(Guid userId)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
 
         public async Task<User> GetUserByEmail(string email)

@@ -28,4 +28,13 @@
     <Folder Include="DataTransferObject\DataMessage\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Shared">
+      <HintPath>C:\Users\admin\Desktop\Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="src">
+      <HintPath>C:\Users\admin\Desktop\src.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

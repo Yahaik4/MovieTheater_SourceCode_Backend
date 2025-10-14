@@ -5,6 +5,8 @@ using src.Infrastructure.EF.Models;
 using src.Infrastructure.Repositories.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
+using Shared.Contracts.Interfaces;
+using Shared.Contracts.Enums;
 
 namespace src.DomainLogic
 {
@@ -36,7 +38,7 @@ namespace src.DomainLogic
                 {
                     Result = false,
                     Message = "Email is not registered",
-                    StatusCode = Common.StatusCodeEnum.NotFound,
+                    StatusCode = StatusCodeEnum.NotFound,
                     Data = null
                 };
             }
@@ -51,13 +53,13 @@ namespace src.DomainLogic
             //    };
             //}
 
-            var accessToken = _jwtToken.GenerateAccessToken(user.UserId, user.Email, user.Role);
+            var accessToken = _jwtToken.GenerateAccessToken(user.Id, user.Email, user.Role);
             var sessionId = Guid.NewGuid();
             
             await _sessionRepository.CreateSession(new Session
             {
-                SessionId = sessionId,
-                UserId = user.UserId,
+                Id = sessionId,
+                UserId = user.Id,
                 ExpiresAt = DateTime.UtcNow.AddDays(7),
                 IpAddress = param.IpAddress,
                 Device = param.Device,
@@ -69,7 +71,7 @@ namespace src.DomainLogic
             {
                 Result = true,
                 Message = "Login successfully",
-                StatusCode = Common.StatusCodeEnum.Success,
+                StatusCode = StatusCodeEnum.Success,
                 Data = new LoginDataResult
                 {
                     AccessToken = accessToken,

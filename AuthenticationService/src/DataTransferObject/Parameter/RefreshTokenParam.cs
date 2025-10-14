@@ -1,4 +1,6 @@
-﻿namespace src.DataTransferObject.Parameter
+﻿using Shared.Contracts.Interfaces;
+
+namespace src.DataTransferObject.Parameter
 {
     public class RefreshTokenParam : IParam
     {

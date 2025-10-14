@@ -1,6 +1,7 @@
-﻿using src.Common;
+﻿using Shared.Contracts.Enums;
+using Shared.Contracts.Interfaces;
 
-namespace src.DataTransferObject.ResultData
+namespace Shared.Contracts.ResultData
 {
     public abstract class BaseResultData : IResultData
     {

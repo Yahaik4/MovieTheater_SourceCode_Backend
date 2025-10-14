@@ -6,7 +6,6 @@ using src.Infrastructure.Repositories;
 using src.Infrastructure.Repositories.Interfaces;
 using src.Services;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 Console.WriteLine("Current Environment: " + builder.Environment.EnvironmentName);

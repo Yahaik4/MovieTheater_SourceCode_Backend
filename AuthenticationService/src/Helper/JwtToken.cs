@@ -3,6 +3,7 @@ using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Shared;
 
 namespace src.Helper
 {
@@ -96,6 +97,5 @@ namespace src.Helper
                 return null;
             }
         }
-
     }
 }

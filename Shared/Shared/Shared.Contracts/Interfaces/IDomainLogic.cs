@@ -1,4 +1,4 @@
-﻿namespace src.DomainLogic
+﻿namespace Shared.Contracts.Interfaces
 {
     public interface IDomainLogic<IParam, IResultData>
     {

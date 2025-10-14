@@ -16,7 +16,7 @@ namespace src.Infrastructure.Repositories
 
         public async Task<Session?> GetSessionById(Guid sessionId)
         {
-            return await _context.Sessions.FirstOrDefaultAsync(s => s.SessionId == sessionId);
+            return await _context.Sessions.FirstOrDefaultAsync(s => s.Id == sessionId);
         }
 
         public async Task<Session> CreateSession(Session session)

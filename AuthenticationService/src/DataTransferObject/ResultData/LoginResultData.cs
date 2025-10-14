@@ -1,4 +1,6 @@
-﻿namespace src.DataTransferObject.ResultData
+﻿using Shared.Contracts.ResultData;
+
+namespace src.DataTransferObject.ResultData
 {
     public class LoginResultData : BaseResultData
     {
