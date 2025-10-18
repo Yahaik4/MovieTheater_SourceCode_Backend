@@ -20,7 +20,8 @@
 
     <ItemGroup>
 	    <Protobuf Include="ServiceConnector\Protos\Authentication.proto" GrpcServices="Client" />
-    </ItemGroup>
+		<Protobuf Include="ServiceConnector\Protos\Cinema.proto" GrpcServices="Client" />
+	</ItemGroup>
 
     <ItemGroup>
       <Reference Include="Shared">

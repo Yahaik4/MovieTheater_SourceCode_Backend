@@ -10,6 +10,7 @@ namespace src.ServiceConnector
     public class ServiceConnectorConfig
     {
         public ServiceConnectorConfigOption AuthenticationService { get; set; } = new ServiceConnectorConfigOption();
+        public ServiceConnectorConfigOption CinemaService { get; set; } = new ServiceConnectorConfigOption();
     }
     public class BaseServiceConnector
     {
@@ -27,6 +28,10 @@ namespace src.ServiceConnector
                 AuthenticationService = new ServiceConnectorConfigOption
                 {
                     Endpoint = _configuration["ServiceConnector:AuthService:Endpoint"] ?? string.Empty
+                },
+                CinemaService = new ServiceConnectorConfigOption
+                {
+                    Endpoint = _configuration["ServiceConnector:CinemaService:Endpoint"] ?? string.Empty
                 }
             };
         }
@@ -49,5 +54,9 @@ namespace src.ServiceConnector
 
         protected GrpcChannel GetAuthenticationServiceChannel()
             => GetGrpcChannel(GetServiceConnectorConfig().AuthenticationService.Endpoint);
+
+        protected GrpcChannel GetCinemaServiceChannel()
+            => GetGrpcChannel(GetServiceConnectorConfig().CinemaService.Endpoint);
+
     }
 }

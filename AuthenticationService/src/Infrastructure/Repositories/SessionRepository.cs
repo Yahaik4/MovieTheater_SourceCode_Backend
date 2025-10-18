@@ -28,6 +28,7 @@ namespace src.Infrastructure.Repositories
 
         public async Task<Session> UpdateSession(Session session)
         {
+            _context.Sessions.Update(session);
             await _context.SaveChangesAsync();
             return session;
         }

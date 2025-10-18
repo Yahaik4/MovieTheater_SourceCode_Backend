@@ -6,6 +6,7 @@ using src.Infrastructure.Repositories;
 using src.Infrastructure.Repositories.Interfaces;
 using src.Services;
 using Shared.Utils;
+using src.ServiceConnector.ProfileServiceConnector;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,10 @@ void RegisterRepository()
     services.AddScoped<LoginLogic>();
     services.AddScoped<RefreshTokenLogic>();
     services.AddScoped<LogoutLogic>();
+    services.AddScoped<RegisterLogic>();
+
+    services.AddScoped<ProfileServiceConnector>();
+    services.AddHttpContextAccessor();
 }
 
 void RegisterGrpcServicePublish()

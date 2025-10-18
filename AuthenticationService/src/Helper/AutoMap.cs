@@ -16,7 +16,11 @@ namespace src.Helper
             CreateMap<RefreshTokenResultData, RefreshTokenGrpcReplyDTO>();
             CreateMap<RefreshTokenDataResult, RefreshTokenGrpcReplyDataDTO>();
 
+            // LogoutMapping
             CreateMap<LogoutResultData, LogoutGrpcReplyDTO>();
+
+            // RegisterMapping
+            CreateMap<RegisterResultData, RegisterGrpcReplyDTO>();
         }
     }
 }

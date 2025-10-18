@@ -9,5 +9,6 @@ namespace src.Infrastructure.Repositories.Interfaces
         Task<User> CreateUser(User user);
         Task<User> UpdateUser(User user);
         Task<bool> DeleteUser(User user);
+        Task<bool> RemoveUser(User user);
     }
 }

@@ -58,5 +58,20 @@ namespace src.ServiceConnector.AuthServiceConnector
             return await client.LogoutAsync(request);
         }
 
+        public async Task<RegisterGrpcReplyDTO> Register(string fullName, string email, string Password)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new RegisterGrpcRequestDTO
+            {
+                FullName = fullName,
+                Password = Password,
+                Email = email,
+            };
+
+            return await client.RegisterAsync(request);
+        }
+
     }
 }

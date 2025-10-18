@@ -28,6 +28,13 @@ namespace src.Infrastructure.Repositories
             return true;
         }
 
+        public async Task<bool> RemoveUser(User user)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<User> GetUserById(Guid userId)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);

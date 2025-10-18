@@ -1,0 +1,41 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "CinemaGrpc";
+
+package Cinema;
+
+service CinemaGrpcService {
+	rpc CreateCinema(CreateCinemaGrpcRequestDTO) returns (CreateCinemaGrpcReplyDTO);
+}
+
+message CreateCinemaGrpcRequestDTO {
+	string Name = 1;
+	string Address = 2;
+	string City = 3;
+	string PhoneNumber = 4;
+	string Email = 5;
+	string Open_time = 6;
+	string Close_time = 7;
+	int32 TotalRoom = 8;
+	string Status = 9;
+}
+
+message CreateCinemaGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreateCinemaGrpcReplyDataDTO Data = 4;
+}
+
+message CreateCinemaGrpcReplyDataDTO {
+	string Id = 1;
+	string Name = 2;
+	string Address = 3;
+	string City = 4;
+	string PhoneNumber = 5;
+	string Email = 6;
+	string Open_time = 7;
+	string Close_time = 8;
+	int32 TotalRoom = 9;
+	string Status = 10;
+}

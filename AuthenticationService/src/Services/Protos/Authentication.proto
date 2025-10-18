@@ -8,6 +8,7 @@ service AuthenticationGrpcService {
 	rpc Login(LoginGrpcRequestDTO) returns (LoginGrpcReplyDTO);
 	rpc RefreshToken(RefreshTokenGrpcRequestDTO) returns (RefreshTokenGrpcReplyDTO);
 	rpc Logout(RefreshTokenGrpcRequestDTO) returns (LogoutGrpcReplyDTO);
+	rpc Register(RegisterGrpcRequestDTO) returns (RegisterGrpcReplyDTO);
 }
 
 message LoginGrpcRequestDTO {
@@ -43,6 +44,18 @@ message RefreshTokenGrpcReplyDataDTO {
 }
 
 message LogoutGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+}
+
+message RegisterGrpcRequestDTO {
+	string FullName = 1;
+	string Email = 2;
+	string Password = 3;
+}
+
+message RegisterGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;

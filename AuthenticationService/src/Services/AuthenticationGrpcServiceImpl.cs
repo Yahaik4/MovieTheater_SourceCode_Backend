@@ -12,13 +12,19 @@ namespace src.Services
         private readonly LoginLogic _loginLogic;
         private readonly RefreshTokenLogic _refreshTokenLogic;
         private readonly LogoutLogic _logoutLogic;
+        private readonly RegisterLogic _registerLogic;
 
-        public AuthenticationGrpcServiceImpl(IMapper mapper, LoginLogic loginLogic, RefreshTokenLogic refreshTokenLogic, LogoutLogic logoutLogic) 
+        public AuthenticationGrpcServiceImpl(IMapper mapper, 
+                                            LoginLogic loginLogic, 
+                                            RefreshTokenLogic refreshTokenLogic, 
+                                            LogoutLogic logoutLogic, 
+                                            RegisterLogic registerLogic) 
         {
             _mapper = mapper;
             _loginLogic = loginLogic;
             _refreshTokenLogic = refreshTokenLogic;
             _logoutLogic = logoutLogic;
+            _registerLogic = registerLogic;
         }
 
         public override async Task<LoginGrpcReplyDTO> Login(LoginGrpcRequestDTO request, ServerCallContext context)
@@ -55,6 +61,18 @@ namespace src.Services
             });
 
             return _mapper.Map<LogoutGrpcReplyDTO>(result);
+        }
+
+        public override async Task<RegisterGrpcReplyDTO> Register(RegisterGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _registerLogic.Execute(new RegisterParam
+            {
+                FullName = request.FullName,
+                Email = request.Email,
+                Password = request.Password,
+            });
+
+            return _mapper.Map<RegisterGrpcReplyDTO>(result);
         }
     }
 }

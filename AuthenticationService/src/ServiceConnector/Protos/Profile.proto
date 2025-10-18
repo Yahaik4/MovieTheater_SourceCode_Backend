@@ -1,0 +1,21 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "ProfileGrpc";
+
+package Profile;
+
+service ProfileGrpcService {
+	rpc CreateProfile(CreateProfileGrpcRequestDTO) returns (CreateProfileGrpcReplyDTO);
+}
+
+message CreateProfileGrpcRequestDTO {
+	string FullName = 1;
+	string Role = 2;
+	string UserId = 3;
+}
+
+message CreateProfileGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+}

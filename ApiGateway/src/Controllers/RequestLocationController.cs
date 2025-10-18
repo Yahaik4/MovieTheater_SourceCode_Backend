@@ -172,5 +172,33 @@ namespace src.Controllers
                 };
             }
         }
+
+        [HttpPost("register")]
+        public async Task<RegisterResultDTO> Register(RegisterRequestParam param)
+        {
+            try
+            {
+                var result = await _authenticationConnector.Register(param.FullName, param.Email, param.Password);
+
+                return new RegisterResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new RegisterResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
     }
 }
