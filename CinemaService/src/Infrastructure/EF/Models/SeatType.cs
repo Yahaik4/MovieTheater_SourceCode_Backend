@@ -4,8 +4,8 @@ namespace src.Infrastructure.EF.Models
 {
     public class SeatType : BaseEntity
     {
-        public string NameType { get; set; }
-        public decimal BasePrice { get; set; }
-        public ICollection<SeatLayoutDetail> SeatLayoutDetails { get; set; }
+        public string NameType { get; set; } // VIP, Couple, Standard.
+        public decimal ExtraPrice { get; set; }
+        public ICollection<Seat> Seats { get; set; }
     }
 }

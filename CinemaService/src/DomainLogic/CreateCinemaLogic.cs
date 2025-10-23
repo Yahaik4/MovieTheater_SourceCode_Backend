@@ -27,16 +27,20 @@ namespace src.DomainLogic
                 throw new ValidationException("Param cannot be blank.");
             }
 
+            //Console.WriteLine($"[GRPC REQUEST] Name={param.Name}, Address={param.Address}, OpenTime={param.OpenTime}, CloseTime={param.CloseTime}");
+            //Console.WriteLine($"[GRPC REQUEST] Email={param.Email}, TotalRoom={param.TotalRoom}, Status={param.Status}");
+
             var cinema = new Cinema
             {
                 Id = Guid.NewGuid(),
                 Name = param.Name,
                 Address = param.Address,
+                City = param.City,
                 PhoneNumber = param.PhoneNumber,
                 Email = param.Email,
-                Open_Time = param.Open_Time,
-                Close_Time = param.Close_Time,
-                Status = string.IsNullOrWhiteSpace(param.Status) ? "Active" : param.Status,
+                Open_Time = param.OpenTime,
+                Close_Time = param.CloseTime,
+                Status = string.IsNullOrWhiteSpace(param.Status) ? "Active" : param.Status
             };
 
             await _cinemaRepository.CreateCinema(cinema);
@@ -51,12 +55,12 @@ namespace src.DomainLogic
                     Id = cinema.Id,
                     Name = cinema.Name,
                     Address = cinema.Address,
+                    City = cinema.City,
                     PhoneNumber = cinema.PhoneNumber,
                     Email = cinema.Email,
-                    Open_Time = cinema.Open_Time,
-                    Close_Time = cinema.Close_Time,
+                    OpenTime = cinema.Open_Time,
+                    CloseTime = cinema.Close_Time,
                     Status = cinema.Status,
-                    TotalRoom = cinema.TotalRoom
                 }
             };
         } 

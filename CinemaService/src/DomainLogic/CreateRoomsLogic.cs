@@ -19,81 +19,86 @@ namespace src.DomainLogic
             _cinemaRepository = cinemaRepository;
         }
 
-        public async Task<CreateListRoomResultData> Execute(CreateListRoomParam param)
+        public Task<CreateListRoomResultData> Execute(CreateListRoomParam param)
         {
-            if (param == null)
-            {
-                throw new ValidationException("Param cannot be blank.");
-            }
-
-            var cinema = await _cinemaRepository.GetCinemaById(param.CinemaId);
-
-            if (cinema == null) {
-                throw new NotFoundException("Cinema not found");
-            }
-
-            var existingRooms = await _roomRepository.GetAllRoom(param.CinemaId);
-            var existingRoomsNumbers = existingRooms.Select(r => r.RoomNumber).ToHashSet();
-
-            var newRooms = new List<Room>();
-            var skippedRooms = new List<int>();
-
-            foreach (var roomParam in param.Rooms)
-            {
-                if (existingRoomsNumbers.Contains(roomParam.RoomNumber))
-                {
-                    skippedRooms.Add(roomParam.RoomNumber);
-                    continue;
-                }
-
-                var room = new Room
-                {
-                    Id = Guid.NewGuid(),
-                    RoomNumber = roomParam.RoomNumber,
-                    Type = roomParam.Type,
-                    Status = roomParam.Status ?? "Active",
-                    CinemaId = param.CinemaId,
-                    LayoutId = roomParam.LayoutId ?? Guid.Empty,
-                };
-
-                newRooms.Add(room);
-                existingRoomsNumbers.Add(room.RoomNumber);
-            }
-
-            if (!newRooms.Any()) {
-                throw new ValidationException("All room is existed");
-            }
-            else
-            {
-                await _roomRepository.AddListRoom(newRooms);
-            }
-
-            string message;
-            if (!skippedRooms.Any()) {
-                message = "Add Rooms Successfully";
-            }
-            else
-            {
-                message = $"Some rooms were existed: {string.Join(", ", skippedRooms)}";
-            }
-
-            return new CreateListRoomResultData
-            {
-                Result = true,
-                Message = message,
-                StatusCode = StatusCodeEnum.Success,
-                Data = new CreateListRoomDataResult
-                {
-                    CinemaId = param.CinemaId,
-                    Rooms = newRooms.Select(r => new RoomDataResult
-                    {
-                        RoomNumber = r.RoomNumber,
-                        Type = r.Type,
-                        Status = r.Status,
-                        LayoutId = r.LayoutId
-                    }).ToList()
-                }
-            };
+            throw new NotImplementedException();
         }
+
+        //public async Task<CreateListRoomResultData> Execute(CreateListRoomParam param)
+        //{
+        //    if (param == null)
+        //    {
+        //        throw new ValidationException("Param cannot be blank.");
+        //    }
+
+        //    var cinema = await _cinemaRepository.GetCinemaById(param.CinemaId);
+
+        //    if (cinema == null) {
+        //        throw new NotFoundException("Cinema not found");
+        //    }
+
+        //    var existingRooms = await _roomRepository.GetAllRoom(param.CinemaId);
+        //    var existingRoomsNumbers = existingRooms.Select(r => r.RoomNumber).ToHashSet();
+
+        //    var newRooms = new List<Room>();
+        //    var skippedRooms = new List<int>();
+
+        //    foreach (var roomParam in param.Rooms)
+        //    {
+        //        if (existingRoomsNumbers.Contains(roomParam.RoomNumber))
+        //        {
+        //            skippedRooms.Add(roomParam.RoomNumber);
+        //            continue;
+        //        }
+
+        //        var room = new Room
+        //        {
+        //            Id = Guid.NewGuid(),
+        //            RoomNumber = roomParam.RoomNumber,
+        //            Type = roomParam.Type,
+        //            Status = roomParam.Status ?? "Active",
+        //            CinemaId = param.CinemaId,
+        //            LayoutId = roomParam.LayoutId ?? Guid.Empty,
+        //        };
+
+        //        newRooms.Add(room);
+        //        existingRoomsNumbers.Add(room.RoomNumber);
+        //    }
+
+        //    if (!newRooms.Any()) {
+        //        throw new ValidationException("All room is existed");
+        //    }
+        //    else
+        //    {
+        //        await _roomRepository.AddListRoom(newRooms);
+        //    }
+
+        //    string message;
+        //    if (!skippedRooms.Any()) {
+        //        message = "Add Rooms Successfully";
+        //    }
+        //    else
+        //    {
+        //        message = $"Some rooms were existed: {string.Join(", ", skippedRooms)}";
+        //    }
+
+        //    return new CreateListRoomResultData
+        //    {
+        //        Result = true,
+        //        Message = message,
+        //        StatusCode = StatusCodeEnum.Success,
+        //        Data = new CreateListRoomDataResult
+        //        {
+        //            CinemaId = param.CinemaId,
+        //            Rooms = newRooms.Select(r => new RoomDataResult
+        //            {
+        //                RoomNumber = r.RoomNumber,
+        //                Type = r.Type,
+        //                Status = r.Status,
+        //                LayoutId = r.LayoutId
+        //            }).ToList()
+        //        }
+        //    };
+        //}
     }
 }

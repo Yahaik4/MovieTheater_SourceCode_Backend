@@ -21,9 +21,23 @@ namespace src.Infrastructure.Repositories
             return cinema;
         }
 
-        public async Task<IEnumerable<Cinema>> GetAllCinema()
+        public async Task<IEnumerable<Cinema>> GetAllCinema(Guid? id, string? name, string? city, string? status)
         {
-            return await _context.Cinemas.ToListAsync();
+            var query = _context.Cinemas.AsQueryable();
+
+            if (id.HasValue)
+                query = query.Where(x => x.Id == id);
+
+            if (!string.IsNullOrWhiteSpace(city))
+                query = query.Where(x => x.City.ToLower().Contains(city.ToLower()));
+
+            if (!string.IsNullOrWhiteSpace(name))
+                query = query.Where(x => x.Name.ToLower().Contains(name.ToLower()));
+
+            if (!string.IsNullOrWhiteSpace(status))
+                query = query.Where(x => x.Status == status);
+
+            return await query.ToListAsync();
         }
 
         public async Task<Cinema?> GetCinemaById(Guid cinemaId)

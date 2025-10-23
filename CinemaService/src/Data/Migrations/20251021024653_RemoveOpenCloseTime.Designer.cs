@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using src.Data;
@@ -11,9 +12,11 @@ using src.Data;
 namespace src.Data.Migrations
 {
     [DbContext(typeof(CinemaDbContext))]
-    partial class CinemaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251021024653_RemoveOpenCloseTime")]
+    partial class RemoveOpenCloseTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,13 +35,6 @@ namespace src.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly>("Close_Time")
-                        .HasColumnType("time without time zone");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -56,9 +52,6 @@ namespace src.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<TimeOnly>("Open_Time")
-                        .HasColumnType("time without time zone");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("text");
@@ -66,6 +59,9 @@ namespace src.Data.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("TotalRoom")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -76,6 +72,46 @@ namespace src.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Cinemas");
+                });
+
+            modelBuilder.Entity("src.Infrastructure.EF.Models.ColumnSkip", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("SeatLayoutId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("column")
+                        .HasColumnType("integer");
+
+                    b.Property<char>("end_label")
+                        .HasColumnType("character(1)");
+
+                    b.Property<char>("start_label")
+                        .HasColumnType("character(1)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SeatLayoutId");
+
+                    b.ToTable("ColumnSkips");
                 });
 
             modelBuilder.Entity("src.Infrastructure.EF.Models.Room", b =>
@@ -96,54 +132,15 @@ namespace src.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("LayoutId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("RoomNumber")
                         .HasColumnType("integer");
-
-                    b.Property<Guid>("RoomTypeId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("Total_Column")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Total_Row")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CinemaId");
-
-                    b.HasIndex("RoomTypeId");
-
-                    b.ToTable("Rooms");
-                });
-
-            modelBuilder.Entity("src.Infrastructure.EF.Models.RoomType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("BasePrice")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -157,17 +154,18 @@ namespace src.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoomTypes");
+                    b.HasIndex("CinemaId");
+
+                    b.HasIndex("LayoutId");
+
+                    b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("src.Infrastructure.EF.Models.Seat", b =>
+            modelBuilder.Entity("src.Infrastructure.EF.Models.SeatLayout", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<int>("ColumnIndex")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -175,27 +173,10 @@ namespace src.Data.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
-                    b.Property<int>("DisplayNumber")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Label")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("RoomId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("SeatCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SeatTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Status")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -205,16 +186,65 @@ namespace src.Data.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("text");
 
-                    b.Property<bool>("isActive")
-                        .HasColumnType("boolean");
+                    b.Property<int>("total_columns")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("total_rows")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoomId");
+                    b.ToTable("SeatLayouts");
+                });
+
+            modelBuilder.Entity("src.Infrastructure.EF.Models.SeatLayoutDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ColumnNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Column_start")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("RowLabel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("SeatLayoutId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SeatTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SeatLayoutId");
 
                     b.HasIndex("SeatTypeId");
 
-                    b.ToTable("Seats");
+                    b.ToTable("SeatLayoutDetail");
                 });
 
             modelBuilder.Entity("src.Infrastructure.EF.Models.SeatType", b =>
@@ -223,14 +253,14 @@ namespace src.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<decimal>("BasePrice")
+                        .HasColumnType("numeric");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
-
-                    b.Property<decimal>("ExtraPrice")
-                        .HasColumnType("numeric");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -250,6 +280,17 @@ namespace src.Data.Migrations
                     b.ToTable("SeatTypes");
                 });
 
+            modelBuilder.Entity("src.Infrastructure.EF.Models.ColumnSkip", b =>
+                {
+                    b.HasOne("src.Infrastructure.EF.Models.SeatLayout", "SeatLayout")
+                        .WithMany("ColumnSkips")
+                        .HasForeignKey("SeatLayoutId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SeatLayout");
+                });
+
             modelBuilder.Entity("src.Infrastructure.EF.Models.Room", b =>
                 {
                     b.HasOne("src.Infrastructure.EF.Models.Cinema", "Cinema")
@@ -258,32 +299,32 @@ namespace src.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("src.Infrastructure.EF.Models.RoomType", "RoomType")
+                    b.HasOne("src.Infrastructure.EF.Models.SeatLayout", "SeatLayout")
                         .WithMany("Rooms")
-                        .HasForeignKey("RoomTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("LayoutId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Cinema");
 
-                    b.Navigation("RoomType");
+                    b.Navigation("SeatLayout");
                 });
 
-            modelBuilder.Entity("src.Infrastructure.EF.Models.Seat", b =>
+            modelBuilder.Entity("src.Infrastructure.EF.Models.SeatLayoutDetail", b =>
                 {
-                    b.HasOne("src.Infrastructure.EF.Models.Room", "Room")
-                        .WithMany("Seats")
-                        .HasForeignKey("RoomId")
+                    b.HasOne("src.Infrastructure.EF.Models.SeatLayout", "SeatLayout")
+                        .WithMany("SeatLayoutDetails")
+                        .HasForeignKey("SeatLayoutId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("src.Infrastructure.EF.Models.SeatType", "SeatType")
-                        .WithMany("Seats")
+                        .WithMany("SeatLayoutDetails")
                         .HasForeignKey("SeatTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Room");
+                    b.Navigation("SeatLayout");
 
                     b.Navigation("SeatType");
                 });
@@ -293,19 +334,18 @@ namespace src.Data.Migrations
                     b.Navigation("Rooms");
                 });
 
-            modelBuilder.Entity("src.Infrastructure.EF.Models.Room", b =>
+            modelBuilder.Entity("src.Infrastructure.EF.Models.SeatLayout", b =>
                 {
-                    b.Navigation("Seats");
-                });
+                    b.Navigation("ColumnSkips");
 
-            modelBuilder.Entity("src.Infrastructure.EF.Models.RoomType", b =>
-                {
                     b.Navigation("Rooms");
+
+                    b.Navigation("SeatLayoutDetails");
                 });
 
             modelBuilder.Entity("src.Infrastructure.EF.Models.SeatType", b =>
                 {
-                    b.Navigation("Seats");
+                    b.Navigation("SeatLayoutDetails");
                 });
 #pragma warning restore 612, 618
         }

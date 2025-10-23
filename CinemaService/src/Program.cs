@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Shared.Utils;
 using src.Data;
+using src.DomainLogic;
 using src.Helper;
 using src.Infrastructure.Repositories;
 using src.Infrastructure.Repositories.Interfaces;
@@ -33,8 +34,14 @@ void RegisterRepository()
     services.AddDbContext<CinemaDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+    // repository DJ
     services.AddScoped<IRoomRepository, RoomRepository>();
     services.AddScoped<ICinemaRepository, CinemaRepository>();
+
+    // logic DJ
+    services.AddScoped<GetAllCinemaLogic>();
+    services.AddScoped<CreateCinemaLogic>();
+    services.AddScoped<CreateRoomsLogic>();
 
     //services.AddScoped<ProfileServiceConnector>();
     //services.AddHttpContextAccessor();

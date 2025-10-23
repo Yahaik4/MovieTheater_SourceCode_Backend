@@ -5,7 +5,34 @@ option csharp_namespace = "CinemaGrpc";
 package Cinema;
 
 service CinemaGrpcService {
+	rpc GetAllCinemas(GetAllCinemasGrpcRequestDTO) returns (GetAllCinemasGrpcReplyDTO);
 	rpc CreateCinema(CreateCinemaGrpcRequestDTO) returns (CreateCinemaGrpcReplyDTO);
+}
+
+message GetAllCinemasGrpcRequestDTO {
+	string Id = 1;
+	string Name = 2;
+	string City = 3;
+	string Status = 4;
+}
+
+message GetAllCinemasGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetAllCinemasGrpcReplyDataDTO Data = 4;
+}
+
+message GetAllCinemasGrpcReplyDataDTO {
+	string Name = 1;
+	string Address = 2;
+	string City = 3;
+	string Email = 4;
+	string PhoneNumber = 5;
+	string OpenTime = 6;
+	string CloseTime = 7;
+	int32 TotalRoom = 8;
+	string Status = 9;
 }
 
 message CreateCinemaGrpcRequestDTO {
@@ -14,10 +41,9 @@ message CreateCinemaGrpcRequestDTO {
 	string City = 3;
 	string PhoneNumber = 4;
 	string Email = 5;
-	string Open_time = 6;
-	string Close_time = 7;
-	int32 TotalRoom = 8;
-	string Status = 9;
+	string OpenTime = 6;
+	string CloseTime = 7;
+	string Status = 8;
 }
 
 message CreateCinemaGrpcReplyDTO {
@@ -34,8 +60,7 @@ message CreateCinemaGrpcReplyDataDTO {
 	string City = 4;
 	string PhoneNumber = 5;
 	string Email = 6;
-	string Open_time = 7;
-	string Close_time = 8;
-	int32 TotalRoom = 9;
-	string Status = 10;
+	string OpenTime = 7;
+	string CloseTime = 8;
+	string Status = 9;
 }

@@ -1,10 +1,13 @@
-﻿using Grpc.Core;
+﻿using CinemaGrpc;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Utils;
 using src.DataTransferObject.Parameter;
 using src.DataTransferObject.ResultData;
 using src.ServiceConnector.AuthServiceConnector;
+using src.ServiceConnector.CinemaService;
+using System.Text.Json;
 
 namespace src.Controllers
 {
@@ -13,10 +16,12 @@ namespace src.Controllers
     public class RequestLocationController : ControllerBase
     {
         private readonly AuthenticationServiceConnector _authenticationConnector;
+        private readonly CinemaServiceConnector _cinemaServiceConnector;
 
-        public RequestLocationController(AuthenticationServiceConnector authenticationServiceConnector)
+        public RequestLocationController(AuthenticationServiceConnector authenticationServiceConnector, CinemaServiceConnector cinemaServiceConnector)
         {
             _authenticationConnector = authenticationServiceConnector;
+            _cinemaServiceConnector = cinemaServiceConnector;
         }
 
         [HttpPost("sign-in")]
@@ -193,6 +198,92 @@ namespace src.Controllers
                 Log.Error($"Login Error: {message}");
 
                 return new RegisterResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpGet("get-list-cinema")]
+        public async Task<GetAllCinemasResultDTO> GetAllCinema([FromQuery] GetAllCinemaRequestParam query)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetAllCinemas(query.Id, query.Name, query.City, query.Status);
+
+                return new GetAllCinemasResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(c => new GetAllCinemasDataResult
+                    {
+                        Name = c.Name,
+                        Address = c.Address,
+                        City = c.City,
+                        Email = c.Email,
+                        PhoneNumber = c.PhoneNumber,
+                        Open_Time = c.OpenTime,
+                        Close_Time = c.CloseTime,
+                        TotalRoom = c.TotalRoom,
+                        Status = c.Status,
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new GetAllCinemasResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpPost("create-cinema")]
+        public async Task<CreateCinemaResultDTO> CreateCinema(CreateCinemaRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.CreateCinema(param.Name, param.Address, param.City, param.PhoneNumber, param.Email, param.Open_Time, param.Close_Time, param.Status);
+
+                Console.WriteLine(JsonSerializer.Serialize(result, new JsonSerializerOptions
+                {
+                    WriteIndented = true,       
+                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                }));
+
+                return new CreateCinemaResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreateCinemaDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Name = result.Data.Name,
+                        Address = result.Data.Address,
+                        City = result.Data.City,
+                        PhoneNumber = result.Data.PhoneNumber,
+                        Email = result.Data.Email,
+                        Open_Time = TimeOnly.Parse(result.Data.OpenTime),
+                        Close_Time = TimeOnly.Parse(result.Data.CloseTime),
+                        Status = result.Data.Status
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new CreateCinemaResultDTO
                 {
                     Result = false,
                     Message = message,

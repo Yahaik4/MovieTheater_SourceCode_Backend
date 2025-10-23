@@ -11,10 +11,10 @@ namespace src.Data
 
         public DbSet<Cinema> Cinemas { get; set; }
         public DbSet<Room> Rooms { get; set; }
-        public DbSet<SeatLayout> SeatLayouts { get; set; }
-        public DbSet<SeatLayoutDetail> SeatLayoutDetail { get; set; }
+        public DbSet<RoomType> RoomTypes { get; set; }
+        public DbSet<Seat> Seats { get; set; }
         public DbSet<SeatType> SeatTypes { get; set; }
-        public DbSet<ColumnSkip> ColumnSkips { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Room>(entity =>
@@ -24,36 +24,24 @@ namespace src.Data
                     .HasForeignKey(r => r.CinemaId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(r => r.SeatLayout)
-                    .WithMany(s => s.Rooms)
-                    .HasForeignKey(r => r.LayoutId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(r => r.RoomType)
+                    .WithMany(rt => rt.Rooms)
+                    .HasForeignKey(r => r.RoomTypeId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<SeatLayoutDetail>(entity =>
+            modelBuilder.Entity<Seat>(entity =>
             {
-                entity.HasOne(s => s.SeatLayout)
-                    .WithMany(sl => sl.SeatLayoutDetails)
-                    .HasForeignKey(s => s.SeatLayoutId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
                 entity.HasOne(s => s.SeatType)
-                    .WithMany(st => st.SeatLayoutDetails)
+                    .WithMany(st => st.Seats)
                     .HasForeignKey(s => s.SeatTypeId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
 
-
-            });
-
-            modelBuilder.Entity<ColumnSkip>(entity =>
-            {
-                entity.HasOne(c => c.SeatLayout)
-                    .WithMany(sl => sl.ColumnSkips)
-                    .HasForeignKey(c => c.SeatLayoutId)
+                entity.HasOne(s => s.Room)
+                    .WithMany(r => r.Seats)
+                    .HasForeignKey(s => s.RoomId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
-
-
 
         }
     }

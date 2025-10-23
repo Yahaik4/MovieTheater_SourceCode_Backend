@@ -1,6 +1,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using src.ServiceConnector.AuthServiceConnector;
+using src.ServiceConnector.CinemaService;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +58,7 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 builder.Services.AddScoped<AuthenticationServiceConnector>();
+builder.Services.AddScoped<CinemaServiceConnector>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
