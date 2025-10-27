@@ -19,6 +19,13 @@ namespace src.Helper
             // CreateCinemaMapping
             CreateMap<CreateCinemaResultData, CreateCinemaGrpcReplyDTO>();
             CreateMap<CreateCinemaDataResult, CreateCinemaGrpcReplyDataDTO>();
+
+            // UpdateCinemaMapping
+            CreateMap<UpdateCinemaResultData, UpdateCinemaGrpcReplyDTO>();
+            CreateMap<UpdateCinemaDataResult, UpdateCinemaGrpcReplyDataDTO>();
+
+            // DeleteCinemaMapping
+            CreateMap<DeleteCinemaResultData, DeleteCinemaGrpcReplyDTO>();
         }
     }
 }

@@ -7,6 +7,8 @@ package Cinema;
 service CinemaGrpcService {
 	rpc GetAllCinemas(GetAllCinemasGrpcRequestDTO) returns (GetAllCinemasGrpcReplyDTO);
 	rpc CreateCinema(CreateCinemaGrpcRequestDTO) returns (CreateCinemaGrpcReplyDTO);
+	rpc UpdateCinema(UpdateCinemaGrpcRequestDTO) returns (UpdateCinemaGrpcReplyDTO);
+	rpc DeleteCinema(DeleteCinemaGrpcRequestDTO) returns (DeleteCinemaGrpcReplyDTO);
 }
 
 message GetAllCinemasGrpcRequestDTO {
@@ -63,4 +65,45 @@ message CreateCinemaGrpcReplyDataDTO {
 	string OpenTime = 7;
 	string CloseTime = 8;
 	string Status = 9;
+}
+
+
+message UpdateCinemaGrpcRequestDTO {
+	string Id = 1;
+	string Name = 2;
+	string Address = 3;
+	string City = 4;
+	string PhoneNumber = 5;
+	string Email = 6;
+	string OpenTime = 7;
+	string CloseTime = 8;
+	string Status = 9;
+}
+
+message UpdateCinemaGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateCinemaGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateCinemaGrpcReplyDataDTO {
+	string Name = 1;
+	string Address = 2;
+	string City = 3;
+	string PhoneNumber = 4;
+	string Email = 5;
+	string OpenTime = 6;
+	string CloseTime = 7;
+	string Status = 8;
+}
+
+message DeleteCinemaGrpcRequestDTO {
+	string Id = 1;
+}
+
+message DeleteCinemaGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
 }

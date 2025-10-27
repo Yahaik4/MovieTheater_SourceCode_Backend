@@ -20,9 +20,6 @@ namespace src.DomainLogic
         {
             var cinemas = await _cinemaRepository.GetAllCinema(param.Id, param.Name, param.City, param.Status);
 
-            //string jsonString = JsonSerializer.Serialize(cinemas);
-            //Console.WriteLine(jsonString);
-
             return new GetAllCinemasResultData
             {
                 Result = true,

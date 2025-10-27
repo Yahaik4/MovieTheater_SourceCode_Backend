@@ -42,6 +42,8 @@ void RegisterRepository()
     services.AddScoped<GetAllCinemaLogic>();
     services.AddScoped<CreateCinemaLogic>();
     services.AddScoped<CreateRoomsLogic>();
+    services.AddScoped<UpdateCinemaLogic>();
+    services.AddScoped<DeleteCinemaLogic>();
 
     //services.AddScoped<ProfileServiceConnector>();
     //services.AddHttpContextAccessor();

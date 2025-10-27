@@ -17,12 +17,20 @@ namespace src.Services
         private readonly IMapper _mapper;
         private readonly CreateCinemaLogic _createCinemaLogic;
         private readonly GetAllCinemaLogic _getAllCinemaLogic;
+        private readonly UpdateCinemaLogic _updateCinemaLogic;
+        private readonly DeleteCinemaLogic _deleteCinemaLogic;
 
-        public CinemaGrpcServiceImpl(IMapper mapper, CreateCinemaLogic createCinemaLogic, GetAllCinemaLogic getAllCinemaLogic) 
+        public CinemaGrpcServiceImpl(IMapper mapper, 
+                                    CreateCinemaLogic createCinemaLogic, 
+                                    GetAllCinemaLogic getAllCinemaLogic, 
+                                    UpdateCinemaLogic updateCinemaLogic,
+                                    DeleteCinemaLogic deleteCinemaLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
             _getAllCinemaLogic = getAllCinemaLogic;
+            _updateCinemaLogic = updateCinemaLogic;
+            _deleteCinemaLogic = deleteCinemaLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -69,7 +77,34 @@ namespace src.Services
                 Console.WriteLine(ex.StackTrace);
                 throw; // để gRPC biết có lỗi
             }
+        }
 
+        public override async Task<UpdateCinemaGrpcReplyDTO> UpdateCinema(UpdateCinemaGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _updateCinemaLogic.Execute(new UpdateCinemaParam
+            {
+                Id = Guid.Parse(request.Id),
+                Name = request.Name,
+                Address = request.Address,
+                City = request.City,
+                PhoneNumber = request.PhoneNumber,
+                Email = request.Email,
+                OpenTime = TimeOnly.Parse(request.OpenTime),
+                CloseTime = TimeOnly.Parse(request.CloseTime),
+                Status = request.Status,
+            });
+
+            return _mapper.Map<UpdateCinemaGrpcReplyDTO>(result);
+        }
+
+        public override async Task<DeleteCinemaGrpcReplyDTO> DeleteCinema(DeleteCinemaGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _deleteCinemaLogic.Execute(new DeleteCinemaParam
+            {
+                Id = Guid.Parse(request.Id),
+            });
+
+            return _mapper.Map<DeleteCinemaGrpcReplyDTO>(result);
         }
     }
 }

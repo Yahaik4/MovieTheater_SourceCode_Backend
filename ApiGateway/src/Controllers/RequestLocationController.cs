@@ -253,12 +253,6 @@ namespace src.Controllers
             {
                 var result = await _cinemaServiceConnector.CreateCinema(param.Name, param.Address, param.City, param.PhoneNumber, param.Email, param.Open_Time, param.Close_Time, param.Status);
 
-                Console.WriteLine(JsonSerializer.Serialize(result, new JsonSerializerOptions
-                {
-                    WriteIndented = true,       
-                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-                }));
-
                 return new CreateCinemaResultDTO
                 {
                     Result = result.Result,
@@ -284,6 +278,72 @@ namespace src.Controllers
                 Log.Error($"Login Error: {message}");
 
                 return new CreateCinemaResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpPut("update-cinema/{id}")]
+        public async Task<UpdateCinemaResultDTO> UpdateCinema(Guid id, [FromBody] UpdateCinemaRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.UpdateCinema(id, param.Name, param.Address, param.City, param.PhoneNumber, param.Email, param.Open_Time, param.Close_Time, param.Status);
+
+                return new UpdateCinemaResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new UpdateCinemaDataResult
+                    {
+                        Name = result.Data.Name,
+                        Address = result.Data.Address,
+                        City = result.Data.City,
+                        PhoneNumber = result.Data.PhoneNumber,
+                        Email = result.Data.Email,
+                        Open_Time = TimeOnly.Parse(result.Data.OpenTime),
+                        Close_Time = TimeOnly.Parse(result.Data.CloseTime),
+                        Status = result.Data.Status
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new UpdateCinemaResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpDelete("delete-cinema/{id}")]
+        public async Task<DeleteCinemaResultDTO> DeleteCinema(Guid id)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.DeleteCinema(id);
+                return new DeleteCinemaResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new DeleteCinemaResultDTO
                 {
                     Result = false,
                     Message = message,

@@ -6,8 +6,6 @@ using src.DataTransferObject.ResultData;
 using src.Helper;
 using src.Infrastructure.EF.Models;
 using src.Infrastructure.Repositories.Interfaces;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace src.DomainLogic
 {
@@ -26,9 +24,6 @@ namespace src.DomainLogic
             {
                 throw new ValidationException("Param cannot be blank.");
             }
-
-            //Console.WriteLine($"[GRPC REQUEST] Name={param.Name}, Address={param.Address}, OpenTime={param.OpenTime}, CloseTime={param.CloseTime}");
-            //Console.WriteLine($"[GRPC REQUEST] Email={param.Email}, TotalRoom={param.TotalRoom}, Status={param.Status}");
 
             var cinema = new Cinema
             {

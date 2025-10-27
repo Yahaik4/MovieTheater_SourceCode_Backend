@@ -51,5 +51,6 @@ namespace src.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return cinema;
         }
+
     }
 }
