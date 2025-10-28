@@ -10,7 +10,6 @@ namespace src.Helper
     {
         public AutoMap()
         {
-            //CreateMap<TimeOnly, string>().ConvertUsing(t => t.ToString("HH:mm"));
 
             //GetAllCinemaMapping
             CreateMap<GetAllCinemasResultData, GetAllCinemasGrpcReplyDTO>();
@@ -26,6 +25,22 @@ namespace src.Helper
 
             // DeleteCinemaMapping
             CreateMap<DeleteCinemaResultData, DeleteCinemaGrpcReplyDTO>();
+
+            // CreateRoomTypeMapping
+            CreateMap<CreateRoomTypeResultData, CreateRoomTypeGrpcReplyDTO>();
+            CreateMap<CreateRoomTypeDataResult, CreateRoomTypeGrpcReplyDataDTO>();
+
+            //GetAllRoomTypeMapping
+            CreateMap<GetAllRoomTypeResultData, GetAllRoomTypesGrpcReplyDTO>();
+            CreateMap<GetAllRoomTypesDataResult, GetAllRoomTypesGrpcReplyDataDTO>();
+
+            // UpdateRoomTypeMapping
+            CreateMap<UpdateRoomTypeResultData, UpdateRoomTypeGrpcReplyDTO>();
+            CreateMap<UpdateRoomTypeDataResult, UpdateRoomTypeGrpcReplyDataDTO>();
+
+            // DeleteRoomTypeMapping
+            CreateMap<DeleteRoomTypeResultData, DeleteRoomTypeGrpcReplyDTO>();
+
         }
     }
 }

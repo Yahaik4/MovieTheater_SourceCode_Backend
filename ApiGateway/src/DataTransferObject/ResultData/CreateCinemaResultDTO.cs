@@ -17,5 +17,6 @@
         public TimeOnly Close_Time { get; set; }
         public int TotalRoom { get; set; } = 0;
         public string Status { get; set; }
+        public string CreateBy { get; set; }
     }
 }

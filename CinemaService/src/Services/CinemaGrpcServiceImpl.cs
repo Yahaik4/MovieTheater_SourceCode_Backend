@@ -3,12 +3,6 @@ using CinemaGrpc;
 using Grpc.Core;
 using src.DataTransferObject.Parameter;
 using src.DomainLogic;
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.Text.Json;
-using System.Xml;
-using Newtonsoft.Json;
-using Formatting = Newtonsoft.Json.Formatting;
 
 namespace src.Services
 {
@@ -19,18 +13,30 @@ namespace src.Services
         private readonly GetAllCinemaLogic _getAllCinemaLogic;
         private readonly UpdateCinemaLogic _updateCinemaLogic;
         private readonly DeleteCinemaLogic _deleteCinemaLogic;
+        private readonly CreateRoomTypeLogic _createRoomTypeLogic;
+        private readonly GetAllRoomTypeLogic _getAllRoomTypeLogic;
+        private readonly UpdateRoomTypeLogic _updateRoomTypeLogic;
+        private readonly DeleteRoomTypeLogic _deleteRoomTypeLogic;
 
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
                                     GetAllCinemaLogic getAllCinemaLogic, 
                                     UpdateCinemaLogic updateCinemaLogic,
-                                    DeleteCinemaLogic deleteCinemaLogic) 
+                                    DeleteCinemaLogic deleteCinemaLogic,
+                                    CreateRoomTypeLogic createRoomTypeLogic,
+                                    GetAllRoomTypeLogic getAllRoomTypeLogic,
+                                    UpdateRoomTypeLogic updateRoomTypeLogic,
+                                    DeleteRoomTypeLogic deleteRoomTypeLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
             _getAllCinemaLogic = getAllCinemaLogic;
             _updateCinemaLogic = updateCinemaLogic;
             _deleteCinemaLogic = deleteCinemaLogic;
+            _createRoomTypeLogic = createRoomTypeLogic;
+            _getAllRoomTypeLogic = getAllRoomTypeLogic;
+            _updateRoomTypeLogic = updateRoomTypeLogic;
+            _deleteRoomTypeLogic = deleteRoomTypeLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -66,7 +72,8 @@ namespace src.Services
                     Email = request.Email,
                     OpenTime = TimeOnly.Parse(request.OpenTime),
                     CloseTime = TimeOnly.Parse(request.CloseTime),
-                    Status = request.Status,
+                    Status = string.IsNullOrWhiteSpace(request.Status) ? "Active" : request.Status,
+                    CreateBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? "System" : request.CreatedBy
                 });
 
                 return _mapper.Map<CreateCinemaGrpcReplyDTO>(result);
@@ -105,6 +112,67 @@ namespace src.Services
             });
 
             return _mapper.Map<DeleteCinemaGrpcReplyDTO>(result);
+        }
+
+
+        public override async Task<GetAllRoomTypesGrpcReplyDTO> GetAllRoomTypes(GetAllRoomTypesGrpcRequestDTO request, ServerCallContext context)
+        {
+            Guid? roomTypeId = null;
+            if (!string.IsNullOrWhiteSpace(request.Id)
+                && Guid.TryParse(request.Id, out var parsedId))
+            {
+                roomTypeId = parsedId;
+            }
+
+            decimal? basePrice = null;
+            if (!string.IsNullOrWhiteSpace(request.BasePrice)
+                && decimal.TryParse(request.BasePrice, out var parsedPrice))
+            {
+                basePrice = parsedPrice;
+            }
+
+            var result = await _getAllRoomTypeLogic.Execute(new GetAllRoomTypeParam
+            {
+                Id = roomTypeId,
+                Type = request.Type,
+                BasePrice = basePrice,
+            });
+
+            return _mapper.Map<GetAllRoomTypesGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CreateRoomTypeGrpcReplyDTO> CreateRoomType(CreateRoomTypeGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _createRoomTypeLogic.Execute(new CreateRoomTypeParam
+            {
+                Type = request.Type,
+                BasePrice = decimal.Parse(request.BasePrice),
+                CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? "System" : request.CreatedBy
+            });
+
+            return _mapper.Map<CreateRoomTypeGrpcReplyDTO>(result);
+        }
+
+        public override async Task<UpdateRoomTypeGrpcReplyDTO> UpdateRoomType(UpdateRoomTypeGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _updateRoomTypeLogic.Execute(new UpdateRoomTypeParam
+            {
+                Id = Guid.Parse(request.Id),
+                Type = request.Type,
+                BasePrice = decimal.Parse(request.BasePrice),
+            });
+
+            return _mapper.Map<UpdateRoomTypeGrpcReplyDTO>(result);
+        }
+
+        public override async Task<DeleteRoomTypeGrpcReplyDTO> DeleteRoomType(DeleteRoomTypeGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _deleteRoomTypeLogic.Execute(new DeleteRoomTypeParam
+            {
+                Id = Guid.Parse(request.Id),
+            });
+
+            return _mapper.Map<DeleteRoomTypeGrpcReplyDTO>(result);
         }
     }
 }

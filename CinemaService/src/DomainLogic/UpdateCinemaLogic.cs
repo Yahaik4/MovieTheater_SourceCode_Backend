@@ -31,6 +31,7 @@ namespace src.DomainLogic
             cinema.Open_Time = param.OpenTime;
             cinema.Close_Time = param.CloseTime;
             cinema.Status = param.Status;
+            cinema.UpdatedAt = DateTime.UtcNow;
 
             await _cinemaRepository.UpdateCinema(cinema);
 

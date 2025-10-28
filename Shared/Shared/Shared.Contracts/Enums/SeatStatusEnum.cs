@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.Shared.Contracts.Enums
+namespace Shared.Contracts.Enums
 {
-    internal static class SeatStatusEnum
+    public static class SeatStatusEnum
     {
         public const string Available = "Available";
         public const string Reserved = "Reserved";

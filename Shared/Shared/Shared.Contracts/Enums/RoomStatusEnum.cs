@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.Shared.Contracts.Enums
+namespace Shared.Contracts.Enums
 {
-    internal static class RoomStatusEnum
+    public static class RoomStatusEnum
     {
         public const string Active = "Active";
         public const string Inactive = "Inactive";

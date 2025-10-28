@@ -35,7 +35,8 @@ namespace src.DomainLogic
                 Email = param.Email,
                 Open_Time = param.OpenTime,
                 Close_Time = param.CloseTime,
-                Status = string.IsNullOrWhiteSpace(param.Status) ? "Active" : param.Status
+                Status = param.Status,
+                CreatedBy = param.CreateBy
             };
 
             await _cinemaRepository.CreateCinema(cinema);
@@ -44,7 +45,7 @@ namespace src.DomainLogic
             {
                 Result = true,
                 Message = "Create new Cinema Successfully",
-                StatusCode = StatusCodeEnum.Success,
+                StatusCode = StatusCodeEnum.Created,
                 Data = new CreateCinemaDataResult
                 {
                     Id = cinema.Id,
@@ -56,6 +57,7 @@ namespace src.DomainLogic
                     OpenTime = cinema.Open_Time,
                     CloseTime = cinema.Close_Time,
                     Status = cinema.Status,
+                    CreateBy = cinema.CreatedBy
                 }
             };
         } 

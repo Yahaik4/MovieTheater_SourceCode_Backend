@@ -37,6 +37,7 @@ void RegisterRepository()
     // repository DJ
     services.AddScoped<IRoomRepository, RoomRepository>();
     services.AddScoped<ICinemaRepository, CinemaRepository>();
+    services.AddScoped<IRoomTypeRepository, RoomTypeRepository>();
 
     // logic DJ
     services.AddScoped<GetAllCinemaLogic>();
@@ -44,6 +45,11 @@ void RegisterRepository()
     services.AddScoped<CreateRoomsLogic>();
     services.AddScoped<UpdateCinemaLogic>();
     services.AddScoped<DeleteCinemaLogic>();
+
+    services.AddScoped<GetAllRoomTypeLogic>();
+    services.AddScoped<CreateRoomTypeLogic>();
+    services.AddScoped<UpdateRoomTypeLogic>();
+    services.AddScoped<DeleteRoomTypeLogic>();
 
     //services.AddScoped<ProfileServiceConnector>();
     //services.AddHttpContextAccessor();

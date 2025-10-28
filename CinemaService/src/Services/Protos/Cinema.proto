@@ -9,6 +9,12 @@ service CinemaGrpcService {
 	rpc CreateCinema(CreateCinemaGrpcRequestDTO) returns (CreateCinemaGrpcReplyDTO);
 	rpc UpdateCinema(UpdateCinemaGrpcRequestDTO) returns (UpdateCinemaGrpcReplyDTO);
 	rpc DeleteCinema(DeleteCinemaGrpcRequestDTO) returns (DeleteCinemaGrpcReplyDTO);
+
+	rpc GetAllRoomTypes(GetAllRoomTypesGrpcRequestDTO) returns (GetAllRoomTypesGrpcReplyDTO);
+	rpc CreateRoomType(CreateRoomTypeGrpcRequestDTO) returns (CreateRoomTypeGrpcReplyDTO);
+	rpc UpdateRoomType(UpdateRoomTypeGrpcRequestDTO) returns (UpdateRoomTypeGrpcReplyDTO);
+	rpc DeleteRoomType(DeleteRoomTypeGrpcRequestDTO) returns (DeleteRoomTypeGrpcReplyDTO);
+
 }
 
 message GetAllCinemasGrpcRequestDTO {
@@ -46,6 +52,7 @@ message CreateCinemaGrpcRequestDTO {
 	string OpenTime = 6;
 	string CloseTime = 7;
 	string Status = 8;
+	string CreatedBy = 9;
 }
 
 message CreateCinemaGrpcReplyDTO {
@@ -65,6 +72,7 @@ message CreateCinemaGrpcReplyDataDTO {
 	string OpenTime = 7;
 	string CloseTime = 8;
 	string Status = 9;
+	string CreatedBy = 10;
 }
 
 
@@ -103,6 +111,73 @@ message DeleteCinemaGrpcRequestDTO {
 }
 
 message DeleteCinemaGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+}
+
+message CreateRoomTypeGrpcRequestDTO {
+	string Type = 1; 
+    string BasePrice = 2;
+    string CreatedBy = 3;
+}
+
+message CreateRoomTypeGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreateRoomTypeGrpcReplyDataDTO Data = 4;
+}
+
+message CreateRoomTypeGrpcReplyDataDTO {
+	string Id = 1;
+	string Type = 2; 
+    string BasePrice = 3;
+	string CreatedBy = 4;
+}
+
+
+message GetAllRoomTypesGrpcRequestDTO {
+	string Id = 1;
+	string Type = 2;
+	string BasePrice = 3;
+}
+
+message GetAllRoomTypesGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetAllRoomTypesGrpcReplyDataDTO Data = 4;
+}
+
+message GetAllRoomTypesGrpcReplyDataDTO {
+	string Type = 1;
+	string BasePrice = 2;
+}
+
+message UpdateRoomTypeGrpcRequestDTO {
+	string Id = 1;
+	string Type = 2;
+	string BasePrice = 3;
+}
+
+message UpdateRoomTypeGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateRoomTypeGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateRoomTypeGrpcReplyDataDTO {
+	string Type = 1;
+	string BasePrice = 2;
+}
+
+message DeleteRoomTypeGrpcRequestDTO {
+	string Id = 1;
+}
+
+message DeleteRoomTypeGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;

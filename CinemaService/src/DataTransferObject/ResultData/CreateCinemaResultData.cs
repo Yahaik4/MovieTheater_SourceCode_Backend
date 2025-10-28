@@ -9,5 +9,6 @@ namespace src.DataTransferObject.ResultData
 
     public class CreateCinemaDataResult : CinemaBaseDataResult
     {
+        public string CreateBy { get; set; }
     }
 }

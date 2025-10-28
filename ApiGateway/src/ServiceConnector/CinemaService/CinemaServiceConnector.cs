@@ -2,6 +2,7 @@
 using CinemaGrpc;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using src.Helper;
 using System;
 using System.Net;
 using System.Xml.Linq;
@@ -11,10 +12,12 @@ namespace src.ServiceConnector.CinemaService
     public class CinemaServiceConnector : BaseServiceConnector
     {
         private readonly ServiceConnectorConfig _serviceConnectorConfig;
+        private readonly ICurrentUserService _currentUserService;
 
-        public CinemaServiceConnector(IConfiguration configuration) : base(configuration)
+        public CinemaServiceConnector(IConfiguration configuration, ICurrentUserService currentUserService) : base(configuration)
         {
             _serviceConnectorConfig = GetServiceConnectorConfig();
+            _currentUserService = currentUserService;
         }
 
         public async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(Guid? id, string? name,string? city, string? status)
@@ -53,7 +56,8 @@ namespace src.ServiceConnector.CinemaService
                 Email = email,
                 OpenTime = open_time,
                 CloseTime = close_time,
-                Status = status
+                Status = status,
+                CreatedBy = _currentUserService.UserId ?? _currentUserService.Email ?? "System"
             };
 
             return await client.CreateCinemaAsync(request);
@@ -82,17 +86,77 @@ namespace src.ServiceConnector.CinemaService
 
         public async Task<DeleteCinemaGrpcReplyDTO> DeleteCinema(Guid id)
         {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new DeleteCinemaGrpcRequestDTO
             {
-                using var channel = GetCinemaServiceChannel();
-                var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+                Id = id.ToString(),
+            };
 
-                var request = new DeleteCinemaGrpcRequestDTO
-                {
-                    Id = id.ToString(),
-                };
+            return await client.DeleteCinemaAsync(request);
+        }
 
-                return await client.DeleteCinemaAsync(request);
-            }
+        public async Task<GetAllRoomTypesGrpcReplyDTO> GetAllRoomTypes(Guid? id, string? type, decimal? basePrice)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetAllRoomTypesGrpcRequestDTO();
+
+            if (id.HasValue)
+                request.Id = id.Value.ToString();
+
+            if (!string.IsNullOrWhiteSpace(type))
+                request.Type = type;
+
+            if (basePrice.HasValue)
+                request.BasePrice = basePrice.Value.ToString();
+
+            return await client.GetAllRoomTypesAsync(request);
+        }
+
+        public async Task<CreateRoomTypeGrpcReplyDTO> CreateRoomType(string type, decimal basePrice)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new CreateRoomTypeGrpcRequestDTO
+            {
+                Type = type,
+                BasePrice = basePrice.ToString(),
+                CreatedBy = _currentUserService.UserId ?? _currentUserService.Email ?? "System"
+            };
+
+            return await client.CreateRoomTypeAsync(request);
+        }
+
+        public async Task<UpdateRoomTypeGrpcReplyDTO> UpdateRoomType(Guid id, string type, decimal basePrice)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new UpdateRoomTypeGrpcRequestDTO
+            {
+                Id = id.ToString(),
+                Type = type,
+                BasePrice = basePrice.ToString(),
+            };
+
+            return await client.UpdateRoomTypeAsync(request);
+        }
+
+        public async Task<DeleteRoomTypeGrpcReplyDTO> DeleteRoomType(Guid id)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new DeleteRoomTypeGrpcRequestDTO
+            {
+                Id = id.ToString(),
+            };
+
+            return await client.DeleteRoomTypeAsync(request);
         }
     }
 }

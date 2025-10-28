@@ -16,7 +16,7 @@ namespace src.Infrastructure.Repositories
 
         public async Task<Cinema> CreateCinema(Cinema cinema)
         {
-            await _context.AddAsync(cinema);
+            await _context.Cinemas.AddAsync(cinema);
             await _context.SaveChangesAsync();
             return cinema;
         }
@@ -36,6 +36,8 @@ namespace src.Infrastructure.Repositories
 
             if (!string.IsNullOrWhiteSpace(status))
                 query = query.Where(x => x.Status == status);
+
+            query = query.Where(x => x.IsDeleted == false);
 
             return await query.ToListAsync();
         }

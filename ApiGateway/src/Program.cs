@@ -1,5 +1,6 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using src.Helper;
 using src.ServiceConnector.AuthServiceConnector;
 using src.ServiceConnector.CinemaService;
 using System.Text;
@@ -21,11 +22,18 @@ builder.Services.AddAuthentication("Bearer")
             ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
             ValidAudience = builder.Configuration["JwtSettings:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))
+                Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:AccessTokenKey"]))
         };
+
     });
 
 builder.Services.AddControllers();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
@@ -57,6 +65,8 @@ builder.Services.AddSwaggerGen(option =>
 
 });
 
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 builder.Services.AddScoped<AuthenticationServiceConnector>();
 builder.Services.AddScoped<CinemaServiceConnector>();
 builder.Services.AddHttpContextAccessor();
@@ -70,11 +80,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -12,5 +12,6 @@ namespace src.DataTransferObject.Parameter
         public TimeOnly OpenTime { get; set; }
         public TimeOnly CloseTime { get; set; }
         public string? Status { get; set; }
+        public string CreateBy { get; set; }
     }
 }
