@@ -21,12 +21,12 @@ namespace src.Infrastructure.Repositories
 
         public async Task<Room> CreateRoom(Room room)
         {
-            await _context.AddAsync(room);
+            await _context.Rooms.AddAsync(room);
             await _context.SaveChangesAsync();
             return room;
         }
 
-        public async Task<IEnumerable<Room>> GetAllRoom(Guid cinemaId)
+        public async Task<IEnumerable<Room>> GetAllRoomByCinema(Guid cinemaId)
         {
             return await _context.Rooms.Where(r => r.CinemaId == cinemaId).ToListAsync();
         }
@@ -38,7 +38,7 @@ namespace src.Infrastructure.Repositories
 
         public async Task<Room> UpdateRoom(Room room)
         {
-            _context.Update(room);
+            _context.Rooms.Update(room);
             await _context.SaveChangesAsync();
             return room;
         }

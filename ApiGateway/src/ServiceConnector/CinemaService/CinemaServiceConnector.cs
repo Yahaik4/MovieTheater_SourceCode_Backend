@@ -158,5 +158,67 @@ namespace src.ServiceConnector.CinemaService
 
             return await client.DeleteRoomTypeAsync(request);
         }
+
+        public async Task<GetAllSeatTypesGrpcReplyDTO> GetAllSeatTypes(Guid? id, string? type, decimal? extraPrice)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetAllSeatTypesGrpcRequestDTO();
+
+            if (id.HasValue)
+                request.Id = id.Value.ToString();
+
+            if (!string.IsNullOrWhiteSpace(type))
+                request.Type = type;
+
+            if (extraPrice.HasValue)
+                request.ExtraPrice = extraPrice.Value.ToString();
+
+            return await client.GetAllSeatTypesAsync(request);
+        }
+
+        public async Task<CreateSeatTypeGrpcReplyDTO> CreateSeatType(string type, decimal extraPrice)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new CreateSeatTypeGrpcRequestDTO
+            {
+                Type = type,
+                ExtraPrice = extraPrice.ToString(),
+                CreatedBy = _currentUserService.UserId ?? _currentUserService.Email ?? "System"
+            };
+
+            return await client.CreateSeatTypeAsync(request);
+        }
+
+        public async Task<UpdateSeatTypeGrpcReplyDTO> UpdateSeatType(Guid id, string type, decimal extraPrice)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new UpdateSeatTypeGrpcRequestDTO
+            {
+                Id = id.ToString(),
+                Type = type,
+                ExtraPrice = extraPrice.ToString(),
+            };
+
+            return await client.UpdateSeatTypeAsync(request);
+        }
+
+        public async Task<DeleteSeatTypeGrpcReplyDTO> DeleteSeatType(Guid id)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new DeleteSeatTypeGrpcRequestDTO
+            {
+                Id = id.ToString(),
+            };
+
+            return await client.DeleteSeatTypeAsync(request);
+        }
     }
 }

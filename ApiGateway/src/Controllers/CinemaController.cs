@@ -35,6 +35,7 @@ namespace src.Controllers
                     StatusCode = result.StatusCode,
                     Data = result.Data.Select(c => new GetAllCinemasDataResult
                     {
+                        Id = Guid.Parse(c.Id),
                         Name = c.Name,
                         Address = c.Address,
                         City = c.City,
@@ -185,6 +186,7 @@ namespace src.Controllers
                     StatusCode = result.StatusCode,
                     Data = result.Data.Select(rt => new GetAllRoomTypesDataResult
                     {
+                        Id = Guid.Parse(rt.Id),
                         Type = rt.Type,
                         BasePrice = Decimal.Parse(rt.BasePrice)
                     }).ToList()
@@ -293,6 +295,137 @@ namespace src.Controllers
                 Log.Error($"Login Error: {message}");
 
                 return new DeleteRoomTypeResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpGet("seat-types")]
+        public async Task<GetAllSeatTypesResultDTO> GetAllSeatType([FromQuery] GetAllSeatTypeRequestParam query)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetAllSeatTypes(query.Id, query.Type, query.ExtraPrice);
+
+                return new GetAllSeatTypesResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(st => new GetAllSeatTypesDataResult
+                    {
+                        Id = Guid.Parse(st.Id),
+                        Type = st.Type,
+                        ExtraPrice = Decimal.Parse(st.ExtraPrice)
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new GetAllSeatTypesResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost("seat-type")]
+        public async Task<CreateSeatTypeResultDTO> CreateSeatType(CreateSeatTypeRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.CreateSeatType(param.Type, param.ExtraPrice);
+
+                return new CreateSeatTypeResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreateSeatTypeDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Type = result.Data.Type,
+                        ExtraPrice = Decimal.Parse(result.Data.ExtraPrice),
+                        CreatedBy = result.Data.CreatedBy
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new CreateSeatTypeResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut("seat-type/{id}")]
+        public async Task<UpdateSeatTypeResultDTO> UpdateSeatType(Guid id, [FromBody] UpdateSeatTypeRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.UpdateSeatType(id, param.Type, param.ExtraPrice);
+
+                return new UpdateSeatTypeResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new UpdateSeatTypeDataResult
+                    {
+                        Type = result.Data.Type,
+                        ExtraPrice = decimal.Parse(result.Data.ExtraPrice),
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new UpdateSeatTypeResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpDelete("seat-type/{id}")]
+        public async Task<DeleteSeatTypeResultDTO> DeleteSeatType(Guid id)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.DeleteSeatType(id);
+                return new DeleteSeatTypeResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new DeleteSeatTypeResultDTO
                 {
                     Result = false,
                     Message = message,

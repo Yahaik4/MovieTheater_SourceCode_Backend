@@ -38,11 +38,12 @@ void RegisterRepository()
     services.AddScoped<IRoomRepository, RoomRepository>();
     services.AddScoped<ICinemaRepository, CinemaRepository>();
     services.AddScoped<IRoomTypeRepository, RoomTypeRepository>();
+    services.AddScoped<ISeatTypeRepository, SeatTypeRepository>();
 
     // logic DJ
     services.AddScoped<GetAllCinemaLogic>();
     services.AddScoped<CreateCinemaLogic>();
-    services.AddScoped<CreateRoomsLogic>();
+    //services.AddScoped<CreateRoomsLogic>();
     services.AddScoped<UpdateCinemaLogic>();
     services.AddScoped<DeleteCinemaLogic>();
 
@@ -50,6 +51,11 @@ void RegisterRepository()
     services.AddScoped<CreateRoomTypeLogic>();
     services.AddScoped<UpdateRoomTypeLogic>();
     services.AddScoped<DeleteRoomTypeLogic>();
+
+    services.AddScoped<GetAllSeatTypeLogic>();
+    services.AddScoped<CreateSeatTypeLogic>();
+    services.AddScoped<UpdateSeatTypeLogic>();
+    services.AddScoped<DeleteSeatTypeLogic>();
 
     //services.AddScoped<ProfileServiceConnector>();
     //services.AddHttpContextAccessor();

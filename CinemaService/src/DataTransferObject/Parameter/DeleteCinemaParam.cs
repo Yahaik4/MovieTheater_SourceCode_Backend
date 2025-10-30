@@ -1,6 +1,8 @@
-﻿namespace src.DataTransferObject.Parameter
+﻿using Shared.Contracts.Interfaces;
+
+namespace src.DataTransferObject.Parameter
 {
-    public class DeleteCinemaParam
+    public class DeleteCinemaParam : IParam
     {
         public Guid Id { get; set; }
     }

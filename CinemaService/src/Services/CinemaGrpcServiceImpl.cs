@@ -17,6 +17,10 @@ namespace src.Services
         private readonly GetAllRoomTypeLogic _getAllRoomTypeLogic;
         private readonly UpdateRoomTypeLogic _updateRoomTypeLogic;
         private readonly DeleteRoomTypeLogic _deleteRoomTypeLogic;
+        private readonly GetAllSeatTypeLogic _getAllSeatTypeLogic;
+        private readonly CreateSeatTypeLogic _createSeatTypeLogic;
+        private readonly UpdateSeatTypeLogic _updateSeatTypeLogic;
+        private readonly DeleteSeatTypeLogic _deleteSeatTypeLogic;
 
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
@@ -26,7 +30,11 @@ namespace src.Services
                                     CreateRoomTypeLogic createRoomTypeLogic,
                                     GetAllRoomTypeLogic getAllRoomTypeLogic,
                                     UpdateRoomTypeLogic updateRoomTypeLogic,
-                                    DeleteRoomTypeLogic deleteRoomTypeLogic) 
+                                    DeleteRoomTypeLogic deleteRoomTypeLogic,
+                                    GetAllSeatTypeLogic getAllSeatTypeLogic,
+                                    CreateSeatTypeLogic createSeatTypeLogic,
+                                    UpdateSeatTypeLogic updateSeatTypeLogic,
+                                    DeleteSeatTypeLogic deleteSeatTypeLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -37,6 +45,10 @@ namespace src.Services
             _getAllRoomTypeLogic = getAllRoomTypeLogic;
             _updateRoomTypeLogic = updateRoomTypeLogic;
             _deleteRoomTypeLogic = deleteRoomTypeLogic;
+            _getAllSeatTypeLogic = getAllSeatTypeLogic;
+            _createSeatTypeLogic = createSeatTypeLogic;
+            _updateSeatTypeLogic = updateSeatTypeLogic;
+            _deleteSeatTypeLogic = deleteSeatTypeLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -173,6 +185,66 @@ namespace src.Services
             });
 
             return _mapper.Map<DeleteRoomTypeGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetAllSeatTypesGrpcReplyDTO> GetAllSeatTypes(GetAllSeatTypesGrpcRequestDTO request, ServerCallContext context)
+        {
+            Guid? seatTypeId = null;
+            if (!string.IsNullOrWhiteSpace(request.Id)
+                && Guid.TryParse(request.Id, out var parsedId))
+            {
+                seatTypeId = parsedId;
+            }
+
+            decimal? extraPrice = null;
+            if (!string.IsNullOrWhiteSpace(request.ExtraPrice)
+                && decimal.TryParse(request.ExtraPrice, out var parsedPrice))
+            {
+                extraPrice = parsedPrice;
+            }
+
+            var result = await _getAllSeatTypeLogic.Execute(new GetAllSeatTypeParam
+            {
+                Id = seatTypeId,
+                Type = request.Type,
+                ExtraPrice = extraPrice,
+            });
+
+            return _mapper.Map<GetAllSeatTypesGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CreateSeatTypeGrpcReplyDTO> CreateSeatType(CreateSeatTypeGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _createSeatTypeLogic.Execute(new CreateSeatTypeParam
+            {
+                Type = request.Type,
+                ExtraPrice = decimal.Parse(request.ExtraPrice),
+                CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? "System" : request.CreatedBy
+            });
+
+            return _mapper.Map<CreateSeatTypeGrpcReplyDTO>(result);
+        }
+
+        public override async Task<UpdateSeatTypeGrpcReplyDTO> UpdateSeatType(UpdateSeatTypeGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _updateSeatTypeLogic.Execute(new UpdateSeatTypeParam
+            {
+                Id = Guid.Parse(request.Id),
+                Type = request.Type,
+                ExtraPrice = decimal.Parse(request.ExtraPrice),
+            });
+
+            return _mapper.Map<UpdateSeatTypeGrpcReplyDTO>(result);
+        }
+
+        public override async Task<DeleteSeatTypeGrpcReplyDTO> DeleteSeatType(DeleteSeatTypeGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _deleteSeatTypeLogic.Execute(new DeleteSeatTypeParam
+            {
+                Id = Guid.Parse(request.Id),
+            });
+
+            return _mapper.Map<DeleteSeatTypeGrpcReplyDTO>(result);
         }
     }
 }

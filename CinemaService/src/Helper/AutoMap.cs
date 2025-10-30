@@ -41,6 +41,20 @@ namespace src.Helper
             // DeleteRoomTypeMapping
             CreateMap<DeleteRoomTypeResultData, DeleteRoomTypeGrpcReplyDTO>();
 
+            // GetAllSeatTypeMapping
+            CreateMap<GetAllSeatTypeResultData, GetAllSeatTypesGrpcReplyDTO>();
+            CreateMap<GetAllSeatTypeDataResult, GetAllSeatTypesGrpcReplyDataDTO>();
+
+            // CreateSeatTypeMapping
+            CreateMap<CreateSeatTypeResultData, CreateSeatTypeGrpcReplyDTO>();
+            CreateMap<CreateSeatTypeDataResult, CreateSeatTypeGrpcReplyDataDTO>();
+
+            // UpdateSeatTypeMapping
+            CreateMap<UpdateSeatTypeResultData, UpdateSeatTypeGrpcReplyDTO>();
+            CreateMap<UpdateSeatTypeDataResult, UpdateSeatTypeGrpcReplyDataDTO>();
+
+            // DeleteSeatTypeMapping
+            CreateMap<DeleteSeatTypeResultData, DeleteSeatTypeGrpcReplyDTO>();
         }
     }
 }

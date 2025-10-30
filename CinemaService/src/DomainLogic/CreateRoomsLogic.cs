@@ -8,97 +8,40 @@ using src.Infrastructure.Repositories.Interfaces;
 
 namespace src.DomainLogic
 {
-    public class CreateRoomsLogic : IDomainLogic<CreateListRoomParam, Task<CreateListRoomResultData>>
+    public class CreateRoomsLogic : IDomainLogic<CreateRoomParam, Task<CreateRoomResultData>>
     {
         private readonly IRoomRepository _roomRepository;
         private readonly ICinemaRepository _cinemaRepository;
+        private readonly IRoomTypeRepository _roomTypeRepository;
 
-        public CreateRoomsLogic(IRoomRepository roomRepository, ICinemaRepository cinemaRepository)
+        public CreateRoomsLogic(IRoomRepository roomRepository, ICinemaRepository cinemaRepository, IRoomTypeRepository roomTypeRepository)
         {
             _roomRepository = roomRepository;
             _cinemaRepository = cinemaRepository;
+            _roomTypeRepository = roomTypeRepository;
         }
 
-        public Task<CreateListRoomResultData> Execute(CreateListRoomParam param)
+        public Task<CreateRoomResultData> Execute(CreateRoomParam param)
         {
             throw new NotImplementedException();
         }
 
-        //public async Task<CreateListRoomResultData> Execute(CreateListRoomParam param)
+        //public async Task<CreateRoomResultData> Execute(CreateRoomParam param)
         //{
-        //    if (param == null)
-        //    {
-        //        throw new ValidationException("Param cannot be blank.");
-        //    }
-
         //    var cinema = await _cinemaRepository.GetCinemaById(param.CinemaId);
 
         //    if (cinema == null) {
-        //        throw new NotFoundException("Cinema not found");
+        //        throw new NotFoundException("Cinema not Found");
         //    }
 
-        //    var existingRooms = await _roomRepository.GetAllRoom(param.CinemaId);
-        //    var existingRoomsNumbers = existingRooms.Select(r => r.RoomNumber).ToHashSet();
+        //    var type = await _roomTypeRepository.GetRoomTypeById(param.RoomTypeId);
 
-        //    var newRooms = new List<Room>();
-        //    var skippedRooms = new List<int>();
-
-        //    foreach (var roomParam in param.Rooms)
-        //    {
-        //        if (existingRoomsNumbers.Contains(roomParam.RoomNumber))
-        //        {
-        //            skippedRooms.Add(roomParam.RoomNumber);
-        //            continue;
-        //        }
-
-        //        var room = new Room
-        //        {
-        //            Id = Guid.NewGuid(),
-        //            RoomNumber = roomParam.RoomNumber,
-        //            Type = roomParam.Type,
-        //            Status = roomParam.Status ?? "Active",
-        //            CinemaId = param.CinemaId,
-        //            LayoutId = roomParam.LayoutId ?? Guid.Empty,
-        //        };
-
-        //        newRooms.Add(room);
-        //        existingRoomsNumbers.Add(room.RoomNumber);
+        //    if (type == null) {
+        //        throw new NotFoundException("Type not Found");
         //    }
 
-        //    if (!newRooms.Any()) {
-        //        throw new ValidationException("All room is existed");
-        //    }
-        //    else
-        //    {
-        //        await _roomRepository.AddListRoom(newRooms);
-        //    }
 
-        //    string message;
-        //    if (!skippedRooms.Any()) {
-        //        message = "Add Rooms Successfully";
-        //    }
-        //    else
-        //    {
-        //        message = $"Some rooms were existed: {string.Join(", ", skippedRooms)}";
-        //    }
 
-        //    return new CreateListRoomResultData
-        //    {
-        //        Result = true,
-        //        Message = message,
-        //        StatusCode = StatusCodeEnum.Success,
-        //        Data = new CreateListRoomDataResult
-        //        {
-        //            CinemaId = param.CinemaId,
-        //            Rooms = newRooms.Select(r => new RoomDataResult
-        //            {
-        //                RoomNumber = r.RoomNumber,
-        //                Type = r.Type,
-        //                Status = r.Status,
-        //                LayoutId = r.LayoutId
-        //            }).ToList()
-        //        }
-        //    };
         //}
     }
 }

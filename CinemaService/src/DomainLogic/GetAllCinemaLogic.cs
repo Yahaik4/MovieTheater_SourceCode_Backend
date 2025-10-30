@@ -27,6 +27,7 @@ namespace src.DomainLogic
                 StatusCode = StatusCodeEnum.Success,
                 Data = cinemas.Select(c => new GetAllCinemasDataResult
                 {
+                    Id = c.Id,
                     Name = c.Name,
                     Address = c.Address,
                     City = c.City,

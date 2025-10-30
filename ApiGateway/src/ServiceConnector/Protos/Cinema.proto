@@ -15,6 +15,11 @@ service CinemaGrpcService {
 	rpc UpdateRoomType(UpdateRoomTypeGrpcRequestDTO) returns (UpdateRoomTypeGrpcReplyDTO);
 	rpc DeleteRoomType(DeleteRoomTypeGrpcRequestDTO) returns (DeleteRoomTypeGrpcReplyDTO);
 
+	rpc GetAllSeatTypes(GetAllSeatTypesGrpcRequestDTO) returns (GetAllSeatTypesGrpcReplyDTO);
+	rpc CreateSeatType(CreateSeatTypeGrpcRequestDTO) returns (CreateSeatTypeGrpcReplyDTO);
+	rpc UpdateSeatType(UpdateSeatTypeGrpcRequestDTO) returns (UpdateSeatTypeGrpcReplyDTO);
+	rpc DeleteSeatType(DeleteSeatTypeGrpcRequestDTO) returns (DeleteSeatTypeGrpcReplyDTO);
+
 }
 
 message GetAllCinemasGrpcRequestDTO {
@@ -32,15 +37,16 @@ message GetAllCinemasGrpcReplyDTO {
 }
 
 message GetAllCinemasGrpcReplyDataDTO {
-	string Name = 1;
-	string Address = 2;
-	string City = 3;
-	string Email = 4;
-	string PhoneNumber = 5;
-	string OpenTime = 6;
-	string CloseTime = 7;
-	int32 TotalRoom = 8;
-	string Status = 9;
+	string Id = 1;
+	string Name = 2;
+	string Address = 3;
+	string City = 4;
+	string Email = 5;
+	string PhoneNumber = 6;
+	string OpenTime = 7;
+	string CloseTime = 8;
+	int32 TotalRoom = 9;
+	string Status = 10;
 }
 
 message CreateCinemaGrpcRequestDTO {
@@ -151,8 +157,9 @@ message GetAllRoomTypesGrpcReplyDTO {
 }
 
 message GetAllRoomTypesGrpcReplyDataDTO {
-	string Type = 1;
-	string BasePrice = 2;
+	string Id = 1;
+	string Type = 2;
+	string BasePrice = 3;
 }
 
 message UpdateRoomTypeGrpcRequestDTO {
@@ -178,6 +185,73 @@ message DeleteRoomTypeGrpcRequestDTO {
 }
 
 message DeleteRoomTypeGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+}
+
+message GetAllSeatTypesGrpcRequestDTO {
+	string Id = 1;
+	string Type = 2;
+	string ExtraPrice = 3;
+}
+
+message GetAllSeatTypesGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetAllSeatTypesGrpcReplyDataDTO Data = 4;
+}
+
+message GetAllSeatTypesGrpcReplyDataDTO {
+	string Id = 1;
+	string Type = 2;
+	string ExtraPrice = 3;
+}
+
+message CreateSeatTypeGrpcRequestDTO {
+	string Type = 1;
+	string ExtraPrice = 2;
+	string CreatedBy = 3;
+}
+
+message CreateSeatTypeGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreateSeatTypeGrpcReplyDataDTO Data = 4;
+}
+
+message CreateSeatTypeGrpcReplyDataDTO {
+	string Id = 1;
+	string Type = 2;
+	string ExtraPrice = 3;
+	string CreatedBy = 4;
+}
+
+message UpdateSeatTypeGrpcRequestDTO {
+	string Id = 1;
+	string Type = 2;
+	string ExtraPrice = 3;
+}
+
+message UpdateSeatTypeGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateSeatTypeGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateSeatTypeGrpcReplyDataDTO {
+	string Type = 1;
+	string ExtraPrice = 2;
+}
+
+message DeleteSeatTypeGrpcRequestDTO {
+	string Id = 1;
+}
+
+message DeleteSeatTypeGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;

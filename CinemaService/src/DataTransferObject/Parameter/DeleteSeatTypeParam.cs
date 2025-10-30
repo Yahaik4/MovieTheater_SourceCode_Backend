@@ -2,7 +2,7 @@
 
 namespace src.DataTransferObject.Parameter
 {
-    public class DeleteRoomTypeParam : IParam
+    public class DeleteSeatTypeParam : IParam
     {
         public Guid Id { get; set; }
     }

@@ -26,6 +26,7 @@ namespace src.DomainLogic
                 StatusCode = StatusCodeEnum.Success,
                 Data = roomTypes.Select(c => new GetAllRoomTypesDataResult
                 {
+                    Id = c.Id,
                     Type = c.Type,
                     BasePrice = c.BasePrice,
                 }).ToList(),
