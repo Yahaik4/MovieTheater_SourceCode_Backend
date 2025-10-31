@@ -433,5 +433,131 @@ namespace src.Controllers
                 };
             }
         }
+
+        [HttpGet("rooms/{cinemaId}")]
+        public async Task<GetAllRoomResultDTO> GetAllRoom(Guid cinemaId, [FromQuery] GetAllRoomRequestParam query)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetAllRooms(cinemaId, query.Id, query.RoomNumber, query.Status,  query.Type);
+
+                return new GetAllRoomResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(r => new GetAllRoomsDataResult
+                    {
+                        Id = Guid.Parse(r.Id),
+                        RoomNumber = r.RoomNumber,
+                        Status = r.Status,
+                        TotalColumn = r.TotalColumn,
+                        TotalRow = r.TotalRow,
+                        RoomType = r.RoomType,
+                        CreatedBy = r.CreatedBy,
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new GetAllRoomResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost("room")]
+        public async Task<CreateRoomResultDTO> CreateRoom(CreateRoomRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.CreateRoom(param.RoomNumber, param.TotalColumn, param.TotalRow, param.Status, param.RoomTypeId, param.CinemaId);
+
+                return new CreateRoomResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreateRoomDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        RoomNumber = result.Data.RoomNumber,
+                        TotalColumn = result.Data.TotalColumn,
+                        TotalRow = result.Data.TotalRow,
+                        Status = result.Data.Status,
+                        RoomType = result.Data.RoomType,
+                        Cinema = result.Data.Cinema,
+                        CreatedBy = result.Data.CreatedBy,
+                        Seats = result.Data.Seats.Select(s => new CreateSeatDataResult
+                        {
+                            Id = Guid.Parse(s.Id),
+                            Label = s.Label,
+                            ColumnIndex = s.ColumnIndex,
+                            DisplayNumber = s.DisplayNumber,
+                            SeatCode = s.SeatCode,
+                            isActive = s.IsActive,
+                            Status = s.Status,
+                            SeatType = s.SeatType,
+                        }).ToList()
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new CreateRoomResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut("room/{id}")]
+        public async Task<UpdateRoomResultDTO> UpdateRoom(Guid id, [FromBody] UpdateRoomRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.UpdateRoom(id, param.RoomNumber, param.Status,param.Total_Column,param.Total_Row, param.RoomTypeId, param.CinemaId);
+
+                return new UpdateRoomResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new UpdateRoomDataResult
+                    {
+                        RoomNumber = result.Data.RoomNumber,
+                        Total_Column = result.Data.TotalColumn,
+                        Total_Row = result.Data.TotalRow,
+                        Type = result.Data.Type,
+                        Status = result.Data.Status
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new UpdateRoomResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
     }
 }

@@ -10,6 +10,10 @@ service CinemaGrpcService {
 	rpc UpdateCinema(UpdateCinemaGrpcRequestDTO) returns (UpdateCinemaGrpcReplyDTO);
 	rpc DeleteCinema(DeleteCinemaGrpcRequestDTO) returns (DeleteCinemaGrpcReplyDTO);
 
+	rpc GetAllRooms(GetAllRoomsGrpcRequestDTO) returns (GetAllRoomsGrpcReplyDTO);
+	rpc CreateRoom(CreateRoomGrpcRequestDTO) returns (CreateRoomGrpcReplyDTO);
+	rpc UpdateRoom(UpdateRoomGrpcRequestDTO) returns (UpdateRoomGrpcReplyDTO);
+
 	rpc GetAllRoomTypes(GetAllRoomTypesGrpcRequestDTO) returns (GetAllRoomTypesGrpcReplyDTO);
 	rpc CreateRoomType(CreateRoomTypeGrpcRequestDTO) returns (CreateRoomTypeGrpcReplyDTO);
 	rpc UpdateRoomType(UpdateRoomTypeGrpcRequestDTO) returns (UpdateRoomTypeGrpcReplyDTO);
@@ -255,4 +259,94 @@ message DeleteSeatTypeGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;
+}
+
+message CreateRoomGrpcRequestDTO {
+	int32 RoomNumber = 1;
+    string Status = 2; 
+    int32 TotalColumn = 3;
+	int32 TotalRow = 4;
+    string RoomTypeId = 5;
+    string CinemaId = 6;
+	string CreatedBy = 7;
+}
+
+message CreateRoomGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreateRoomGrpcReplyDataDTO Data = 4;
+}
+
+message CreateRoomGrpcReplyDataDTO {
+	string Id = 1;
+    int32 RoomNumber = 2;
+    string Status = 3; 
+    int32 TotalColumn = 4;
+	int32 TotalRow = 5;
+    string RoomType = 6;
+    string Cinema = 7;
+	string CreatedBy = 8;
+	repeated CreateSeatGrpcReplyDataDTO Seats = 9;
+}
+
+message CreateSeatGrpcReplyDataDTO {
+	string Id = 1;
+	string Label = 2;
+    int32 ColumnIndex = 3;
+    int32 DisplayNumber = 4;
+    string SeatCode = 5;
+    bool isActive = 6;
+    string Status = 7;
+    string SeatType = 8;
+}
+
+message GetAllRoomsGrpcRequestDTO {
+	string CinemaId = 1;
+	string Id = 2;
+	int32 RoomNumber = 3;
+    string Status = 4; 
+    string Type = 5;
+}
+
+message GetAllRoomsGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetAllRoomsGrpcReplyDataDTO Data = 4;
+}
+
+message GetAllRoomsGrpcReplyDataDTO {
+	string Id = 1;
+    int32 RoomNumber = 2;
+    string Status = 3;
+    int32 TotalColumn = 4;
+    int32 TotalRow = 5;
+    string RoomType = 6;
+    string CreatedBy = 7;
+}
+
+message UpdateRoomGrpcRequestDTO {
+	string Id = 1;
+	int32 RoomNumber = 2;
+	string Status = 3;
+	int32 TotalColumn = 4;
+	int32 TotalRow = 5;
+	string RoomTypeId = 6;
+	string CinemaId = 7;
+}
+
+message UpdateRoomGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateRoomGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateRoomGrpcReplyDataDTO {
+	int32 RoomNumber = 1;
+	string Status = 2;
+	int32 TotalColumn = 3;
+	int32 TotalRow = 4;
+	string Type = 5;
 }

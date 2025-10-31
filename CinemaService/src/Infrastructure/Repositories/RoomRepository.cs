@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Grpc.Core;
+using Microsoft.EntityFrameworkCore;
 using src.Data;
 using src.Infrastructure.EF.Models;
 using src.Infrastructure.Repositories.Interfaces;
+using System.Xml.Linq;
 
 namespace src.Infrastructure.Repositories
 {
@@ -26,9 +28,27 @@ namespace src.Infrastructure.Repositories
             return room;
         }
 
-        public async Task<IEnumerable<Room>> GetAllRoomByCinema(Guid cinemaId)
+        public async Task<IEnumerable<Room>> GetAllRoomByCinema(Guid cinemaId, Guid? id, int? roomNumber, string? status, string? type)
         {
-            return await _context.Rooms.Where(r => r.CinemaId == cinemaId).ToListAsync();
+            var query = _context.Rooms.Include(r => r.RoomType).AsQueryable();
+
+            query = query.Where(r => r.CinemaId == cinemaId);
+
+            if (id.HasValue)
+                query = query.Where(r => r.Id == id);
+
+            if (roomNumber.HasValue && roomNumber.Value > 0)
+                query = query.Where(r => r.RoomNumber == roomNumber);
+
+            if (!string.IsNullOrWhiteSpace(status))
+                query = query.Where(r => r.Status.ToLower().Contains(status.ToLower()));
+
+            if (!string.IsNullOrWhiteSpace(type))
+                query = query.Where(x => x.RoomType.Type.ToLower().Contains(type.ToLower()));
+
+            query = query.Where(x => x.IsDeleted == false);
+
+            return await query.ToListAsync();
         }
 
         public async Task<Room?> GetRoomById(Guid roomId)

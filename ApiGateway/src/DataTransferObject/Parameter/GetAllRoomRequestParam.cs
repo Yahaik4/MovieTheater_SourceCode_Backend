@@ -1,10 +1,7 @@
-﻿using Shared.Contracts.Interfaces;
-
-namespace src.DataTransferObject.Parameter
+﻿namespace src.DataTransferObject.Parameter
 {
-    public class GetAllRoomParam : IParam
+    public class GetAllRoomRequestParam
     {
-        public Guid CinemaId { get; set; }
         public Guid? Id { get; set; }
         public int? RoomNumber { get; set; }
         public string? Status { get; set; }

@@ -21,7 +21,9 @@ namespace src.Services
         private readonly CreateSeatTypeLogic _createSeatTypeLogic;
         private readonly UpdateSeatTypeLogic _updateSeatTypeLogic;
         private readonly DeleteSeatTypeLogic _deleteSeatTypeLogic;
-
+        private readonly CreateRoomsLogic _createRoomsLogic;
+        private readonly GetAllRoomLogic _getAllRoomLogic;
+        private readonly UpdateRoomLogic _updateRoomLogic;
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
                                     GetAllCinemaLogic getAllCinemaLogic, 
@@ -34,7 +36,10 @@ namespace src.Services
                                     GetAllSeatTypeLogic getAllSeatTypeLogic,
                                     CreateSeatTypeLogic createSeatTypeLogic,
                                     UpdateSeatTypeLogic updateSeatTypeLogic,
-                                    DeleteSeatTypeLogic deleteSeatTypeLogic) 
+                                    DeleteSeatTypeLogic deleteSeatTypeLogic,
+                                    CreateRoomsLogic createRoomsLogic,
+                                    GetAllRoomLogic getAllRoomLogic,
+                                    UpdateRoomLogic updateRoomLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -49,6 +54,9 @@ namespace src.Services
             _createSeatTypeLogic = createSeatTypeLogic;
             _updateSeatTypeLogic = updateSeatTypeLogic;
             _deleteSeatTypeLogic = deleteSeatTypeLogic;
+            _createRoomsLogic = createRoomsLogic;
+            _getAllRoomLogic = getAllRoomLogic;
+            _updateRoomLogic = updateRoomLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -245,6 +253,59 @@ namespace src.Services
             });
 
             return _mapper.Map<DeleteSeatTypeGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CreateRoomGrpcReplyDTO> CreateRoom(CreateRoomGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _createRoomsLogic.Execute(new CreateRoomParam
+            {
+                RoomNumber = request.RoomNumber,
+                Status = request.Status,
+                Total_Column = request.TotalColumn,
+                Total_Row = request.TotalRow,
+                RoomTypeId = Guid.Parse(request.RoomTypeId),
+                CinemaId = Guid.Parse(request.CinemaId),
+                CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? "System" : request.CreatedBy
+            });
+
+            return _mapper.Map<CreateRoomGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetAllRoomsGrpcReplyDTO> GetAllRooms(GetAllRoomsGrpcRequestDTO request, ServerCallContext context)
+        {
+            Guid? roomId = null;
+            if (!string.IsNullOrWhiteSpace(request.Id)
+                && Guid.TryParse(request.Id, out var parsedId))
+            {
+                roomId = parsedId;
+            }
+
+            var result = await _getAllRoomLogic.Execute(new GetAllRoomParam
+            {
+                CinemaId = Guid.Parse(request.CinemaId),
+                Id = roomId,
+                RoomNumber = request.RoomNumber,
+                Status = request.Status,
+                Type = request.Type,
+            });
+
+            return _mapper.Map<GetAllRoomsGrpcReplyDTO>(result);
+        }
+
+        public override async Task<UpdateRoomGrpcReplyDTO> UpdateRoom(UpdateRoomGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _updateRoomLogic.Execute(new UpdateRoomParam
+            {
+                Id = Guid.Parse(request.Id),
+                RoomNumber = request.RoomNumber,
+                Total_Column = request.TotalColumn,
+                Total_Row = request.TotalRow,
+                Status = request.Status,
+                RoomTypeId = Guid.Parse(request.RoomTypeId),
+                CinemaId = Guid.Parse(request.CinemaId)
+            });
+
+            return _mapper.Map<UpdateRoomGrpcReplyDTO>(result);
         }
     }
 }

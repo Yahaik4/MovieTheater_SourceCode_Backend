@@ -84,7 +84,6 @@ namespace src.Controllers
             try
             {
                 var refreshToken = HttpContext.Request.Cookies["refresh_token"];
-                Console.WriteLine($"[RefreshTokenLogic] sessionId: {refreshToken}");
 
                 if (string.IsNullOrEmpty(refreshToken))
                 {

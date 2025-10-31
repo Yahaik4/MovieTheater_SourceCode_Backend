@@ -45,7 +45,7 @@ namespace src.DomainLogic
                     Id = roomType.Id,
                     Type = roomType.Type,
                     BasePrice = roomType.BasePrice,
-                    CreatedBy = param.CreatedBy,
+                    CreatedBy = roomType.CreatedBy,
                 }
             };
         }

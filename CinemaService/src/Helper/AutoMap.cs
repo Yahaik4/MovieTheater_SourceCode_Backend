@@ -55,6 +55,17 @@ namespace src.Helper
 
             // DeleteSeatTypeMapping
             CreateMap<DeleteSeatTypeResultData, DeleteSeatTypeGrpcReplyDTO>();
+
+            CreateMap<CreateRoomResultData, CreateRoomGrpcReplyDTO>();
+            CreateMap<CreateRoomDataResult, CreateRoomGrpcReplyDataDTO>();
+            CreateMap<CreateSeatDataResult, CreateSeatGrpcReplyDataDTO>();
+
+            CreateMap<GetAllRoomResultData, GetAllRoomsGrpcReplyDTO>();
+            CreateMap<GetAllRoomDataResult, GetAllRoomsGrpcReplyDataDTO>();
+
+            CreateMap<UpdateRoomResultData, UpdateRoomGrpcReplyDTO>();
+            CreateMap<UpdateRoomDataResult, UpdateRoomGrpcReplyDataDTO>();
+
         }
     }
 }

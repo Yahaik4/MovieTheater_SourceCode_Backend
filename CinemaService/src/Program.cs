@@ -35,17 +35,21 @@ void RegisterRepository()
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
     // repository DJ
-    services.AddScoped<IRoomRepository, RoomRepository>();
     services.AddScoped<ICinemaRepository, CinemaRepository>();
+    services.AddScoped<IRoomRepository, RoomRepository>();
     services.AddScoped<IRoomTypeRepository, RoomTypeRepository>();
     services.AddScoped<ISeatTypeRepository, SeatTypeRepository>();
+    services.AddScoped<ISeatRepository, SeatRepository>();
 
     // logic DJ
     services.AddScoped<GetAllCinemaLogic>();
     services.AddScoped<CreateCinemaLogic>();
-    //services.AddScoped<CreateRoomsLogic>();
     services.AddScoped<UpdateCinemaLogic>();
     services.AddScoped<DeleteCinemaLogic>();
+
+    services.AddScoped<GetAllRoomLogic>();
+    services.AddScoped<CreateRoomsLogic>();
+    services.AddScoped<UpdateRoomLogic>();
 
     services.AddScoped<GetAllRoomTypeLogic>();
     services.AddScoped<CreateRoomTypeLogic>();

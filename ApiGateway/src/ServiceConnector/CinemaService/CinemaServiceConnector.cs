@@ -220,5 +220,67 @@ namespace src.ServiceConnector.CinemaService
 
             return await client.DeleteSeatTypeAsync(request);
         }
+
+        public async Task<CreateRoomGrpcReplyDTO> CreateRoom(int roomNumber, int totalColumn, int totalRow, string status, Guid roomTypeId, Guid cinemaId)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new CreateRoomGrpcRequestDTO
+            {
+                RoomNumber = roomNumber,
+                TotalColumn = totalColumn,
+                TotalRow = totalRow,
+                Status = status,
+                RoomTypeId = roomTypeId.ToString(),
+                CinemaId = cinemaId.ToString(),
+                CreatedBy = _currentUserService.UserId ?? _currentUserService.Email ?? "System"
+            };
+
+            return await client.CreateRoomAsync(request);
+        }
+
+        public async Task<GetAllRoomsGrpcReplyDTO> GetAllRooms(Guid cinemaId, Guid? id, int? roomNumber, string? status, string? type)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetAllRoomsGrpcRequestDTO();
+
+            request.CinemaId = cinemaId.ToString();
+
+            if (id.HasValue)
+                request.Id = id.Value.ToString();
+
+            if (roomNumber.HasValue)
+                request.RoomNumber = roomNumber.Value;
+
+            if (!string.IsNullOrWhiteSpace(status))
+                request.Status = status;
+
+            if (!string.IsNullOrWhiteSpace(type))
+                request.Type = type;
+
+            return await client.GetAllRoomsAsync(request);
+        }
+
+        public async Task<UpdateRoomGrpcReplyDTO> UpdateRoom(Guid id, int roomNumber, string status, int totalColumn, int totalRow, Guid roomTypeId, Guid cinemaId)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new UpdateRoomGrpcRequestDTO
+            {
+                Id = id.ToString(),
+                RoomNumber = roomNumber,
+                Status = status,
+                TotalColumn = totalColumn,
+                TotalRow = totalRow,
+                RoomTypeId = roomTypeId.ToString(),
+                CinemaId = cinemaId.ToString()
+            };
+
+            return await client.UpdateRoomAsync(request);
+        }
     }
 }
