@@ -45,9 +45,12 @@ namespace src.Infrastructure.Repositories
             return seat;
         }
 
-        public async Task<bool> DeleteSeat(Seat seat)
+        public async Task<bool> DeleteSeats(List<Seat> seats)
         {
-            _context.Seats.Remove(seat);
+            var seatId = seats.Select(s => s.Id).ToList();
+            var listSeat = await _context.Seats.Where(s => seatId.Contains(s.Id)).ToListAsync();
+
+            _context.Seats.RemoveRange(listSeat);
             await _context.SaveChangesAsync();
             return true;
         }

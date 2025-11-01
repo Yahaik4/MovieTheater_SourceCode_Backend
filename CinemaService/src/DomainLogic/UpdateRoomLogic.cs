@@ -26,14 +26,14 @@ namespace src.DomainLogic
         {
             var rooms = await _roomRepository.GetAllRoomByCinema(param.CinemaId, null, null, null, null);
 
-            var isRoomExists = rooms.Any(r => r.RoomNumber == param.RoomNumber);
+            var isRoomExists = rooms.Any(r => r.RoomNumber == param.RoomNumber && r.Id != param.Id);
 
             if (isRoomExists)
             {
                 throw new ValidationException($"Room number {param.RoomNumber} already exists in this cinema.");
             }
 
-            var roomType = await _roomTypeRepository.GetRoomTypeById(param.Id);
+            var roomType = await _roomTypeRepository.GetRoomTypeById(param.RoomTypeId);
 
             if (roomType == null)
             {
@@ -69,9 +69,9 @@ namespace src.DomainLogic
                     s.ColumnIndex > param.Total_Column
                 ).ToList();
 
-                foreach (var seat in seatsToRemove)
+                if (seatsToRemove.Any())
                 {
-                    await _seatRepository.DeleteSeat(seat);
+                    await _seatRepository.DeleteSeats(seatsToRemove);
                 }
             }
 
@@ -80,26 +80,28 @@ namespace src.DomainLogic
                 var newSeats = new List<Seat>();
                 var seatType = await _seatTypeRepository.GetSeatTypeByName("Standard");
 
-                for (int r = 0; r < param.Total_Row; r++)
+                for (int row = 0; row < param.Total_Row; row++)
                 {
-                    char rowLabel = (char)('A' + r);
-                    for (int c = 1; c <= param.Total_Column; c++)
+                    char rowLetter = (char)('A' + row);
+
+                    for (int col = 1; col <= param.Total_Column; col++)
                     {
-                        if (seats.Any(s => s.Label == rowLabel.ToString() && s.ColumnIndex == c))
+                        if (seats.Any(s => s.Label == $"{rowLetter}{col}"))
                             continue;
 
                         newSeats.Add(new Seat
                         {
                             Id = Guid.NewGuid(),
                             RoomId = room.Id,
-                            Label = rowLabel.ToString(),
-                            ColumnIndex = c,
-                            DisplayNumber = c,
-                            SeatCode = $"{rowLabel}{c}",
+                            Label = $"{rowLetter}{col}",
+                            ColumnIndex = col,
+                            DisplayNumber = (row * param.Total_Column) + col,
+                            SeatCode = $"{room.RoomNumber}-{rowLetter}{col}",
                             SeatTypeId = seatType.Id,
                             isActive = true,
-                            Status = "Active",
+                            Status = "Available",
                             CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow,
                             IsDeleted = false
                         });
                     }
@@ -109,6 +111,7 @@ namespace src.DomainLogic
                     await _seatRepository.CreateSeats(newSeats);
             }
 
+
             return new UpdateRoomResultData
             {
                 Result = true,
@@ -117,10 +120,10 @@ namespace src.DomainLogic
                 Data = new UpdateRoomDataResult
                 {
                     RoomNumber = room.RoomNumber,
-                    Total_Row = room.Total_Row,
-                    Total_Column = room.Total_Column,
+                    TotalRow = room.Total_Row,
+                    TotalColumn = room.Total_Column,
                     Status = room.Status,
-                    Type = room.GetType().Name,
+                    Type = room.RoomType.Type,
                 }
             };
         }

@@ -13,6 +13,7 @@ service CinemaGrpcService {
 	rpc GetAllRooms(GetAllRoomsGrpcRequestDTO) returns (GetAllRoomsGrpcReplyDTO);
 	rpc CreateRoom(CreateRoomGrpcRequestDTO) returns (CreateRoomGrpcReplyDTO);
 	rpc UpdateRoom(UpdateRoomGrpcRequestDTO) returns (UpdateRoomGrpcReplyDTO);
+	rpc DeleteRoom(DeleteRoomGrpcRequestDTO) returns (DeleteRoomGrpcReplyDTO);
 
 	rpc GetAllRoomTypes(GetAllRoomTypesGrpcRequestDTO) returns (GetAllRoomTypesGrpcReplyDTO);
 	rpc CreateRoomType(CreateRoomTypeGrpcRequestDTO) returns (CreateRoomTypeGrpcReplyDTO);
@@ -349,4 +350,14 @@ message UpdateRoomGrpcReplyDataDTO {
 	int32 TotalColumn = 3;
 	int32 TotalRow = 4;
 	string Type = 5;
+}
+
+message DeleteRoomGrpcRequestDTO {
+	string Id = 1;
+}
+
+message DeleteRoomGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
 }

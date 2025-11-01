@@ -282,5 +282,18 @@ namespace src.ServiceConnector.CinemaService
 
             return await client.UpdateRoomAsync(request);
         }
+
+        public async Task<DeleteRoomGrpcReplyDTO> DeleteRoom(Guid id)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new DeleteRoomGrpcRequestDTO
+            {
+                Id = id.ToString(),
+            };
+
+            return await client.DeleteRoomAsync(request);
+        }
     }
 }

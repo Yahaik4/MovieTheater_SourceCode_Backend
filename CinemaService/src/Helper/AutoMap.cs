@@ -66,6 +66,8 @@ namespace src.Helper
             CreateMap<UpdateRoomResultData, UpdateRoomGrpcReplyDTO>();
             CreateMap<UpdateRoomDataResult, UpdateRoomGrpcReplyDataDTO>();
 
+            CreateMap<DeleteRoomResultData, DeleteRoomGrpcReplyDTO>();
+
         }
     }
 }

@@ -559,5 +559,32 @@ namespace src.Controllers
                 };
             }
         }
+
+        [HttpDelete("room/{id}")]
+        public async Task<DeleteRoomResultDTO> DeleteRoom(Guid id)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.DeleteRoom(id);
+                return new DeleteRoomResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new DeleteRoomResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
     }
 }

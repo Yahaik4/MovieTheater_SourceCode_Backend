@@ -50,6 +50,7 @@ void RegisterRepository()
     services.AddScoped<GetAllRoomLogic>();
     services.AddScoped<CreateRoomsLogic>();
     services.AddScoped<UpdateRoomLogic>();
+    services.AddScoped<DeleteRoomLogic>();
 
     services.AddScoped<GetAllRoomTypeLogic>();
     services.AddScoped<CreateRoomTypeLogic>();

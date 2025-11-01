@@ -9,6 +9,6 @@ namespace src.Infrastructure.Repositories.Interfaces
         Task<Seat> CreateSeat(Seat seat);
         Task<Seat> UpdateSeat(Seat seat);
         Task<IEnumerable<Seat>> CreateSeats(List<Seat> seats);
-        Task<bool> DeleteSeat(Seat seat);
+        Task<bool> DeleteSeats(List<Seat> seats);
     }
 }

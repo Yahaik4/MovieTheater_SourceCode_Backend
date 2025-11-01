@@ -24,6 +24,7 @@ namespace src.Services
         private readonly CreateRoomsLogic _createRoomsLogic;
         private readonly GetAllRoomLogic _getAllRoomLogic;
         private readonly UpdateRoomLogic _updateRoomLogic;
+        private readonly DeleteRoomLogic _deleteRoomLogic;
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
                                     GetAllCinemaLogic getAllCinemaLogic, 
@@ -39,7 +40,8 @@ namespace src.Services
                                     DeleteSeatTypeLogic deleteSeatTypeLogic,
                                     CreateRoomsLogic createRoomsLogic,
                                     GetAllRoomLogic getAllRoomLogic,
-                                    UpdateRoomLogic updateRoomLogic) 
+                                    UpdateRoomLogic updateRoomLogic,
+                                    DeleteRoomLogic deleteRoomLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -57,6 +59,7 @@ namespace src.Services
             _createRoomsLogic = createRoomsLogic;
             _getAllRoomLogic = getAllRoomLogic;
             _updateRoomLogic = updateRoomLogic;
+            _deleteRoomLogic = deleteRoomLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -306,6 +309,16 @@ namespace src.Services
             });
 
             return _mapper.Map<UpdateRoomGrpcReplyDTO>(result);
+        }
+
+        public override async Task<DeleteRoomGrpcReplyDTO> DeleteRoom(DeleteRoomGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _deleteRoomLogic.Execute(new DeleteRoomParam
+            {
+                Id = Guid.Parse(request.Id),
+            });
+
+            return _mapper.Map<DeleteRoomGrpcReplyDTO>(result);
         }
     }
 }
