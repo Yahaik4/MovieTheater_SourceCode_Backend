@@ -20,6 +20,9 @@ service CinemaGrpcService {
 	rpc UpdateRoomType(UpdateRoomTypeGrpcRequestDTO) returns (UpdateRoomTypeGrpcReplyDTO);
 	rpc DeleteRoomType(DeleteRoomTypeGrpcRequestDTO) returns (DeleteRoomTypeGrpcReplyDTO);
 
+	rpc GetAllSeats(GetAllSeatsGrpcRequestDTO) returns (GetAllSeatsGrpcReplyDTO);
+	rpc UpdateSeats(UpdateSeatsGrpcRequestDTO) returns (UpdateSeatsGrpcReplyDTO);
+
 	rpc GetAllSeatTypes(GetAllSeatTypesGrpcRequestDTO) returns (GetAllSeatTypesGrpcReplyDTO);
 	rpc CreateSeatType(CreateSeatTypeGrpcRequestDTO) returns (CreateSeatTypeGrpcReplyDTO);
 	rpc UpdateSeatType(UpdateSeatTypeGrpcRequestDTO) returns (UpdateSeatTypeGrpcReplyDTO);
@@ -360,4 +363,49 @@ message DeleteRoomGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;
+}
+
+message GetAllSeatsGrpcRequestDTO {
+	string RoomId = 1;
+}
+
+message GetAllSeatsGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetAllSeatsGrpcReplyDataDTO Data = 4;
+}
+
+message GetAllSeatsGrpcReplyDataDTO {
+	string Id = 1;
+	string Label = 2;
+    int32 ColumnIndex = 3;
+    int32 DisplayNumber = 4;
+    string SeatCode = 5;
+    bool isActive = 6;
+    string Status = 7;
+    string SeatType = 8;
+}
+
+message UpdateSeatsGrpcRequestDTO {
+	repeated string Id = 1;
+	bool isActive = 2;
+	string SeatTypeId = 3;
+}
+
+message UpdateSeatsGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated UpdateSeatsGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateSeatsGrpcReplyDataDTO {
+	string Label = 1;
+    int32 ColumnIndex = 2;
+    int32 DisplayNumber = 3;
+    string SeatCode = 4;
+    bool isActive = 5;
+    string Status = 6;
+    string SeatType = 7;
 }

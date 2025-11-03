@@ -25,6 +25,9 @@ namespace src.Services
         private readonly GetAllRoomLogic _getAllRoomLogic;
         private readonly UpdateRoomLogic _updateRoomLogic;
         private readonly DeleteRoomLogic _deleteRoomLogic;
+        private readonly GetAllSeatLogic _getAllSeatLogic;
+        private readonly UpdateSeatLogic _updateSeatLogic;
+
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
                                     GetAllCinemaLogic getAllCinemaLogic, 
@@ -41,7 +44,9 @@ namespace src.Services
                                     CreateRoomsLogic createRoomsLogic,
                                     GetAllRoomLogic getAllRoomLogic,
                                     UpdateRoomLogic updateRoomLogic,
-                                    DeleteRoomLogic deleteRoomLogic) 
+                                    DeleteRoomLogic deleteRoomLogic,
+                                    GetAllSeatLogic getAllSeatLogic,
+                                    UpdateSeatLogic updateSeatLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -60,6 +65,8 @@ namespace src.Services
             _getAllRoomLogic = getAllRoomLogic;
             _updateRoomLogic = updateRoomLogic;
             _deleteRoomLogic = deleteRoomLogic;
+            _getAllSeatLogic = getAllSeatLogic;
+            _updateSeatLogic = updateSeatLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -320,5 +327,45 @@ namespace src.Services
 
             return _mapper.Map<DeleteRoomGrpcReplyDTO>(result);
         }
+
+        public override async Task<GetAllSeatsGrpcReplyDTO> GetAllSeats(GetAllSeatsGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getAllSeatLogic.Execute(new GetAllSeatParam
+            {
+                RoomId = Guid.Parse(request.RoomId)
+            });
+
+            return _mapper.Map<GetAllSeatsGrpcReplyDTO>(result);
+        }
+
+        public override async Task<UpdateSeatsGrpcReplyDTO> UpdateSeats(UpdateSeatsGrpcRequestDTO request, ServerCallContext context)
+        {
+            var seatIds = new List<Guid>();
+
+            if (request.Id != null && request.Id.Count > 0)
+            {
+                seatIds = request.Id
+                    .Where(id => Guid.TryParse(id, out _))
+                    .Select(Guid.Parse)
+                    .ToList();
+            }
+
+            Guid? seatTypeId = null;
+            if (!string.IsNullOrWhiteSpace(request.SeatTypeId) 
+                && Guid.TryParse(request.SeatTypeId, out var parsedSeatTypeId))
+            {
+                seatTypeId = parsedSeatTypeId;
+            }
+
+            var result = await _updateSeatLogic.Execute(new UpdateSeatParam
+            {
+                Id = seatIds,
+                isActive = request.IsActive,
+                SeatTypeId = seatTypeId
+            });
+
+            return _mapper.Map<UpdateSeatsGrpcReplyDTO>(result);
+        }
+
     }
 }

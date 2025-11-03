@@ -57,6 +57,9 @@ void RegisterRepository()
     services.AddScoped<UpdateRoomTypeLogic>();
     services.AddScoped<DeleteRoomTypeLogic>();
 
+    services.AddScoped<GetAllSeatLogic>();
+    services.AddScoped<UpdateSeatLogic>();
+
     services.AddScoped<GetAllSeatTypeLogic>();
     services.AddScoped<CreateSeatTypeLogic>();
     services.AddScoped<UpdateSeatTypeLogic>();

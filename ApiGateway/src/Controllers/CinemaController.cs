@@ -586,5 +586,82 @@ namespace src.Controllers
                 };
             }
         }
+
+        [HttpGet("seats/{roomId}")]
+        public async Task<GetAllSeatsResultDTO> GetAllSeat(Guid roomId)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetAllSeats(roomId);
+
+                return new GetAllSeatsResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(r => new GetAllSeatsDataResult
+                    {
+                        Id = Guid.Parse(r.Id),
+                        Label = r.Label,
+                        ColumnIndex = r.ColumnIndex,
+                        DisplayNumber = r.DisplayNumber,
+                        SeatCode = r.SeatCode,
+                        isActive = r.IsActive,
+                        Status = r.Status,
+                        SeatType = r.SeatType,
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new GetAllSeatsResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpPatch("seats")]
+        public async Task<UpdateSeatsResultDTO> UpdateSeats(UpdateSeatsRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.UpdateSeats(param.Ids, param.IsActive, param.SeatTypeId);
+
+                return new UpdateSeatsResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(s => new UpdateSeatsDataResult
+                    {
+                        Label = s.Label,
+                        ColumnIndex = s.ColumnIndex,
+                        DisplayNumber = s.DisplayNumber,
+                        SeatCode = s.SeatCode,
+                        isActive = s.IsActive,
+                        Status = s.Status,
+                        SeatType = s.SeatType,
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new UpdateSeatsResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
     }
 }

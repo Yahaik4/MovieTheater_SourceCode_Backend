@@ -68,6 +68,11 @@ namespace src.Helper
 
             CreateMap<DeleteRoomResultData, DeleteRoomGrpcReplyDTO>();
 
+            CreateMap<GetAllSeatResultData, GetAllSeatsGrpcReplyDTO>();
+            CreateMap<GetAllSeatDataResult, GetAllSeatsGrpcReplyDataDTO>();
+
+            CreateMap<UpdateSeatsResultData, UpdateSeatsGrpcReplyDTO>();
+            CreateMap<UpdateSeatsDataResult, UpdateSeatsGrpcReplyDataDTO>();
         }
     }
 }

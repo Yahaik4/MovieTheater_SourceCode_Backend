@@ -295,5 +295,36 @@ namespace src.ServiceConnector.CinemaService
 
             return await client.DeleteRoomAsync(request);
         }
+
+        public async Task<GetAllSeatsGrpcReplyDTO> GetAllSeats(Guid roomId)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetAllSeatsGrpcRequestDTO
+            {
+                RoomId = roomId.ToString(),
+            };
+
+            return await client.GetAllSeatsAsync(request);
+        }
+
+        public async Task<UpdateSeatsGrpcReplyDTO> UpdateSeats(List<Guid> ids, bool? isActive, Guid? seatTypeId)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new UpdateSeatsGrpcRequestDTO();
+
+            request.Id.AddRange(ids.Select(id => id.ToString()));
+
+            if (isActive.HasValue)
+                request.IsActive = isActive.Value;
+
+            if (seatTypeId.HasValue)
+                request.SeatTypeId = seatTypeId.Value.ToString();
+
+            return await client.UpdateSeatsAsync(request);
+        }
     }
 }

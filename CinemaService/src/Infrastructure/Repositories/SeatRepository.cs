@@ -30,7 +30,7 @@ namespace src.Infrastructure.Repositories
 
         public async Task<IEnumerable<Seat>> GetAllSeatByRoom(Guid? RoomId)
         {
-            return await _context.Seats.Where(s => s.RoomId == RoomId).ToListAsync();
+            return await _context.Seats.Include(s => s.SeatType).Where(s => s.RoomId == RoomId).ToListAsync();
         }
 
         public async Task<Seat?> GetSeatById(Guid id)
@@ -45,6 +45,13 @@ namespace src.Infrastructure.Repositories
             return seat;
         }
 
+        public async Task UpdateSeats(IEnumerable<Seat> seats)
+        {
+            _context.Seats.UpdateRange(seats);
+            await _context.SaveChangesAsync();
+        }
+
+
         public async Task<bool> DeleteSeats(List<Seat> seats)
         {
             var seatId = seats.Select(s => s.Id).ToList();
@@ -53,6 +60,16 @@ namespace src.Infrastructure.Repositories
             _context.Seats.RemoveRange(listSeat);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<Seat>> GetSeatsByIds(Guid[] ids)
+        {
+            return await _context.Seats.Where(s => ids.Contains(s.Id)).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Seat>> GetSeatByIds(List<Guid> Ids)
+        {
+            return await _context.Seats.Include(s => s.SeatType).Where(s => Ids.Contains(s.Id)).ToListAsync();
         }
     }
 }
