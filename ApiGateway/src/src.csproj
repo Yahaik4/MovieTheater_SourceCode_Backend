@@ -22,6 +22,7 @@
     <ItemGroup>
 	    <Protobuf Include="ServiceConnector\Protos\Authentication.proto" GrpcServices="Client" />
 		<Protobuf Include="ServiceConnector\Protos\Cinema.proto" GrpcServices="Client" />
+		<Protobuf Include="ServiceConnector\Protos\Movie.proto" GrpcServices="Client" />
 	</ItemGroup>
 
     <ItemGroup>

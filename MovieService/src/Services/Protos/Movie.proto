@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "MovieGrpc";
+
+package Movie;
+
+service MovieGrpcService {
+  rpc GetGenres(GetGenresGrpcRequestDTO) returns (GetGenresGrpcReplyDTO);
+}
+
+message GetGenresGrpcRequestDTO {
+	string id = 1;
+	string name = 2;
+}
+
+message GetGenresGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetGenresGrpcReplyDataDTO Data = 4;
+}
+
+message GetGenresGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+}

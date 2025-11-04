@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 using src.Helper;
 using src.ServiceConnector.AuthServiceConnector;
 using src.ServiceConnector.CinemaService;
+using src.ServiceConnector.MovieService;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,6 +70,7 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddScoped<AuthenticationServiceConnector>();
 builder.Services.AddScoped<CinemaServiceConnector>();
+builder.Services.AddScoped<MovieServiceConnector>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
