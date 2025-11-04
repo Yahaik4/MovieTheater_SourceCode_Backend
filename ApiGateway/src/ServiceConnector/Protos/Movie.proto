@@ -5,7 +5,10 @@ option csharp_namespace = "MovieGrpc";
 package Movie;
 
 service MovieGrpcService {
-  rpc GetGenres(GetGenresGrpcRequestDTO) returns (GetGenresGrpcReplyDTO);
+	rpc GetGenres(GetGenresGrpcRequestDTO) returns (GetGenresGrpcReplyDTO);
+	rpc CreateGenre(CreateGenreGrpcRequestDTO) returns (CreateGenreGrpcReplyDTO);
+	rpc UpdateGenre(UpdateGenreGrpcRequestDTO) returns (UpdateGenreGrpcReplyDTO);
+	rpc DeleteGenre(DeleteGenreGrpcRequestDTO) returns (DeleteGenreGrpcReplyDTO);
 }
 
 message GetGenresGrpcRequestDTO {
@@ -23,4 +26,48 @@ message GetGenresGrpcReplyDTO {
 message GetGenresGrpcReplyDataDTO {
 	string id = 1;
 	string name = 2;
+}
+
+message CreateGenreGrpcRequestDTO {
+	string name = 1;
+	string createdBy = 2;
+}
+
+message CreateGenreGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreateGenreGrpcReplyDataDTO Data = 4;
+}
+
+message CreateGenreGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+}
+
+message UpdateGenreGrpcRequestDTO {
+	string id = 1;
+	string name = 2;
+}
+
+message UpdateGenreGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateGenreGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateGenreGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+}
+
+message DeleteGenreGrpcRequestDTO {
+	string id = 1;
+}
+
+message DeleteGenreGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
 }

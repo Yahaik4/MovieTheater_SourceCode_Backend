@@ -27,6 +27,17 @@ namespace src.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
+        public async Task<Genre?> GetGenreById(Guid id)
+        {
+            return await _context.Genres.FirstOrDefaultAsync(g => g.Id == id);
+
+        }
+
+        public async Task<Genre?> GetGenreByName(string name)
+        {
+            return await _context.Genres.FirstOrDefaultAsync(g => g.Name == name);
+        }
+
         public async Task<IEnumerable<Genre>> GetGenres(GetGenresParam param)
         {
             var query = _context.Genres.AsQueryable();

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using CinemaGrpc;
-using Shared.Contracts.ResultData;
 using src.DataTransferObject.ResultData;
-using System;
 
 namespace src.Helper
 {

@@ -36,6 +36,9 @@ void RegisterRepository()
     services.AddScoped<IGenreRepository, GenreRepository>();
 
     services.AddScoped<GetGenresLogic>();
+    services.AddScoped<CreateGenreLogic>();
+    services.AddScoped<UpdateGenreLogic>();
+    services.AddScoped<DeleteGenreLogic>();
 }
 
 void RegisterGrpcServicePublish()

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using MovieGrpc;
-using Shared.Contracts.ResultData;
 using src.DataTransferObject.ResultData;
-using System;
 
 namespace src.Helper
 {
@@ -13,6 +11,14 @@ namespace src.Helper
             //GetGenresMapping
             CreateMap<GetGenresResultData, GetGenresGrpcReplyDTO>();
             CreateMap<GetGenresDataResult, GetGenresGrpcReplyDataDTO>();
+
+            CreateMap<CreateGenreResultData, CreateGenreGrpcReplyDTO>();
+            CreateMap<CreateGenreDataResult, CreateGenreGrpcReplyDataDTO>();
+
+            CreateMap<UpdateGenreResultData, UpdateGenreGrpcReplyDTO>();
+            CreateMap<UpdateGenreDataResult, UpdateGenreGrpcReplyDataDTO>();
+
+            CreateMap<DeleteGenreResultData, DeleteGenreGrpcReplyDTO>();
         }
     }
 }
