@@ -1,3 +1,4 @@
+using AutoMapper.Internal;
 using Microsoft.EntityFrameworkCore;
 using Shared.Utils;
 using src.Data;
@@ -13,6 +14,24 @@ Console.WriteLine("Current Environment: " + builder.Environment.EnvironmentName)
 Console.WriteLine("Connection String: " + builder.Configuration.GetConnectionString("DefaultConnection"));
 
 builder.Services.AddAutoMapper(typeof(AutoMap));
+//builder.Services.AddAutoMapper(cfg =>
+//{
+//    cfg.AllowNullCollections = true;
+//    cfg.AllowNullDestinationValues = true;
+
+//    // ? Cách làm chu?n cho AutoMapper 12+
+//    cfg.Internal().ForAllMaps((typeMap, map) =>
+//    {
+//        map.ForAllMembers(opt =>
+//        {
+//            if (opt.DestinationMember.GetMemberType() == typeof(string))
+//            {
+//                opt.NullSubstitute(string.Empty);
+//            }
+//        });
+//    });
+//}, typeof(AutoMap));
+
 // Add services to the container.
 builder.Services.AddGrpc();
 var services = builder.Services;
@@ -34,11 +53,17 @@ void RegisterRepository()
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
     services.AddScoped<IGenreRepository, GenreRepository>();
+    services.AddScoped<IPersonRepository, PersonRepository>();
 
     services.AddScoped<GetGenresLogic>();
     services.AddScoped<CreateGenreLogic>();
     services.AddScoped<UpdateGenreLogic>();
     services.AddScoped<DeleteGenreLogic>();
+
+    services.AddScoped<GetPersonsLogic>();
+    services.AddScoped<CreatePersonLogic>();
+    services.AddScoped<UpdatePersonLogic>();
+    services.AddScoped<DeletePersonLogic>();
 }
 
 void RegisterGrpcServicePublish()

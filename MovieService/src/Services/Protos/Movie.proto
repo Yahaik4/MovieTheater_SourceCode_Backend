@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
+
 option csharp_namespace = "MovieGrpc";
 
 package Movie;
@@ -9,6 +11,11 @@ service MovieGrpcService {
 	rpc CreateGenre(CreateGenreGrpcRequestDTO) returns (CreateGenreGrpcReplyDTO);
 	rpc UpdateGenre(UpdateGenreGrpcRequestDTO) returns (UpdateGenreGrpcReplyDTO);
 	rpc DeleteGenre(DeleteGenreGrpcRequestDTO) returns (DeleteGenreGrpcReplyDTO);
+
+	rpc GetPersons(GetPersonsGrpcRequestDTO) returns (GetPersonsGrpcReplyDTO);
+	rpc CreatePerson(CreatePersonGrpcRequestDTO) returns (CreatePersonGrpcReplyDTO);
+	rpc UpdatePerson(UpdatePersonGrpcRequestDTO) returns (UpdatePersonGrpcReplyDTO);
+	rpc DeletePerson(DeletePersonGrpcRequestDTO) returns (DeletePersonGrpcReplyDTO);
 }
 
 message GetGenresGrpcRequestDTO {
@@ -67,6 +74,92 @@ message DeleteGenreGrpcRequestDTO {
 }
 
 message DeleteGenreGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+}
+
+message GetPersonsGrpcRequestDTO {
+	string id = 1;
+	string name = 2;
+}
+
+message GetPersonsGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetPersonsGrpcReplyDataDTO Data = 4;
+}
+
+message GetPersonsGrpcReplyDataDTO {
+	string id = 1;
+	string fullName = 2;
+	string gender = 3;
+	google.protobuf.StringValue birthDate = 4;
+	google.protobuf.StringValue nationality = 5;
+	google.protobuf.StringValue bio = 6;
+	google.protobuf.StringValue imageUrl = 7;
+}
+
+message CreatePersonGrpcRequestDTO {
+	string fullName = 1;
+	string gender = 2;
+	google.protobuf.StringValue birthDate = 3;
+	google.protobuf.StringValue nationality = 4;
+	google.protobuf.StringValue bio = 5;
+	google.protobuf.StringValue imageUrl = 6;
+	string createdBy = 7;
+}
+
+message CreatePersonGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreatePersonGrpcReplyDataDTO Data = 4;
+}
+
+message CreatePersonGrpcReplyDataDTO {
+	string id = 1;
+	string fullName = 2;
+	string gender = 3;
+	google.protobuf.StringValue birthDate = 4;
+	google.protobuf.StringValue nationality = 5;
+	google.protobuf.StringValue bio = 6;
+	google.protobuf.StringValue imageUrl = 7;
+}
+
+message UpdatePersonGrpcRequestDTO {
+	string id = 1;
+	string fullName = 2;
+	string gender = 3;
+	google.protobuf.StringValue birthDate = 4;
+	google.protobuf.StringValue nationality = 5;
+	google.protobuf.StringValue bio = 6;
+	google.protobuf.StringValue imageUrl = 7;
+}
+
+message UpdatePersonGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdatePersonGrpcReplyDataDTO Data = 4;
+}
+
+message UpdatePersonGrpcReplyDataDTO {
+	string id = 1;
+	string fullName = 2;
+	string gender = 3;
+	google.protobuf.StringValue birthDate = 4;
+	google.protobuf.StringValue nationality = 5;
+	google.protobuf.StringValue bio = 6;
+	google.protobuf.StringValue imageUrl = 7;
+}
+
+message DeletePersonGrpcRequestDTO {
+	string id = 1;
+}
+
+message DeletePersonGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;

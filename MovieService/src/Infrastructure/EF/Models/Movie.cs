@@ -12,6 +12,7 @@ namespace src.Infrastructure.EF.Models
         public string Country { get; set; }
         public string Language { get; set; }
         public string Poster { get; set; }
+        public string TrailerUrl { get; set; }
         public string Status { get; set; }
         public ICollection<MoviePerson> MoviePersons { get; set; }
         public ICollection<MovieGenre> MovieGenres { get; set; }

@@ -1,0 +1,61 @@
+﻿using Shared.Contracts.Enums;
+using Shared.Contracts.Exceptions;
+using Shared.Contracts.Interfaces;
+using src.DataTransferObject.Parameter;
+using src.DataTransferObject.ResultData;
+using src.Infrastructure.EF.Models;
+using src.Infrastructure.Repositories.Interfaces;
+
+namespace src.DomainLogic
+{
+    public class CreatePersonLogic : IDomainLogic<CreatePersonParam, Task<CreatePersonResultData>>
+    {
+        private readonly IPersonRepository _personRepository;
+
+        public CreatePersonLogic(IPersonRepository personRepository)
+        {
+            _personRepository = personRepository;
+        }
+
+        public async Task<CreatePersonResultData> Execute(CreatePersonParam param)
+        {
+
+            Console.WriteLine($"FullName: {param.FullName}");
+            Console.WriteLine($"Gender: {param.Gender}");
+            Console.WriteLine($"BirthDate: {param.BirthDate?.ToString() ?? "null"}");
+            Console.WriteLine($"Nationality: {param.Nationality ?? "null"}");
+            Console.WriteLine($"Bio: {param.Bio ?? "null"}");
+            Console.WriteLine($"ImageUrl: {param.ImageUrl ?? "null"}");
+
+            var newPerson = await _personRepository.CreatePerson(new Person
+            {
+                Id = Guid.NewGuid(),
+                FullName = param.FullName,
+                Gender = param.Gender,
+                BirthDate = param.BirthDate,
+                Nationality = param.Nationality,
+                Bio = param.Bio,
+                ImageUrl = param.ImageUrl,
+                CreatedBy = param.CreatedBy,
+                CreatedAt = DateTime.UtcNow
+            });
+
+            return new CreatePersonResultData
+            {
+                Result = true,
+                Message = "Create Person Successfully",
+                StatusCode = StatusCodeEnum.Created,
+                Data = new CreatePersonDataResult
+                {
+                    Id = newPerson.Id,
+                    FullName = newPerson.FullName,
+                    Gender = newPerson.Gender,
+                    BirthDate = newPerson.BirthDate,
+                    Nationality = newPerson.Nationality,
+                    Bio = newPerson.Bio,
+                    ImageUrl = newPerson.ImageUrl,
+                }
+            };
+        }
+    }
+}

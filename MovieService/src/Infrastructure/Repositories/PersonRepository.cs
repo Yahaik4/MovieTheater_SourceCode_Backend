@@ -29,6 +29,11 @@ namespace src.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
+        public async Task<Person?> GetPersonById(Guid id)
+        {
+            return await _context.Persons.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<IEnumerable<Person>> GetPersons(GetPersonsParam param)
         {
             var query = _context.Persons.AsQueryable();
