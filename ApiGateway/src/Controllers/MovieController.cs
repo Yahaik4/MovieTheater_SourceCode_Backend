@@ -292,5 +292,112 @@ namespace src.Controllers
                 };
             }
         }
+
+        [HttpGet("movies")]
+        public async Task<GetMoviesResultDTO> GetMovies([FromQuery] GetMoviesRequestParam query)
+        {
+            try
+            {
+                var result = await _movieServiceConnector.GetMovies(query.Id, query.Name, query.Country, query.Status);
+
+                return new GetMoviesResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(m => new GetMoviesDataResult
+                    {
+                        Id = Guid.Parse(m.Id),
+                        Name = m.Name,
+                        Country = m.Country,
+                        Description = m.Description,
+                        Status = m.Status,
+                        Duration = TimeSpan.Parse(m.Duration),
+                        Language = m.Language,
+                        Poster = m.Poster,
+                        Publisher = m.Publisher,
+                        ReleaseDate = DateOnly.Parse(m.ReleaseDate),
+                        TrailerUrl = m.TrailerUrl,
+                        Genres = m.Genres.Select(mg => new MovieGenreDataResult
+                        {
+                            GenreId = Guid.Parse(mg.GenreId),
+                            GenreName = mg.GenreName,
+                        }).ToList(),
+                        Persons = m.Persons.Select(mp => new MoviePersonDataResult
+                        {
+                            PersonId = Guid.Parse(mp.PersonId),
+                            FullName = mp.FullName,
+                            Role = mp.Role,
+                        }).ToList()
+
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new GetMoviesResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpPost("movie")]
+        public async Task<CreateMovieResultDTO> CreateMovie(CreateMovieRequestParam param)
+        {
+            try
+            {
+                var result = await _movieServiceConnector.CreateMovie(param);
+
+                return new CreateMovieResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreateMovieDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Name = result.Data.Name,
+                        Country = result.Data.Country,
+                        Description = result.Data.Description,
+                        Status = result.Data.Status,
+                        Duration = TimeSpan.Parse(result.Data.Duration),
+                        Language = result.Data.Language,
+                        Poster = result.Data.Poster,
+                        Publisher = result.Data.Publisher,
+                        ReleaseDate = DateOnly.Parse(result.Data.ReleaseDate),
+                        TrailerUrl  = result.Data.TrailerUrl,
+                        Genres = result.Data.Genres.Select(mg => new MovieGenreDataResult
+                        {
+                            GenreId = Guid.Parse(mg.GenreId),
+                            GenreName = mg.GenreName,
+                        }).ToList(),
+                        Persons = result.Data.Persons.Select(mp => new MoviePersonDataResult
+                        {
+                            PersonId = Guid.Parse(mp.PersonId),
+                            FullName = mp.FullName,
+                            Role = mp.Role,
+                        }).ToList()
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new CreateMovieResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
     }
 }

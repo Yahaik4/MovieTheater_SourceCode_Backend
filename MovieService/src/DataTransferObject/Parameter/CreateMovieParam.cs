@@ -1,8 +1,8 @@
-﻿using Shared.Infrastructure;
+﻿using Shared.Contracts.Interfaces;
 
-namespace src.Infrastructure.EF.Models
+namespace src.DataTransferObject.Parameter
 {
-    public class Movie : BaseEntity
+    public class CreateMovieParam : IParam
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -14,7 +14,18 @@ namespace src.Infrastructure.EF.Models
         public string Poster { get; set; }
         public string TrailerUrl { get; set; }
         public string Status { get; set; }
-        public ICollection<MoviePerson> MoviePersons { get; set; }
-        public ICollection<MovieGenre> MovieGenres { get; set; }
+        public List<MovieGenreParam> Genres { get; set; }
+        public List<MoviePersonParam> Persons { get; set; }
+    }
+
+    public class MovieGenreParam
+    {
+        public Guid GenreId { get; set; }
+    }
+
+    public class MoviePersonParam
+    {
+        public Guid PersonId { get; set; }
+        public string Role { get; set; } = null!;
     }
 }

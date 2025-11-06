@@ -2,7 +2,10 @@
 using Grpc.Core;
 using Microsoft.AspNetCore.Http.HttpResults;
 using MovieGrpc;
+using src.DataTransferObject.Parameter;
 using src.Helper;
+using System.Diagnostics.Metrics;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace src.ServiceConnector.MovieService
@@ -140,6 +143,54 @@ namespace src.ServiceConnector.MovieService
             };
 
             return await client.DeletePersonAsync(request);
+        }
+
+        public async Task<GetMoviesGrpcReplyDTO> GetMovies(Guid? id, string? name, string? country, string? status)
+        {
+            using var channel = GetMovieServiceChannel();
+            var client = new MovieGrpcService.MovieGrpcServiceClient(channel);
+
+            var request = new GetMoviesGrpcRequestDTO
+            {
+                Id = id.HasValue ? id.ToString() : null,
+                Name = name,
+                Country = country,
+                Status = status
+            };
+
+            return await client.GetMoviesAsync(request);
+        }
+
+        public async Task<CreateMovieGrpcReplyDTO> CreateMovie(CreateMovieRequestParam param)
+        {
+            using var channel = GetMovieServiceChannel();
+            var client = new MovieGrpcService.MovieGrpcServiceClient(channel);
+
+            var request = new CreateMovieGrpcRequestDTO
+            {
+                Name = param.Name,
+                Country = param.Country,
+                Status = param.Status,
+                Description = param.Description,
+                Duration = param.Duration.ToString(),
+                ReleaseDate = param.ReleaseDate.ToString(),
+                Language = param.Language,
+                Publisher = param.Publisher,
+                Poster = param.Poster,
+                TrailerUrl = param.TrailerUrl,
+            };
+
+            request.Genres.AddRange(param.Genres.Select(g =>
+                new MovieGenreGrpcRequestDTO { GenreId = g.GenreId.ToString() }));
+
+            request.Persons.AddRange(param.Persons.Select(p =>
+                new MoviePersonGrpcRequestDTO
+                {
+                    PersonId = p.PersonId.ToString(),
+                    Role = p.Role
+                }));
+
+            return await client.CreateMovieAsync(request);
         }
     }
 }

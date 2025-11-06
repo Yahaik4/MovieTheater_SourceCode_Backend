@@ -10,9 +10,8 @@ namespace src.Helper
     {
         public AutoMap()
         {
-            AllowNullCollections = true;
-            AllowNullDestinationValues = true;
-
+            //AllowNullCollections = true;
+            //AllowNullDestinationValues = true;
             //GetGenresMapping
             CreateMap<GetGenresResultData, GetGenresGrpcReplyDTO>();
             CreateMap<GetGenresDataResult, GetGenresGrpcReplyDataDTO>();
@@ -42,32 +41,19 @@ namespace src.Helper
 
             //GetGenresMapping
             CreateMap<DeletePersonResultData, DeletePersonGrpcReplyDTO>();
+
+            // Movie
+
+            CreateMap<MovieGenreDataResult, MovieGenreGrpcReplyDataDTO>();
+            CreateMap<MoviePersonDataResult, MoviePersonGrpcReplyDataDTO>();
+
+            CreateMap<GetMoviesResultData, GetMoviesGrpcReplyDTO>();
+            CreateMap<GetMoviesDataResult, GetMoviesGrpcReplyDataDTO>();
+
+            CreateMap<CreateMovieResultData, CreateMovieGrpcReplyDTO>();
+            CreateMap<CreateMovieDataResult, CreateMovieGrpcReplyDataDTO>();
+
         }
 
-        //private static RepeatedField<GetPersonsGrpcReplyDataDTO> ConvertPersons(List<GetPersonsDataResult> data)
-        //{
-        //    var repeated = new RepeatedField<GetPersonsGrpcReplyDataDTO>();
-
-        //    if (data != null)
-        //    {
-        //        foreach (var item in data)
-        //        {
-        //            repeated.Add(new GetPersonsGrpcReplyDataDTO
-        //            {
-        //                Id = item.Id.ToString(),
-        //                FullName = item.FullName,
-        //                Gender = item.Gender,
-        //                BirthDate = item.BirthDate.HasValue
-        //                    ? item.BirthDate.Value.ToString("yyyy-MM-dd")
-        //                    : "",
-        //                Nationality = item.Nationality,
-        //                Bio = item.Bio,
-        //                ImageUrl = item.ImageUrl
-        //            });
-        //        }
-        //    }
-
-        //    return repeated;
-        //}
     }
 }

@@ -34,6 +34,11 @@ namespace src.Infrastructure.Repositories
             return await _context.Persons.FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<IEnumerable<Person>> GetPersonByIds(List<Guid> ids)
+        {
+            return await _context.Persons.Where(p =>  ids.Contains(p.Id)).ToListAsync();
+        }
+
         public async Task<IEnumerable<Person>> GetPersons(GetPersonsParam param)
         {
             var query = _context.Persons.AsQueryable();

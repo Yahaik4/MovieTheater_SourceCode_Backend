@@ -1,4 +1,3 @@
-using AutoMapper.Internal;
 using Microsoft.EntityFrameworkCore;
 using Shared.Utils;
 using src.Data;
@@ -14,23 +13,6 @@ Console.WriteLine("Current Environment: " + builder.Environment.EnvironmentName)
 Console.WriteLine("Connection String: " + builder.Configuration.GetConnectionString("DefaultConnection"));
 
 builder.Services.AddAutoMapper(typeof(AutoMap));
-//builder.Services.AddAutoMapper(cfg =>
-//{
-//    cfg.AllowNullCollections = true;
-//    cfg.AllowNullDestinationValues = true;
-
-//    // ? Cách làm chu?n cho AutoMapper 12+
-//    cfg.Internal().ForAllMaps((typeMap, map) =>
-//    {
-//        map.ForAllMembers(opt =>
-//        {
-//            if (opt.DestinationMember.GetMemberType() == typeof(string))
-//            {
-//                opt.NullSubstitute(string.Empty);
-//            }
-//        });
-//    });
-//}, typeof(AutoMap));
 
 // Add services to the container.
 builder.Services.AddGrpc();
@@ -54,6 +36,9 @@ void RegisterRepository()
 
     services.AddScoped<IGenreRepository, GenreRepository>();
     services.AddScoped<IPersonRepository, PersonRepository>();
+    services.AddScoped<IMovieRepository, MovieRepository>();
+    services.AddScoped<IMovieGenreRepository, MovieGenreRepository>();
+    services.AddScoped<IMoviePersonRepository, MoviePersonRepository>();
 
     services.AddScoped<GetGenresLogic>();
     services.AddScoped<CreateGenreLogic>();
@@ -64,6 +49,9 @@ void RegisterRepository()
     services.AddScoped<CreatePersonLogic>();
     services.AddScoped<UpdatePersonLogic>();
     services.AddScoped<DeletePersonLogic>();
+
+    services.AddScoped<GetMoviesLogic>();
+    services.AddScoped<CreateMovieLogic>();
 }
 
 void RegisterGrpcServicePublish()

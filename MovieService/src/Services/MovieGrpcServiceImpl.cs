@@ -17,6 +17,8 @@ namespace src.Services
         private readonly CreatePersonLogic _createPersonLogic;
         private readonly UpdatePersonLogic _updatePersonLogic;
         private readonly DeletePersonLogic _deletePersonLogic;
+        private readonly GetMoviesLogic _getMoviesLogic;
+        private readonly CreateMovieLogic _createMovieLogic;
         public MovieGrpcServiceImpl(IMapper mapper, 
                                     GetGenresLogic getGenresLogic, 
                                     CreateGenreLogic createGenreLogic, 
@@ -25,7 +27,9 @@ namespace src.Services
                                     GetPersonsLogic getPersonsLogic,
                                     CreatePersonLogic createPersonLogic,
                                     UpdatePersonLogic updatePersonLogic,
-                                    DeletePersonLogic deletePersonLogic)
+                                    DeletePersonLogic deletePersonLogic,
+                                    GetMoviesLogic getMoviesLogic,
+                                    CreateMovieLogic createMovieLogic)
         {
             _mapper = mapper;
             _getGenresLogic = getGenresLogic;
@@ -37,6 +41,9 @@ namespace src.Services
             _createPersonLogic = createPersonLogic;
             _updatePersonLogic = updatePersonLogic;
             _deletePersonLogic = deletePersonLogic;
+
+            _getMoviesLogic = getMoviesLogic;
+            _createMovieLogic = createMovieLogic;
         }
 
         public override async Task<GetGenresGrpcReplyDTO> GetGenres(GetGenresGrpcRequestDTO request, ServerCallContext context)
@@ -153,6 +160,54 @@ namespace src.Services
             });
 
             return _mapper.Map<DeletePersonGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetMoviesGrpcReplyDTO> GetMovies(GetMoviesGrpcRequestDTO request, ServerCallContext context)
+        {
+            Guid? movieId = null;
+            if (!string.IsNullOrWhiteSpace(request.Id)
+                && Guid.TryParse(request.Id, out var parsedId))
+            {
+                movieId = parsedId;
+            }
+
+            var result = await _getMoviesLogic.Execute(new GetMoviesParam
+            {
+                Id = movieId,
+                Name = request.Name,
+                Country = request.Country,
+                Status = request.Status,
+            });
+
+            return _mapper.Map<GetMoviesGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CreateMovieGrpcReplyDTO> CreateMovie(CreateMovieGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _createMovieLogic.Execute(new CreateMovieParam
+            {
+                Name = request.Name,
+                Description = request.Description,
+                Duration = TimeSpan.Parse(request.Duration),
+                Language = request.Language,
+                Publisher = request.Publisher,
+                ReleaseDate = DateOnly.Parse(request.ReleaseDate),
+                Poster = request.Poster,
+                TrailerUrl = request.TrailerUrl,
+                Country = request.Country,
+                Status = request.Status,
+                Genres = request.Genres.Select(mg => new MovieGenreParam
+                {
+                    GenreId = Guid.Parse(mg.GenreId),
+                }).ToList(),
+                Persons = request.Persons.Select(mp => new MoviePersonParam
+                {
+                    PersonId = Guid.Parse(mp.PersonId),
+                    Role = mp.Role,
+                }).ToList()
+            });
+
+            return _mapper.Map<CreateMovieGrpcReplyDTO>(result);
         }
     }
 }

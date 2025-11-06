@@ -33,6 +33,11 @@ namespace src.Infrastructure.Repositories
 
         }
 
+        public async Task<IEnumerable<Genre>> GetGenreByIds(List<Guid> ids)
+        {
+            return await _context.Genres.Where(g => ids.Contains(g.Id)).ToListAsync();
+        }
+
         public async Task<Genre?> GetGenreByName(string name)
         {
             return await _context.Genres.FirstOrDefaultAsync(g => g.Name == name);

@@ -1,4 +1,5 @@
 ﻿using src.Data;
+using src.DataTransferObject.Parameter;
 using src.Infrastructure.EF.Models;
 using src.Infrastructure.Repositories.Interfaces;
 
@@ -12,22 +13,17 @@ namespace src.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<MovieGenre>> CreateMovieGenre(Guid movieId, List<Guid> genreIds)
+        public async Task<IEnumerable<MovieGenre>> CreateMovieGenre(Guid movieId, List<MovieGenreParam> genres)
         {
-            var movieGenres = new List<MovieGenre>();
-
-            foreach(var genreId in genreIds)
+            var movieGenres = genres.Select(p => new MovieGenre
             {
-                var movieGenre = new MovieGenre{
-                    MovieId = movieId,
-                    GenreId = genreId,
-                };
+                MovieId = movieId,
+                GenreId = p.GenreId,
+            }).ToList();
 
-                movieGenres.Add(movieGenre);
-            }
-
-            await _context.MovieGenres.AddRangeAsync(movieGenres);
+            _context.MovieGenres.AddRange(movieGenres);
             await _context.SaveChangesAsync();
+
             return movieGenres;
         }
 

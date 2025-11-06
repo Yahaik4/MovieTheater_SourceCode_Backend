@@ -16,6 +16,10 @@ service MovieGrpcService {
 	rpc CreatePerson(CreatePersonGrpcRequestDTO) returns (CreatePersonGrpcReplyDTO);
 	rpc UpdatePerson(UpdatePersonGrpcRequestDTO) returns (UpdatePersonGrpcReplyDTO);
 	rpc DeletePerson(DeletePersonGrpcRequestDTO) returns (DeletePersonGrpcReplyDTO);
+
+	rpc GetMovies(GetMoviesGrpcRequestDTO) returns (GetMoviesGrpcReplyDTO);
+	rpc CreateMovie(CreateMovieGrpcRequestDTO) returns (CreateMovieGrpcReplyDTO);
+	//rpc UpdateMovie(UpdateMovieGrpcRequestDTO) returns (UpdateMovieGrpcReplyDTO);
 }
 
 message GetGenresGrpcRequestDTO {
@@ -163,4 +167,92 @@ message DeletePersonGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;
+}
+
+message GetMoviesGrpcRequestDTO {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue country = 3;
+	google.protobuf.StringValue status = 4;
+}
+
+message GetMoviesGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetMoviesGrpcReplyDataDTO Data = 4;
+}
+
+message GetMoviesGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+	string description = 3;
+	string releaseDate = 4; 
+	string duration = 5;
+	string publisher = 6;
+	string country = 7;
+	string language = 8;
+	string poster = 9;
+	string trailerUrl = 10;
+	string status = 11;
+	repeated MovieGenreGrpcReplyDataDTO genres = 12;
+	repeated MoviePersonGrpcReplyDataDTO persons = 13;
+}
+
+message MovieGenreGrpcReplyDataDTO {
+	string genreId = 1;
+	string genreName = 2;
+}
+
+message MoviePersonGrpcReplyDataDTO {
+	string personId = 1;
+	string fullName = 2;
+	string role = 3;
+}
+
+message CreateMovieGrpcRequestDTO {
+	string name = 1;
+	string description = 2;
+	string releaseDate = 3; 
+	string duration = 4;
+	string publisher = 5;
+	string country = 6;
+	string language = 7;
+	string poster = 8;
+	string trailerUrl = 9;
+	string status = 10;
+	repeated MovieGenreGrpcRequestDTO genres = 11;
+	repeated MoviePersonGrpcRequestDTO persons = 12;
+}
+
+message MovieGenreGrpcRequestDTO {
+	string genreId = 1;
+}
+
+message MoviePersonGrpcRequestDTO {
+	string personId = 1;
+	string role = 2;
+}
+
+message CreateMovieGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreateMovieGrpcReplyDataDTO Data = 4;
+}
+
+message CreateMovieGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+	string description = 3;
+	string releaseDate = 4; 
+	string duration = 5;
+	string publisher = 6;
+	string country = 7;
+	string language = 8;
+	string poster = 9;
+	string trailerUrl = 10;
+	string status = 11;
+	repeated MovieGenreGrpcReplyDataDTO genres = 12;
+	repeated MoviePersonGrpcReplyDataDTO persons = 13;
 }

@@ -15,7 +15,7 @@ namespace src.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Movie> CreateMove(Movie movie)
+        public async Task<Movie> CreateMovie(Movie movie)
         {
             await _context.Movies.AddAsync(movie);
             await _context.SaveChangesAsync();
@@ -29,7 +29,12 @@ namespace src.Infrastructure.Repositories
 
         public async Task<IEnumerable<Movie>> GetMovies(GetMoviesParam param)
         {
-            var query = _context.Movies.AsQueryable();
+            var query = _context.Movies
+                .Include(m => m.MovieGenres)
+                    .ThenInclude(mp => mp.Genre)
+                .Include(m => m.MoviePersons)
+                    .ThenInclude(mg => mg.Person)
+                .AsQueryable();
 
             if (param.Id.HasValue)
                 query = query.Where(m => m.Id == param.Id);

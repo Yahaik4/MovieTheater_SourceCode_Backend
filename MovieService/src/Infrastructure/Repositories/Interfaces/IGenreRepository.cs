@@ -7,6 +7,7 @@ namespace src.Infrastructure.Repositories.Interfaces
     {
         Task<IEnumerable<Genre>> GetGenres(GetGenresParam param);
         Task<Genre?> GetGenreById(Guid id);
+        Task<IEnumerable<Genre>> GetGenreByIds(List<Guid> ids);
         Task<Genre?> GetGenreByName(string name);
         Task<Genre> CreateGenre(Genre genre);
         Task<Genre> UpdateGenre(Genre genre);

@@ -19,14 +19,6 @@ namespace src.DomainLogic
 
         public async Task<CreatePersonResultData> Execute(CreatePersonParam param)
         {
-
-            Console.WriteLine($"FullName: {param.FullName}");
-            Console.WriteLine($"Gender: {param.Gender}");
-            Console.WriteLine($"BirthDate: {param.BirthDate?.ToString() ?? "null"}");
-            Console.WriteLine($"Nationality: {param.Nationality ?? "null"}");
-            Console.WriteLine($"Bio: {param.Bio ?? "null"}");
-            Console.WriteLine($"ImageUrl: {param.ImageUrl ?? "null"}");
-
             var newPerson = await _personRepository.CreatePerson(new Person
             {
                 Id = Guid.NewGuid(),
