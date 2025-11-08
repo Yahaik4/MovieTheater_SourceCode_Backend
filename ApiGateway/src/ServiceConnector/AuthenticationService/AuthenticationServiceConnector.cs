@@ -1,7 +1,8 @@
-﻿using AuthenticationGrpc;
+﻿using ApiGateway.ServiceConnector;
+using AuthenticationGrpc;
 using Grpc.Core;
 
-namespace src.ServiceConnector.AuthServiceConnector
+namespace ApiGateway.ServiceConnector.AuthenticationService
 {
     public class AuthenticationServiceConnector : BaseServiceConnector
     {

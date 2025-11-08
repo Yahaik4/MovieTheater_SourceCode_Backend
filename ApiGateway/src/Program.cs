@@ -1,9 +1,9 @@
+using ApiGateway.Helper;
+using ApiGateway.ServiceConnector.AuthenticationService;
+using ApiGateway.ServiceConnector.CinemaService;
+using ApiGateway.ServiceConnector.MovieService;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using src.Helper;
-using src.ServiceConnector.AuthServiceConnector;
-using src.ServiceConnector.CinemaService;
-using src.ServiceConnector.MovieService;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

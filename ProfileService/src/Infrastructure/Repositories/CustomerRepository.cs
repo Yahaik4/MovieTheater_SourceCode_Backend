@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using src.Data;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
+using ProfileService.Data;
+using ProfileService.Infrastructure.EF.Models;
+using ProfileService.Infrastructure.Repositories.Interfaces;
 
-namespace src.Infrastructure.Repositories
+namespace ProfileService.Infrastructure.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {

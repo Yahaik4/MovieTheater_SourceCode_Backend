@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using ProfileGrpc;
-using src.DataTransferObject.ResultData;
+using ProfileService.DataTransferObject.ResultData;
 
-namespace src.Helper
+namespace ProfileService.Helper
 {
     public class AutoMap : Profile
     {

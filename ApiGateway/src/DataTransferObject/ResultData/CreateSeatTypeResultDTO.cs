@@ -1,4 +1,4 @@
-﻿namespace src.DataTransferObject.ResultData
+﻿namespace ApiGateway.DataTransferObject.ResultData
 {
     public class CreateSeatTypeResultDTO : BaseResultDTO
     {

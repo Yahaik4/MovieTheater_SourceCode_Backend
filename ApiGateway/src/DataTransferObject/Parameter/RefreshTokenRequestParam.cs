@@ -1,4 +1,4 @@
-﻿namespace src.DataTransferObject.Parameter
+﻿namespace ApiGateway.DataTransferObject.Parameter
 {
     public class RefreshTokenRequestParam
     {

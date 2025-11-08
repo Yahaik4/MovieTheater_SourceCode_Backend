@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace src.DataTransferObject.Parameter
+namespace ApiGateway.DataTransferObject.Parameter
 {
     public class CreateRoomRequestParam
     {

@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<AssemblyName>ApiGateway</AssemblyName>
+	<RootNamespace>ApiGateway</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,16 +21,14 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Shared\src.csproj" />
+  </ItemGroup>
+
     <ItemGroup>
 	    <Protobuf Include="ServiceConnector\Protos\Authentication.proto" GrpcServices="Client" />
 		<Protobuf Include="ServiceConnector\Protos\Cinema.proto" GrpcServices="Client" />
 		<Protobuf Include="ServiceConnector\Protos\Movie.proto" GrpcServices="Client" />
 	</ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Shared">
-        <HintPath>C:\Users\admin\Desktop\Shared.dll</HintPath>
-      </Reference>
-    </ItemGroup>
 
 </Project>

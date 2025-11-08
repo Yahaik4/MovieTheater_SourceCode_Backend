@@ -1,13 +1,14 @@
-﻿using AuthenticationGrpc;
+﻿using ApiGateway.Helper;
+using ApiGateway.ServiceConnector;
+using AuthenticationGrpc;
 using CinemaGrpc;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using src.Helper;
 using System;
 using System.Net;
 using System.Xml.Linq;
 
-namespace src.ServiceConnector.CinemaService
+namespace ApiGateway.ServiceConnector.CinemaService
 {
     public class CinemaServiceConnector : BaseServiceConnector
     {

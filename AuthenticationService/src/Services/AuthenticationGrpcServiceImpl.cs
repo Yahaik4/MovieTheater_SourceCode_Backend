@@ -1,10 +1,10 @@
 ﻿using AuthenticationGrpc;
+using AuthenticationService.DomainLogic;
 using AutoMapper;
 using Grpc.Core;
-using src.DataTransferObject.Parameter;
-using src.DomainLogic;
+using AuthenticationService.DataTransferObject.Parameter;
 
-namespace src.Services
+namespace AuthenticationService.Services
 {
     public class AuthenticationGrpcServiceImpl : AuthenticationGrpcService.AuthenticationGrpcServiceBase
     {

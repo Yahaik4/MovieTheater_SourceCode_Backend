@@ -1,6 +1,6 @@
 ﻿using Shared.Contracts.Interfaces;
 
-namespace src.DataTransferObject.Parameter
+namespace AuthenticationService.DataTransferObject.Parameter
 {
     public class LoginParam : IParam
     {

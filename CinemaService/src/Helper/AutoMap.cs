@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CinemaGrpc;
-using src.DataTransferObject.ResultData;
+using CinemaService.DataTransferObject.ResultData;
 
-namespace src.Helper
+namespace CinemaService.Helper
 {
     public class AutoMap : Profile
     {

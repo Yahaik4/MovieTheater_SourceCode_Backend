@@ -1,14 +1,13 @@
-﻿using Grpc.Core;
+﻿using CinemaService.DataTransferObject.Parameter;
+using CinemaService.DataTransferObject.ResultData;
+using CinemaService.Infrastructure.Repositories.Interfaces;
+using Grpc.Core;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
 using System.Text.Json;
 
-namespace src.DomainLogic
+namespace CinemaService.DomainLogic
 {
     public class UpdateSeatLogic : IDomainLogic<UpdateSeatParam, Task<UpdateSeatsResultData>>
     {

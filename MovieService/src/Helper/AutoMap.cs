@@ -2,9 +2,9 @@
 using AutoMapper.Internal;
 using Google.Protobuf.Collections;
 using MovieGrpc;
-using src.DataTransferObject.ResultData;
+using MovieService.DataTransferObject.ResultData;
 
-namespace src.Helper
+namespace MovieService.Helper
 {
     public class AutoMap : Profile
     {
@@ -53,6 +53,8 @@ namespace src.Helper
             CreateMap<CreateMovieResultData, CreateMovieGrpcReplyDTO>();
             CreateMap<CreateMovieDataResult, CreateMovieGrpcReplyDataDTO>();
 
+            CreateMap<UpdateMovieResultData, UpdateMovieGrpcReplyDTO>();
+            CreateMap<UpdateMovieDataResult, UpdateMovieGrpcReplyDataDTO>();
         }
 
     }

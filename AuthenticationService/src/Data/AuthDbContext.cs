@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using src.Infrastructure.EF.Models;
+﻿using AuthenticationService.Infrastructure.EF.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace src.Data
+namespace AuthenticationService.Data
 {
     public class AuthDbContext : DbContext
     {

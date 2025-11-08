@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace src.Helper
+namespace ApiGateway.Helper
 {
     public class CurrentUserService : ICurrentUserService
     {

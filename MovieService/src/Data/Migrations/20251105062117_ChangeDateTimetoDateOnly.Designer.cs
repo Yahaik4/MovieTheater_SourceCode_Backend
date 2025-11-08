@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MovieService.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using src.Data;
 
 #nullable disable
 

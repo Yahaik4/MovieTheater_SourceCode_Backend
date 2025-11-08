@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using ProfileService.Data;
+using ProfileService.DomainLogic;
+using ProfileService.Helper;
+using ProfileService.Infrastructure.Repositories;
+using ProfileService.Infrastructure.Repositories.Interfaces;
+using ProfileService.Services;
 using Shared.Utils;
-using src.Data;
-using src.DomainLogic;
-using src.Helper;
-using src.Infrastructure.Repositories;
-using src.Infrastructure.Repositories.Interfaces;
-using src.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

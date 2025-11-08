@@ -1,6 +1,6 @@
-﻿using src.Infrastructure.EF.Models;
+﻿using AuthenticationService.Infrastructure.EF.Models;
 
-namespace src.Infrastructure.Repositories.Interfaces
+namespace AuthenticationService.Infrastructure.Repositories.Interfaces
 {
     public interface ISessionRepository
     {

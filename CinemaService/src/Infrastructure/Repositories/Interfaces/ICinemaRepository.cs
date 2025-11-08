@@ -1,6 +1,6 @@
-﻿using src.Infrastructure.EF.Models;
+﻿using CinemaService.Infrastructure.EF.Models;
 
-namespace src.Infrastructure.Repositories.Interfaces
+namespace CinemaService.Infrastructure.Repositories.Interfaces
 {
     public interface ICinemaRepository
     {

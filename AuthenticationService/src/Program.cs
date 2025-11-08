@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using src.Data;
-using src.DomainLogic;
-using src.Helper;
-using src.Infrastructure.Repositories;
-using src.Infrastructure.Repositories.Interfaces;
-using src.Services;
 using Shared.Utils;
-using src.ServiceConnector.ProfileServiceConnector;
+using AuthenticationService.Helper;
+using AuthenticationService.Infrastructure.Repositories.Interfaces;
+using AuthenticationService.Data;
+using AuthenticationService.DomainLogic;
+using AuthenticationService.ServiceConnector.ProfileService;
+using AuthenticationService.Infrastructure.Repositories;
+using AuthenticationService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

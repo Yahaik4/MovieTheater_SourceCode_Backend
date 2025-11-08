@@ -1,6 +1,6 @@
 ﻿using Shared.Contracts.ResultData;
 
-namespace src.DataTransferObject.ResultData
+namespace AuthenticationService.DataTransferObject.ResultData
 {
     public class LogoutResultData : BaseResultData
     {

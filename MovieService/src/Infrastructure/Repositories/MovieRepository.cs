@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using src.Data;
-using src.DataTransferObject.Parameter;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
+using MovieService.Data;
+using MovieService.DataTransferObject.Parameter;
+using MovieService.Infrastructure.EF.Models;
+using MovieService.Infrastructure.Repositories.Interfaces;
 
-namespace src.Infrastructure.Repositories
+namespace MovieService.Infrastructure.Repositories
 {
     public class MovieRepository : IMovieRepository
     {
@@ -25,6 +25,14 @@ namespace src.Infrastructure.Repositories
         public Task<bool> DeleteMovie(Guid id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Movie?> GetMovieById(Guid id)
+        {
+            return await _context.Movies
+                        .Include(m => m.MovieGenres)
+                        .Include(m => m.MoviePersons)
+                        .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<Movie>> GetMovies(GetMoviesParam param)

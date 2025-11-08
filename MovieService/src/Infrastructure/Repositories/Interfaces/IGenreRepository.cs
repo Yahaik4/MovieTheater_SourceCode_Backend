@@ -1,7 +1,7 @@
-﻿using src.DataTransferObject.Parameter;
-using src.Infrastructure.EF.Models;
+﻿using MovieService.DataTransferObject.Parameter;
+using MovieService.Infrastructure.EF.Models;
 
-namespace src.Infrastructure.Repositories.Interfaces
+namespace MovieService.Infrastructure.Repositories.Interfaces
 {
     public interface IGenreRepository
     {

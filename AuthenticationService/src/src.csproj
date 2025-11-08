@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<AssemblyName>AuthenticationService</AssemblyName>
+	<RootNamespace>AuthenticationService</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,14 +36,7 @@
   <ItemGroup>
     <Folder Include="DataTransferObject\DataMessage\" />
   </ItemGroup>
-
   <ItemGroup>
-    <Reference Include="Shared">
-      <HintPath>C:\Users\admin\Desktop\Shared.dll</HintPath>
-    </Reference>
-    <Reference Include="src">
-      <HintPath>C:\Users\admin\Desktop\src.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\Shared\Shared\src.csproj" />
   </ItemGroup>
-
 </Project>

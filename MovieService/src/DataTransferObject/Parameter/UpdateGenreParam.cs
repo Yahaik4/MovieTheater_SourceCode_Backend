@@ -1,6 +1,6 @@
 ﻿using Shared.Contracts.Interfaces;
 
-namespace src.DataTransferObject.Parameter
+namespace MovieService.DataTransferObject.Parameter
 {
     public class UpdateGenreParam : IParam
     {

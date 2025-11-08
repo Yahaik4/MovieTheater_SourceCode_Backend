@@ -1,6 +1,6 @@
 ﻿using Shared.Contracts.ResultData;
 
-namespace src.DataTransferObject.ResultData
+namespace MovieService.DataTransferObject.ResultData
 {
     public class CreateGenreResultData : BaseResultData
     {

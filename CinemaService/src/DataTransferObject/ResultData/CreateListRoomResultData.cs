@@ -1,7 +1,7 @@
 ﻿using Shared.Contracts.ResultData;
-using src.Infrastructure.EF.Models;
+using CinemaService.Infrastructure.EF.Models;
 
-namespace src.DataTransferObject.ResultData
+namespace CinemaService.DataTransferObject.ResultData
 {
     public class CreateListRoomResultData : BaseResultData
     {

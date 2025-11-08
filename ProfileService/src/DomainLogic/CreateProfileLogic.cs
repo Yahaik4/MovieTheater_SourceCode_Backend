@@ -1,12 +1,12 @@
-﻿using Shared.Contracts.Interfaces;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Infrastructure.Repositories.Interfaces;
-using Shared.Contracts.Exceptions;
-using src.Infrastructure.EF.Models;
+﻿using Shared.Contracts.Exceptions;
+using ProfileService.Infrastructure.EF.Models;
+using ProfileService.Infrastructure.Repositories.Interfaces;
+using ProfileService.DataTransferObject.Parameter;
+using ProfileService.DataTransferObject.ResultData;
 using Shared.Contracts.Enums;
+using Shared.Contracts.Interfaces;
 
-namespace src.DomainLogic
+namespace ProfileService.DomainLogic
 {
     public class CreateProfileLogic : IDomainLogic<CreateProfileParam, Task<CreateProfileResultData>>
     {

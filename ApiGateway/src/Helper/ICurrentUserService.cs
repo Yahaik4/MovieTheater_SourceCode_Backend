@@ -1,4 +1,4 @@
-﻿namespace src.Helper
+﻿namespace ApiGateway.Helper
 {
     public interface ICurrentUserService
     {

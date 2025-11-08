@@ -1,6 +1,6 @@
-﻿using src.Infrastructure.EF.Models;
+﻿using ProfileService.Infrastructure.EF.Models;
 
-namespace src.Infrastructure.Repositories.Interfaces
+namespace ProfileService.Infrastructure.Repositories.Interfaces
 {
     public interface ICustomerRepository
     {

@@ -1,12 +1,12 @@
-﻿using Shared.Contracts.Enums;
+﻿using CinemaService.DataTransferObject.Parameter;
+using CinemaService.DataTransferObject.ResultData;
+using CinemaService.Infrastructure.EF.Models;
+using CinemaService.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
 
-namespace src.DomainLogic
+namespace CinemaService.DomainLogic
 {
     public class CreateRoomsLogic : IDomainLogic<CreateRoomParam, Task<CreateRoomResultData>>
     {
@@ -127,7 +127,7 @@ namespace src.DomainLogic
                         Id = Guid.NewGuid(),
                         Label = $"{rowLetter}{col}",
                         ColumnIndex = col,
-                        DisplayNumber = (row * room.Total_Column) + col,
+                        DisplayNumber = row * room.Total_Column + col,
                         SeatCode = $"{room.RoomNumber}-{rowLetter}{col}",
                         isActive = true,
                         Status = "Available",

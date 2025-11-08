@@ -1,12 +1,12 @@
-﻿using Shared.Contracts.Enums;
+﻿using MovieService.DataTransferObject.Parameter;
+using MovieService.DataTransferObject.ResultData;
+using MovieService.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
+using MovieService.Infrastructure.EF.Models;
 
-namespace src.DomainLogic
+namespace MovieService.DomainLogic
 {
     public class CreateMovieLogic : IDomainLogic<CreateMovieParam, Task<CreateMovieResultData>>
     {

@@ -1,10 +1,10 @@
-﻿using Shared.Contracts.Enums;
+﻿using MovieService.DataTransferObject.Parameter;
+using MovieService.DataTransferObject.ResultData;
+using MovieService.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Enums;
 using Shared.Contracts.Interfaces;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Infrastructure.Repositories.Interfaces;
 
-namespace src.DomainLogic
+namespace MovieService.DomainLogic
 {
     public class GetGenresLogic : IDomainLogic<GetGenresParam, Task<GetGenresResultData>>
     {

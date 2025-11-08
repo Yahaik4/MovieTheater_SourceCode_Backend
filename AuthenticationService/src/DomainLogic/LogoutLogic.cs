@@ -1,12 +1,12 @@
-﻿using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Helper;
-using src.Infrastructure.Repositories.Interfaces;
-using Shared.Contracts.Interfaces;
+﻿using Shared.Contracts.Interfaces;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
+using AuthenticationService.DataTransferObject.Parameter;
+using AuthenticationService.DataTransferObject.ResultData;
+using AuthenticationService.Helper;
+using AuthenticationService.Infrastructure.Repositories.Interfaces;
 
-namespace src.DomainLogic
+namespace AuthenticationService.DomainLogic
 {
     public class LogoutLogic : IDomainLogic<RefreshTokenParam, Task<LogoutResultData>>
     {

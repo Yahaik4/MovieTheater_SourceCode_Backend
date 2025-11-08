@@ -1,11 +1,11 @@
+using CinemaService.Data;
+using CinemaService.DomainLogic;
+using CinemaService.Helper;
+using CinemaService.Infrastructure.Repositories;
+using CinemaService.Infrastructure.Repositories.Interfaces;
+using CinemaService.Services;
 using Microsoft.EntityFrameworkCore;
 using Shared.Utils;
-using src.Data;
-using src.DomainLogic;
-using src.Helper;
-using src.Infrastructure.Repositories;
-using src.Infrastructure.Repositories.Interfaces;
-using src.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

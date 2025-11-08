@@ -1,15 +1,15 @@
-﻿using Shared.Contracts.Enums;
+﻿using AuthenticationService.DataTransferObject.Parameter;
+using AuthenticationService.DataTransferObject.ResultData;
+using AuthenticationService.Helper;
+using AuthenticationService.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Helper;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
+using AuthenticationService.Infrastructure.EF.Models;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace src.DomainLogic
+namespace AuthenticationService.DomainLogic
 {
     public class LoginLogic : IDomainLogic<LoginParam, Task<LoginResultData>>
     {

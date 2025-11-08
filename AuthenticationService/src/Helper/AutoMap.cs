@@ -1,8 +1,8 @@
 ﻿using AuthenticationGrpc;
+using AuthenticationService.DataTransferObject.ResultData;
 using AutoMapper;
-using src.DataTransferObject.ResultData;
 
-namespace src.Helper
+namespace AuthenticationService.Helper
 {
     public class AutoMap : Profile
     {

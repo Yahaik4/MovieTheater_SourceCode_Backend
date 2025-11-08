@@ -1,15 +1,15 @@
-﻿using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
+﻿using AuthenticationService.Infrastructure.EF.Models;
 using System.Security.Cryptography;
 using System.Text;
 using Shared.Contracts.Interfaces;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
-using src.ServiceConnector.ProfileServiceConnector;
+using AuthenticationService.Infrastructure.Repositories.Interfaces;
+using AuthenticationService.DataTransferObject.ResultData;
+using AuthenticationService.DataTransferObject.Parameter;
+using AuthenticationService.ServiceConnector.ProfileService;
 
-namespace src.DomainLogic
+namespace AuthenticationService.DomainLogic
 {
     public class RegisterLogic : IDomainLogic<RegisterParam, Task<RegisterResultData>>
     {

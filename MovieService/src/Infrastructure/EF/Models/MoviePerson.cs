@@ -1,6 +1,6 @@
 ﻿using Shared.Infrastructure;
 
-namespace src.Infrastructure.EF.Models
+namespace MovieService.Infrastructure.EF.Models
 {
     public class MoviePerson : BaseEntity
     {

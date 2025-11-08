@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using src.Data;
-using src.DataTransferObject.Parameter;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
+using MovieService.Data;
+using MovieService.DataTransferObject.Parameter;
+using MovieService.Infrastructure.EF.Models;
+using MovieService.Infrastructure.Repositories.Interfaces;
 
-namespace src.Infrastructure.Repositories
+namespace MovieService.Infrastructure.Repositories
 {
     public class MoviePersonRepository : IMoviePersonRepository
     {
@@ -29,9 +29,16 @@ namespace src.Infrastructure.Repositories
             return moviePersons;
         }
 
-        public Task<bool> DeleteMoviePerson(Guid id)
+        public async Task<bool> DeleteMoviePerson(Guid movieId, List<Guid> personIds)
         {
-            throw new NotImplementedException();
+            var moviePersons = await _context.MoviePersons.Where(mp => mp.MovieId == movieId && personIds.Contains(mp.PersonId)).ToListAsync();
+
+            if (!moviePersons.Any())
+                return false;
+
+            _context.MoviePersons.RemoveRange(moviePersons);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public Task<MoviePerson> UpdateMoviePerson(MoviePerson moviePerson)

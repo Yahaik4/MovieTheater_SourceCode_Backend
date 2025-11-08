@@ -1,4 +1,4 @@
-﻿namespace src.DataTransferObject.ResultData
+﻿namespace CinemaService.DataTransferObject.ResultData
 {
     public class CinemaBaseDataResult
     {

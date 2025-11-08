@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using src.Data;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
+﻿using AuthenticationService.Data;
+using AuthenticationService.Infrastructure.EF.Models;
+using AuthenticationService.Infrastructure.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace src.Infrastructure.Repositories
+namespace AuthenticationService.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {

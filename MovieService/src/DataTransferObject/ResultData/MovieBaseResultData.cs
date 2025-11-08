@@ -1,6 +1,4 @@
-﻿using src.Infrastructure.EF.Models;
-
-namespace src.DataTransferObject.ResultData
+﻿namespace MovieService.DataTransferObject.ResultData
 {
     public class MovieBaseResultData
     {

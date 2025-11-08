@@ -19,7 +19,7 @@ service MovieGrpcService {
 
 	rpc GetMovies(GetMoviesGrpcRequestDTO) returns (GetMoviesGrpcReplyDTO);
 	rpc CreateMovie(CreateMovieGrpcRequestDTO) returns (CreateMovieGrpcReplyDTO);
-	//rpc UpdateMovie(UpdateMovieGrpcRequestDTO) returns (UpdateMovieGrpcReplyDTO);
+	rpc UpdateMovie(UpdateMovieGrpcRequestDTO) returns (UpdateMovieGrpcReplyDTO);
 }
 
 message GetGenresGrpcRequestDTO {
@@ -242,6 +242,45 @@ message CreateMovieGrpcReplyDTO {
 }
 
 message CreateMovieGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+	string description = 3;
+	string releaseDate = 4; 
+	string duration = 5;
+	string publisher = 6;
+	string country = 7;
+	string language = 8;
+	string poster = 9;
+	string trailerUrl = 10;
+	string status = 11;
+	repeated MovieGenreGrpcReplyDataDTO genres = 12;
+	repeated MoviePersonGrpcReplyDataDTO persons = 13;
+}
+
+message UpdateMovieGrpcRequestDTO {
+	string id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue releaseDate = 4;
+	google.protobuf.StringValue duration = 5;
+	google.protobuf.StringValue publisher = 6;
+	google.protobuf.StringValue country = 7;
+	google.protobuf.StringValue language = 8;
+	google.protobuf.StringValue poster = 9;
+	google.protobuf.StringValue trailerUrl = 10;
+	google.protobuf.StringValue status = 11;
+	repeated MovieGenreGrpcRequestDTO genres = 12;
+	repeated MoviePersonGrpcRequestDTO persons = 13;
+}
+
+message UpdateMovieGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateMovieGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateMovieGrpcReplyDataDTO {
 	string id = 1;
 	string name = 2;
 	string description = 3;

@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using src.Data;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
+﻿using CinemaService.Data;
+using CinemaService.Infrastructure.EF.Models;
+using CinemaService.Infrastructure.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace src.Infrastructure.Repositories
+namespace CinemaService.Infrastructure.Repositories
 {
     public class SeatTypeRepository : ISeatTypeRepository
     {

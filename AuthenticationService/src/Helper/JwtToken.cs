@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using Shared;
 
-namespace src.Helper
+namespace AuthenticationService.Helper
 {
     public class JwtToken
     {

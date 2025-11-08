@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using src.Infrastructure.EF.Models;
+using ProfileService.Infrastructure.EF.Models;
 
-namespace src.Data
+namespace ProfileService.Data
 {
     public class ProfileDbContext : DbContext
     {

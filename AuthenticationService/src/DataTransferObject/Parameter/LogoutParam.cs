@@ -1,4 +1,4 @@
-﻿namespace src.DataTransferObject.Parameter
+﻿namespace AuthenticationService.DataTransferObject.Parameter
 {
     public class LogoutParam
     {

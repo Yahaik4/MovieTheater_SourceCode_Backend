@@ -1,4 +1,4 @@
-﻿namespace src.DataTransferObject.Parameter
+﻿namespace CinemaService.DataTransferObject.Parameter
 {
     public class UpdateSeatStatusParam
     {

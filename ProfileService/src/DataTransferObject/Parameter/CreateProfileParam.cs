@@ -1,6 +1,6 @@
 ﻿using Shared.Contracts.Interfaces;
 
-namespace src.DataTransferObject.Parameter
+namespace ProfileService.DataTransferObject.Parameter
 {
     public class CreateProfileParam : IParam
     {

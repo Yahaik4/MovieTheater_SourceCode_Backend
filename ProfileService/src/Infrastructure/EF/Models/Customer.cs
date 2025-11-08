@@ -1,6 +1,6 @@
 ﻿using Shared.Infrastructure;
 
-namespace src.Infrastructure.EF.Models
+namespace ProfileService.Infrastructure.EF.Models
 {
     public class Customer : BaseEntity
     {

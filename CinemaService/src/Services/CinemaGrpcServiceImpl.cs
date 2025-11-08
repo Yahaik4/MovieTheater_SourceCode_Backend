@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using CinemaGrpc;
+using CinemaService.DomainLogic;
 using Grpc.Core;
-using src.DataTransferObject.Parameter;
-using src.DomainLogic;
+using CinemaService.DataTransferObject.Parameter;
 
-namespace src.Services
+namespace CinemaService.Services
 {
     public class CinemaGrpcServiceImpl : CinemaGrpcService.CinemaGrpcServiceBase
     {

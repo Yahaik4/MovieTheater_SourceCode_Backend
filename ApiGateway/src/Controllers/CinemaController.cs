@@ -1,13 +1,13 @@
-﻿using Grpc.Core;
+﻿using ApiGateway.DataTransferObject.Parameter;
+using ApiGateway.DataTransferObject.ResultData;
+using ApiGateway.ServiceConnector.CinemaService;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Utils;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.ServiceConnector.CinemaService;
 
-namespace src.Controllers
+namespace ApiGateway.Controllers
 {
     [Authorize]
     [ApiController]
@@ -188,7 +188,7 @@ namespace src.Controllers
                     {
                         Id = Guid.Parse(rt.Id),
                         Type = rt.Type,
-                        BasePrice = Decimal.Parse(rt.BasePrice)
+                        BasePrice = decimal.Parse(rt.BasePrice)
                     }).ToList()
                 };
             }
@@ -223,7 +223,7 @@ namespace src.Controllers
                     {
                         Id = Guid.Parse(result.Data.Id),
                         Type = result.Data.Type,
-                        BasePrice = Decimal.Parse(result.Data.BasePrice),
+                        BasePrice = decimal.Parse(result.Data.BasePrice),
                         CreatedBy = result.Data.CreatedBy
                     }
                 };
@@ -319,7 +319,7 @@ namespace src.Controllers
                     {
                         Id = Guid.Parse(st.Id),
                         Type = st.Type,
-                        ExtraPrice = Decimal.Parse(st.ExtraPrice)
+                        ExtraPrice = decimal.Parse(st.ExtraPrice)
                     }).ToList()
                 };
             }
@@ -354,7 +354,7 @@ namespace src.Controllers
                     {
                         Id = Guid.Parse(result.Data.Id),
                         Type = result.Data.Type,
-                        ExtraPrice = Decimal.Parse(result.Data.ExtraPrice),
+                        ExtraPrice = decimal.Parse(result.Data.ExtraPrice),
                         CreatedBy = result.Data.CreatedBy
                     }
                 };

@@ -1,6 +1,6 @@
 ﻿using Shared.Contracts.ResultData;
 
-namespace src.DataTransferObject.ResultData
+namespace CinemaService.DataTransferObject.ResultData
 {
     public class GetAllRoomTypeResultData : BaseResultData
     {

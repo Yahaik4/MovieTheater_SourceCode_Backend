@@ -1,14 +1,15 @@
-﻿using CinemaGrpc;
+﻿using ApiGateway.DataTransferObject.Parameter;
+using ApiGateway.Helper;
+using ApiGateway.ServiceConnector;
+using CinemaGrpc;
 using Grpc.Core;
 using Microsoft.AspNetCore.Http.HttpResults;
 using MovieGrpc;
-using src.DataTransferObject.Parameter;
-using src.Helper;
 using System.Diagnostics.Metrics;
 using System.Reflection;
 using System.Xml.Linq;
 
-namespace src.ServiceConnector.MovieService
+namespace ApiGateway.ServiceConnector.MovieService
 {
     public class MovieServiceConnector : BaseServiceConnector
     {
@@ -191,6 +192,39 @@ namespace src.ServiceConnector.MovieService
                 }));
 
             return await client.CreateMovieAsync(request);
+        }
+
+        public async Task<UpdateMovieGrpcReplyDTO> UpdateMovie(UpdateMovieRequestParam param)
+        {
+            using var channel = GetMovieServiceChannel();
+            var client = new MovieGrpcService.MovieGrpcServiceClient(channel);
+
+            var request = new UpdateMovieGrpcRequestDTO
+            {
+                Id = param.Id.ToString(),
+                Name = param.Name,
+                Country = param.Country,
+                Status = param.Status,
+                Description = param.Description,
+                Duration = param.Duration.ToString(),
+                ReleaseDate = param.ReleaseDate.ToString(),
+                Language = param.Language,
+                Publisher = param.Publisher,
+                Poster = param.Poster,
+                TrailerUrl = param.TrailerUrl,
+            };
+
+            request.Genres.AddRange(param.Genres.Select(g =>
+                new MovieGenreGrpcRequestDTO { GenreId = g.GenreId.ToString() }));
+
+            request.Persons.AddRange(param.Persons.Select(p =>
+                new MoviePersonGrpcRequestDTO
+                {
+                    PersonId = p.PersonId.ToString(),
+                    Role = p.Role
+                }));
+
+            return await client.UpdateMovieAsync(request);
         }
     }
 }

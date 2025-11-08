@@ -1,9 +1,9 @@
-﻿using src.Data;
-using src.DataTransferObject.Parameter;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
+﻿using MovieService.Data;
+using MovieService.DataTransferObject.Parameter;
+using MovieService.Infrastructure.EF.Models;
+using MovieService.Infrastructure.Repositories.Interfaces;
 
-namespace src.Infrastructure.Repositories
+namespace MovieService.Infrastructure.Repositories
 {
     public class MovieGenreRepository : IMovieGenreRepository
     {

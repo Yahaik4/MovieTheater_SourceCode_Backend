@@ -1,8 +1,9 @@
 ﻿using AuthenticationGrpc;
+using AuthenticationService.ServiceConnector;
 using Grpc.Core;
 using ProfileGrpc;
 
-namespace src.ServiceConnector.ProfileServiceConnector
+namespace AuthenticationService.ServiceConnector.ProfileService
 {
     public class ProfileServiceConnector : BaseServiceConnector
     {

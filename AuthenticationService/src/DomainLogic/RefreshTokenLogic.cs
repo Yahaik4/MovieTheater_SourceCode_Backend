@@ -1,11 +1,11 @@
-﻿using Shared.Contracts.Exceptions;
+﻿using AuthenticationService.DataTransferObject.Parameter;
+using AuthenticationService.DataTransferObject.ResultData;
+using AuthenticationService.Helper;
+using AuthenticationService.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Helper;
-using src.Infrastructure.Repositories.Interfaces;
 
-namespace src.DomainLogic
+namespace AuthenticationService.DomainLogic
 {
     public class RefreshTokenLogic : IDomainLogic<RefreshTokenParam, Task<RefreshTokenResultData>>
     {

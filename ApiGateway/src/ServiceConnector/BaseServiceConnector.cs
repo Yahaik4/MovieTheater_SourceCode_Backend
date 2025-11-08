@@ -1,6 +1,6 @@
 ﻿using Grpc.Net.Client;
 
-namespace src.ServiceConnector
+namespace ApiGateway.ServiceConnector
 {
     public class ServiceConnectorConfigOption
     {
@@ -50,7 +50,7 @@ namespace src.ServiceConnector
                     HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
 
-            return Grpc.Net.Client.GrpcChannel.ForAddress(endpoint, new GrpcChannelOptions
+            return GrpcChannel.ForAddress(endpoint, new GrpcChannelOptions
             {
                 HttpHandler = httpHandler,
                 MaxReceiveMessageSize = 50 * 1024 * 1024,

@@ -1,11 +1,11 @@
-﻿using Grpc.Core;
+﻿using CinemaService.Data;
+using CinemaService.Infrastructure.EF.Models;
+using CinemaService.Infrastructure.Repositories.Interfaces;
+using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
-using src.Data;
-using src.Infrastructure.EF.Models;
-using src.Infrastructure.Repositories.Interfaces;
 using System.Xml.Linq;
 
-namespace src.Infrastructure.Repositories
+namespace CinemaService.Infrastructure.Repositories
 {
     public class RoomTypeRepository : IRoomTypeRepository
     {

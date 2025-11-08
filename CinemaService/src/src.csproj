@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<AssemblyName>CinemaService</AssemblyName>
+	<RootNamespace>CinemaService</RootNamespace>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -30,13 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Shared">
-      <HintPath>C:\Users\admin\Desktop\Shared.dll</HintPath>
-    </Reference>
+    <Folder Include="DataTransferObject\DataMessage\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DataTransferObject\DataMessage\" />
+    <ProjectReference Include="..\..\Shared\Shared\src.csproj" />
   </ItemGroup>
 
 </Project>

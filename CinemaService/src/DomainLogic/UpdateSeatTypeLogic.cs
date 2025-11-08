@@ -1,11 +1,11 @@
-﻿using Shared.Contracts.Enums;
+﻿using CinemaService.DataTransferObject.Parameter;
+using CinemaService.DataTransferObject.ResultData;
+using CinemaService.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Infrastructure.Repositories.Interfaces;
 
-namespace src.DomainLogic
+namespace CinemaService.DomainLogic
 {
     public class UpdateSeatTypeLogic : IDomainLogic<UpdateSeatTypeParam, Task<UpdateSeatTypeResultData>>
     {

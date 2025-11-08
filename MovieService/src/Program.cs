@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using MovieService.Data;
+using MovieService.DomainLogic;
+using MovieService.Helper;
+using MovieService.Infrastructure.Repositories;
+using MovieService.Infrastructure.Repositories.Interfaces;
+using MovieService.Services;
 using Shared.Utils;
-using src.Data;
-using src.DomainLogic;
-using src.Helper;
-using src.Infrastructure.Repositories;
-using src.Infrastructure.Repositories.Interfaces;
-using src.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +52,7 @@ void RegisterRepository()
 
     services.AddScoped<GetMoviesLogic>();
     services.AddScoped<CreateMovieLogic>();
+    services.AddScoped<UpdateMovieLogic>();
 }
 
 void RegisterGrpcServicePublish()

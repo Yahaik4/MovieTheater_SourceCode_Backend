@@ -1,12 +1,12 @@
-﻿using Grpc.Core;
+﻿using ApiGateway.DataTransferObject.Parameter;
+using ApiGateway.DataTransferObject.ResultData;
+using ApiGateway.ServiceConnector.AuthenticationService;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Utils;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.ServiceConnector.AuthServiceConnector;
 
-namespace src.Controllers
+namespace ApiGateway.Controllers
 {
     [ApiController]
     [Route("api")]

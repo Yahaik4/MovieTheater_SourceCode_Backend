@@ -1,11 +1,11 @@
-﻿using Shared.Contracts.Enums;
+﻿using CinemaService.DataTransferObject.Parameter;
+using CinemaService.DataTransferObject.ResultData;
+using CinemaService.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Enums;
 using Shared.Contracts.Interfaces;
-using src.DataTransferObject.Parameter;
-using src.DataTransferObject.ResultData;
-using src.Infrastructure.Repositories.Interfaces;
 using System.Text.Json;
 
-namespace src.DomainLogic
+namespace CinemaService.DomainLogic
 {
     public class GetAllCinemaLogic : IDomainLogic<GetAllCinemasParam, Task<GetAllCinemasResultData>>
     {

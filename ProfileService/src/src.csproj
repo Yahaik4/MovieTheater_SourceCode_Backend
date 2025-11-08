@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<AssemblyName>ProfileService</AssemblyName>
+	<RootNamespace>ProfileService</RootNamespace>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -29,9 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Shared">
-      <HintPath>..\..\..\Desktop\Shared.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\Shared\Shared\src.csproj" />
   </ItemGroup>
 
 </Project>

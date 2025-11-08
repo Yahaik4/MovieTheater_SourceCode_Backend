@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Grpc.Core;
 using ProfileGrpc;
-using src.DataTransferObject.Parameter;
-using src.DomainLogic;
+using ProfileService.DomainLogic;
+using ProfileService.DataTransferObject.Parameter;
 
-namespace src.Services
+namespace ProfileService.Services
 {
     public class ProfileGrpcServiceImpl : ProfileGrpcService.ProfileGrpcServiceBase
     {

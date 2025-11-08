@@ -1,7 +1,6 @@
-﻿using Shared.Contracts.Interfaces;
-using Shared.Contracts.ResultData;
+﻿using Shared.Contracts.ResultData;
 
-namespace src.DataTransferObject.ResultData
+namespace ProfileService.DataTransferObject.ResultData
 {
     public class CreateProfileResultData : BaseResultData
     {
