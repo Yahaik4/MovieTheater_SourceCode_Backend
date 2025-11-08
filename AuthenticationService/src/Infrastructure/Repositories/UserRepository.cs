@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Shared.Contracts.Exceptions;
 using src.Data;
 using src.Infrastructure.EF.Models;
 using src.Infrastructure.Repositories.Interfaces;
@@ -49,6 +50,61 @@ namespace src.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync();
             return user;
+        }
+
+        public async Task<bool> ChangePassword(string email, string newPassword)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email && !x.IsDeleted);
+
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            user.Password = newPassword;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task SavePendingChangeAsync(string email, string hashedPassword, TimeSpan expiry)
+        {
+            var existing = await _context.Set<PendingPasswordChange>()
+                .FirstOrDefaultAsync(x => x.Email == email);
+
+            if (existing != null)
+                _context.Remove(existing);
+
+            var pending = new PendingPasswordChange
+            {
+                Id = Guid.NewGuid(),
+                Email = email,
+                HashedNewPassword = hashedPassword,
+                ExpiryAt = DateTime.UtcNow.Add(expiry)
+            };
+
+            await _context.AddAsync(pending);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<string?> GetPendingChangeAsync(string email)
+        {
+            var record = await _context.Set<PendingPasswordChange>()
+                .FirstOrDefaultAsync(x => x.Email == email && x.ExpiryAt > DateTime.UtcNow);
+            return record?.HashedNewPassword;
+        }
+
+        public async Task DeletePendingChangeAsync(string email)
+        {
+            var record = await _context.Set<PendingPasswordChange>()
+                .FirstOrDefaultAsync(x => x.Email == email);
+
+            if (record != null)
+            {
+                _context.Remove(record);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

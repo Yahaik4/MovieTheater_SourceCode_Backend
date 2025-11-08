@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+option csharp_namespace = "OTPGrpc";
+
+package OTP;
+
+service OtpGrpcService {
+	rpc GenerateOTP (GenerateOtpRequestGrpc) returns (GenerateOtpResultGrpc);
+	rpc ValidateOTP (ValidateOtpRequestGrpc) returns (ValidateOtpResultGrpc);
+}
+
+message GenerateOtpRequestGrpc {
+    string Email = 1;
+}
+
+message GenerateOtpResultGrpc {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	GenerateOtpDataGrpc Data = 4;
+}
+
+message GenerateOtpDataGrpc {
+	string Email = 1;
+	string Otp = 2;
+}
+
+message ValidateOtpRequestGrpc {
+	string Email = 1;
+	string Otp = 2;
+}
+
+message ValidateOtpResultGrpc {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	ValidateOtpDataGrpc Data = 4;
+}
+
+message ValidateOtpDataGrpc {
+	string Email = 1;
+	bool IsValid = 2;
+}
+
+

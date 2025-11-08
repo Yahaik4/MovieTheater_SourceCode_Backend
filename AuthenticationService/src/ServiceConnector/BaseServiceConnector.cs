@@ -10,6 +10,7 @@ namespace src.ServiceConnector
     public class ServiceConnectorConfig
     {
         public ServiceConnectorConfigOption ProfileService { get; set; } = new ServiceConnectorConfigOption();
+        public ServiceConnectorConfigOption OtpService { get; set; } = new ServiceConnectorConfigOption();
     }
     public class BaseServiceConnector
     {
@@ -27,6 +28,10 @@ namespace src.ServiceConnector
                 ProfileService = new ServiceConnectorConfigOption
                 {
                     Endpoint = _configuration["ServiceConnector:ProfileService:Endpoint"] ?? string.Empty
+                },
+                OtpService = new ServiceConnectorConfigOption
+                {
+                    Endpoint = _configuration["ServiceConnector:OtpService:Endpoint"] ?? string.Empty
                 }
             };
         }
@@ -49,5 +54,8 @@ namespace src.ServiceConnector
 
         protected GrpcChannel GetProfileServiceChannel()
             => GetGrpcChannel(GetServiceConnectorConfig().ProfileService.Endpoint);
+
+        protected GrpcChannel GetOtpServiceChannel()
+            => GetGrpcChannel(GetServiceConnectorConfig().OtpService.Endpoint); 
     }
 }

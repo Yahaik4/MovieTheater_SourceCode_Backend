@@ -21,6 +21,14 @@ namespace src.Helper
 
             // RegisterMapping
             CreateMap<RegisterResultData, RegisterGrpcReplyDTO>();
+
+            CreateMap<ChangePasswordResultData, ChangePasswordGrpcReplyDTO>()
+                .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.Data));
+            CreateMap<ChangePasswordDataResult, ChangePasswordGrpcReplyDataDTO>();
+            
+            CreateMap<ChangePasswordResultData, ConfirmChangePasswordGrpcReplyDTO>()
+                .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.Data));
+            CreateMap<ChangePasswordDataResult, ConfirmChangePasswordGrpcReplyDataDTO>();
         }
     }
 }

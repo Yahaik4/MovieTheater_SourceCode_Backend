@@ -27,5 +27,6 @@ namespace src.ServiceConnector.ProfileServiceConnector
 
             return await client.CreateProfileAsync(request);
         }
+        
     }
 }

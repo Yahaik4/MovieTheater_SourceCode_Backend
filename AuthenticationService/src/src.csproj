@@ -9,6 +9,7 @@
   <ItemGroup>
 	<Protobuf Include="Services\Protos\Authentication.proto" GrpcServices="Server" />
 	  <Protobuf Include="ServiceConnector\Protos\Profile.proto" GrpcServices="Client" />
+    <Protobuf Include="ServiceConnector\Protos\Otp.proto" GrpcServices="Client" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,5 +44,7 @@
       <HintPath>C:\Users\admin\Desktop\src.dll</HintPath>
     </Reference>
   </ItemGroup>
-
+  <ItemGroup>
+      <ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
+  </ItemGroup>
 </Project>

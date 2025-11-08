@@ -23,12 +23,18 @@
 	    <Protobuf Include="ServiceConnector\Protos\Authentication.proto" GrpcServices="Client" />
 		<Protobuf Include="ServiceConnector\Protos\Cinema.proto" GrpcServices="Client" />
 		<Protobuf Include="ServiceConnector\Protos\Movie.proto" GrpcServices="Client" />
+		  <Protobuf Include="ServiceConnector\Protos\Cinema.proto" GrpcServices="Client" />
+      <Protobuf Include="ServiceConnector\Protos\Otp.proto" GrpcServices="Client" />
 	</ItemGroup>
 
     <ItemGroup>
       <Reference Include="Shared">
         <HintPath>C:\Users\admin\Desktop\Shared.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
     </ItemGroup>
 
 </Project>

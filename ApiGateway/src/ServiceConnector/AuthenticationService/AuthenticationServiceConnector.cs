@@ -73,5 +73,34 @@ namespace src.ServiceConnector.AuthServiceConnector
             return await client.RegisterAsync(request);
         }
 
+        public async Task<ChangePasswordGrpcReplyDTO> RequestChangePassword(string email, string oldPassword, string newPassword)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new ChangePasswordGrpcRequestDTO
+            {
+                Email = email,
+                OldPassword = oldPassword,
+                NewPassword = newPassword
+            };
+
+            return await client.RequestChangePasswordAsync(request);
+        }
+
+        public async Task<ConfirmChangePasswordGrpcReplyDTO> ConfirmChangePassword(string email, string otp)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new ConfirmChangePasswordGrpcRequestDTO
+            {
+                Email = email,
+                Otp = otp
+            };
+
+            return await client.ConfirmChangePasswordAsync(request);
+        }
+
     }
 }

@@ -12,6 +12,8 @@ namespace src.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Session> Sessions { get; set; }
 
+        public DbSet<PendingPasswordChange> PendingPasswordChanges { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(entity =>

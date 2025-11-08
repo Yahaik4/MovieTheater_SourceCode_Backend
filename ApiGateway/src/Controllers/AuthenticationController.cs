@@ -199,5 +199,77 @@ namespace src.Controllers
                 };
             }
         }
+
+        [HttpPost("request_change_password")]
+        public async Task<ChangePasswordResultDTO> RequestChangePassword([FromBody] ChangePasswordRequestParam param)
+        {
+            try
+            {
+                var result = await _authenticationConnector.RequestChangePassword(
+                    param.Email, param.OldPassword, param.NewPassword);
+
+                return new ChangePasswordResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new ChangePasswordDataResult
+                    {
+                        Email = result.Data.Email,
+                        IsOtpSent = true,
+                        IsPasswordChanged = false,
+                        IsOtpValid = false
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"RequestChangePassword Error: {message}");
+
+                return new ChangePasswordResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpPost("confirm_change_password")]
+        public async Task<BaseResultDTO> ConfirmChangePassword([FromBody] ConfirmChangePasswordRequestParam param)
+        {
+            try
+            {
+                var result = await _authenticationConnector.ConfirmChangePassword(param.Email, param.Otp);
+
+                return new ChangePasswordResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new ChangePasswordDataResult
+                    {
+                    Email = result.Data.Email,
+                    IsOtpSent = false,
+                    IsOtpValid = true,
+                    IsPasswordChanged = true
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"ConfirmChangePassword Error: {message}");
+
+                return new ChangePasswordResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
     }
 }

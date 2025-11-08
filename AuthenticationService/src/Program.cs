@@ -7,6 +7,7 @@ using src.Infrastructure.Repositories.Interfaces;
 using src.Services;
 using Shared.Utils;
 using src.ServiceConnector.ProfileServiceConnector;
+using src.Infrastructure.Connectors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +49,10 @@ void RegisterRepository()
     services.AddScoped<LogoutLogic>();
     services.AddScoped<RegisterLogic>();
 
+    builder.Services.AddScoped<RequestChangePasswordLogic>();
+    builder.Services.AddScoped<ConfirmChangePasswordLogic>();
     services.AddScoped<ProfileServiceConnector>();
+    builder.Services.AddScoped<OtpServiceConnector>();
     services.AddHttpContextAccessor();
 }
 

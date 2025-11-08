@@ -9,6 +9,8 @@ service AuthenticationGrpcService {
 	rpc RefreshToken(RefreshTokenGrpcRequestDTO) returns (RefreshTokenGrpcReplyDTO);
 	rpc Logout(RefreshTokenGrpcRequestDTO) returns (LogoutGrpcReplyDTO);
 	rpc Register(RegisterGrpcRequestDTO) returns (RegisterGrpcReplyDTO);
+	rpc RequestChangePassword(ChangePasswordGrpcRequestDTO) returns (ChangePasswordGrpcReplyDTO);
+	rpc ConfirmChangePassword(ConfirmChangePasswordGrpcRequestDTO) returns (ConfirmChangePasswordGrpcReplyDTO);
 }
 
 message LoginGrpcRequestDTO {
@@ -59,4 +61,40 @@ message RegisterGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;
+}
+
+message ChangePasswordGrpcRequestDTO {
+	string Email = 1;
+	string OldPassword = 2;
+	string NewPassword = 3;
+}
+
+message ChangePasswordGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	ChangePasswordGrpcReplyDataDTO Data = 4;
+}
+
+message ChangePasswordGrpcReplyDataDTO {
+	string Email = 1;
+	bool IsOtpSent = 2;
+}
+
+message ConfirmChangePasswordGrpcRequestDTO {
+	string Email = 1;
+	string Otp = 2;
+}
+
+message ConfirmChangePasswordGrpcReplyDataDTO {
+	string Email = 1;
+	bool IsOtpValid = 2;
+	bool IsPasswordChanged = 3;
+}
+
+message ConfirmChangePasswordGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	ConfirmChangePasswordGrpcReplyDataDTO Data = 4;
 }

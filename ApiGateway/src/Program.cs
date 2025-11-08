@@ -4,6 +4,7 @@ using src.Helper;
 using src.ServiceConnector.AuthServiceConnector;
 using src.ServiceConnector.CinemaService;
 using src.ServiceConnector.MovieService;
+using src.ServiceConnector.OtpService;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -72,6 +73,7 @@ builder.Services.AddScoped<AuthenticationServiceConnector>();
 builder.Services.AddScoped<CinemaServiceConnector>();
 builder.Services.AddScoped<MovieServiceConnector>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<OtpServiceConnector>();
 
 var app = builder.Build();
 

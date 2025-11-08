@@ -10,5 +10,9 @@ namespace src.Infrastructure.Repositories.Interfaces
         Task<User> UpdateUser(User user);
         Task<bool> DeleteUser(User user);
         Task<bool> RemoveUser(User user);
+        Task<bool> ChangePassword(string email, string newPassword);
+        Task SavePendingChangeAsync(string email, string hashedPassword, TimeSpan expiry);
+        Task<string?> GetPendingChangeAsync(string email);
+        Task DeletePendingChangeAsync(string email);
     }
 }

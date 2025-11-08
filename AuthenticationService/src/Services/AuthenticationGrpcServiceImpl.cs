@@ -13,18 +13,24 @@ namespace src.Services
         private readonly RefreshTokenLogic _refreshTokenLogic;
         private readonly LogoutLogic _logoutLogic;
         private readonly RegisterLogic _registerLogic;
+        private readonly RequestChangePasswordLogic _requestChangePasswordLogic;
+        private readonly ConfirmChangePasswordLogic _confirmChangePasswordLogic;
 
         public AuthenticationGrpcServiceImpl(IMapper mapper, 
                                             LoginLogic loginLogic, 
                                             RefreshTokenLogic refreshTokenLogic, 
-                                            LogoutLogic logoutLogic, 
-                                            RegisterLogic registerLogic) 
+                                            LogoutLogic logoutLogic,
+                                            RegisterLogic registerLogic,
+                                            RequestChangePasswordLogic requestChangePasswordLogic,
+                                            ConfirmChangePasswordLogic confirmChangePasswordLogic) 
         {
             _mapper = mapper;
             _loginLogic = loginLogic;
             _refreshTokenLogic = refreshTokenLogic;
             _logoutLogic = logoutLogic;
             _registerLogic = registerLogic;
+            _requestChangePasswordLogic = requestChangePasswordLogic;
+            _confirmChangePasswordLogic = confirmChangePasswordLogic;
         }
 
         public override async Task<LoginGrpcReplyDTO> Login(LoginGrpcRequestDTO request, ServerCallContext context)
@@ -73,6 +79,29 @@ namespace src.Services
             });
 
             return _mapper.Map<RegisterGrpcReplyDTO>(result);
+        }
+
+        public override async Task<ChangePasswordGrpcReplyDTO> RequestChangePassword(ChangePasswordGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _requestChangePasswordLogic.Execute(new RequestChangePasswordParam
+            {
+                Email = request.Email,
+                OldPassword = request.OldPassword,
+                NewPassword = request.NewPassword
+            });
+
+            return _mapper.Map<ChangePasswordGrpcReplyDTO>(result);
+        }
+
+        public override async Task<ConfirmChangePasswordGrpcReplyDTO> ConfirmChangePassword(ConfirmChangePasswordGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _confirmChangePasswordLogic.Execute(new ConfirmChangePasswordParam
+            {
+                Email = request.Email,
+                Otp = request.Otp
+            });
+
+            return _mapper.Map<ConfirmChangePasswordGrpcReplyDTO>(result);
         }
     }
 }
