@@ -20,6 +20,7 @@ service MovieGrpcService {
 	rpc GetMovies(GetMoviesGrpcRequestDTO) returns (GetMoviesGrpcReplyDTO);
 	rpc CreateMovie(CreateMovieGrpcRequestDTO) returns (CreateMovieGrpcReplyDTO);
 	rpc UpdateMovie(UpdateMovieGrpcRequestDTO) returns (UpdateMovieGrpcReplyDTO);
+	rpc DeleteMovie(DeleteMovieGrpcRequestDTO) returns (DeleteMovieGrpcReplyDTO);
 }
 
 message GetGenresGrpcRequestDTO {
@@ -294,4 +295,14 @@ message UpdateMovieGrpcReplyDataDTO {
 	string status = 11;
 	repeated MovieGenreGrpcReplyDataDTO genres = 12;
 	repeated MoviePersonGrpcReplyDataDTO persons = 13;
+}
+
+message DeleteMovieGrpcRequestDTO {
+	string id = 1;
+}
+
+message DeleteMovieGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
 }

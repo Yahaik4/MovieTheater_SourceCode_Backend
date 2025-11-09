@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using MovieGrpc;
 using Serilog;
 using Shared.Utils;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ApiGateway.Controllers
 {
@@ -400,57 +402,86 @@ namespace ApiGateway.Controllers
             }
         }
 
-        //[HttpPatch("movie")]
-        //public async Task<UpdateMovieResultDTO> UpdateMovie(UpdateMovieRequestParam param)
-        //{
-        //    try
-        //    {
-        //        var result = await _movieServiceConnector.CreateMovie(param);
+        [HttpPatch("movie/{id}")]
+        public async Task<UpdateMovieResultDTO> UpdateMovie(Guid id, UpdateMovieRequestParam param)
+        {
+            try
+            {
+                var result = await _movieServiceConnector.UpdateMovie(id, param);
 
-        //        return new CreateMovieResultDTO
-        //        {
-        //            Result = result.Result,
-        //            Message = result.Message,
-        //            StatusCode = result.StatusCode,
-        //            Data = new CreateMovieDataResult
-        //            {
-        //                Id = Guid.Parse(result.Data.Id),
-        //                Name = result.Data.Name,
-        //                Country = result.Data.Country,
-        //                Description = result.Data.Description,
-        //                Status = result.Data.Status,
-        //                Duration = TimeSpan.Parse(result.Data.Duration),
-        //                Language = result.Data.Language,
-        //                Poster = result.Data.Poster,
-        //                Publisher = result.Data.Publisher,
-        //                ReleaseDate = DateOnly.Parse(result.Data.ReleaseDate),
-        //                TrailerUrl = result.Data.TrailerUrl,
-        //                Genres = result.Data.Genres.Select(mg => new MovieGenreDataResult
-        //                {
-        //                    GenreId = Guid.Parse(mg.GenreId),
-        //                    GenreName = mg.GenreName,
-        //                }).ToList(),
-        //                Persons = result.Data.Persons.Select(mp => new MoviePersonDataResult
-        //                {
-        //                    PersonId = Guid.Parse(mp.PersonId),
-        //                    FullName = mp.FullName,
-        //                    Role = mp.Role,
-        //                }).ToList()
-        //            }
-        //        };
-        //    }
-        //    catch (RpcException ex)
-        //    {
-        //        var (statusCode, message) = RpcExceptionParser.Parse(ex);
-        //        Log.Error($"Login Error: {message}");
+                return new UpdateMovieResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new UpdateMovieDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Name = result.Data.Name,
+                        Country = result.Data.Country,
+                        Description = result.Data.Description,
+                        Status = result.Data.Status,
+                        Duration = TimeSpan.Parse(result.Data.Duration),
+                        Language = result.Data.Language,
+                        Poster = result.Data.Poster,
+                        Publisher = result.Data.Publisher,
+                        ReleaseDate = DateOnly.Parse(result.Data.ReleaseDate),
+                        TrailerUrl = result.Data.TrailerUrl,
+                        Genres = result.Data.Genres.Select(mg => new MovieGenreDataResult
+                        {
+                            GenreId = Guid.Parse(mg.GenreId),
+                            GenreName = mg.GenreName,
+                        }).ToList(),
+                        Persons = result.Data.Persons.Select(mp => new MoviePersonDataResult
+                        {
+                            PersonId = Guid.Parse(mp.PersonId),
+                            FullName = mp.FullName,
+                            Role = mp.Role,
+                        }).ToList()
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
 
-        //        return new CreateMovieResultDTO
-        //        {
-        //            Result = false,
-        //            Message = message,
-        //            StatusCode = (int)statusCode
-        //        };
-        //    }
-        //}
+                return new UpdateMovieResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete("movie/{id}")]
+        public async Task<DeleteMovieGrpcReplyDTO> DeleteMovie(Guid id)
+        {
+            try
+            {
+                var result = await _movieServiceConnector.DeleteMovie(id);
+
+                return new DeleteMovieGrpcReplyDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new DeleteMovieGrpcReplyDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
     }
 }

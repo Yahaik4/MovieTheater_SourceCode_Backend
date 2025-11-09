@@ -1,10 +1,11 @@
 ﻿using MovieService.DataTransferObject.Parameter;
 using MovieService.DataTransferObject.ResultData;
+using MovieService.Infrastructure.EF.Models;
 using MovieService.Infrastructure.Repositories.Interfaces;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
-using MovieService.Infrastructure.EF.Models;
+using System.Text.Json;
 
 namespace MovieService.DomainLogic
 {
@@ -31,6 +32,8 @@ namespace MovieService.DomainLogic
 
         public async Task<UpdateMovieResultData> Execute(UpdateMovieParam param)
         {
+
+            Console.WriteLine("Huy");
             // Validation param
             if (param == null)
             {
@@ -113,7 +116,7 @@ namespace MovieService.DomainLogic
             }
 
             // update movieGenres
-            if (param.Genres != null)
+            if (param.Genres != null && param.Genres.Count() > 0)
             {
                 var genreIds = param.Genres.Select(g => g.GenreId).ToList(); // 1, 2, 3   
                 var existingGenres = await _genreRepository.GetGenreByIds(genreIds);
@@ -149,7 +152,7 @@ namespace MovieService.DomainLogic
                 }
             }
 
-            if (param.Persons != null)
+            if (param.Persons != null && param.Persons.Count() > 0)
             {
                 var personIds = param.Persons.Select(p => p.PersonId).ToList(); // 1, 1, 2, 3 ...
                 var distinctPersonIds = personIds.Distinct().ToList(); // 1, 2, 3

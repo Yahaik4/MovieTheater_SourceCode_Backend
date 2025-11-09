@@ -1,8 +1,6 @@
-﻿using Shared.Contracts.ResultData;
-
-namespace ApiGateway.DataTransferObject.ResultData
+﻿namespace ApiGateway.DataTransferObject.ResultData
 {
-    public class UpdateMovieResultDTO : BaseResultData
+    public class UpdateMovieResultDTO : BaseResultDTO
     {
         public UpdateMovieDataResult Data { get; set; }
     }

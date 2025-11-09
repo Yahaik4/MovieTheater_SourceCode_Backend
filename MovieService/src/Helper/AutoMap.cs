@@ -55,6 +55,8 @@ namespace MovieService.Helper
 
             CreateMap<UpdateMovieResultData, UpdateMovieGrpcReplyDTO>();
             CreateMap<UpdateMovieDataResult, UpdateMovieGrpcReplyDataDTO>();
+
+            CreateMap<DeleteMovieResultData, DeleteMovieGrpcReplyDTO>();
         }
 
     }

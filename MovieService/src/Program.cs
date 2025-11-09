@@ -53,6 +53,7 @@ void RegisterRepository()
     services.AddScoped<GetMoviesLogic>();
     services.AddScoped<CreateMovieLogic>();
     services.AddScoped<UpdateMovieLogic>();
+    services.AddScoped<DeleteMovieLogic>();
 }
 
 void RegisterGrpcServicePublish()

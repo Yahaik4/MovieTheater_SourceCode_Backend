@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using MovieGrpc;
 using System.Diagnostics.Metrics;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Linq;
 
 namespace ApiGateway.ServiceConnector.MovieService
@@ -194,20 +196,20 @@ namespace ApiGateway.ServiceConnector.MovieService
             return await client.CreateMovieAsync(request);
         }
 
-        public async Task<UpdateMovieGrpcReplyDTO> UpdateMovie(UpdateMovieRequestParam param)
+        public async Task<UpdateMovieGrpcReplyDTO> UpdateMovie(Guid id, UpdateMovieRequestParam param)
         {
             using var channel = GetMovieServiceChannel();
             var client = new MovieGrpcService.MovieGrpcServiceClient(channel);
 
             var request = new UpdateMovieGrpcRequestDTO
             {
-                Id = param.Id.ToString(),
+                Id = id.ToString(),
                 Name = param.Name,
                 Country = param.Country,
                 Status = param.Status,
                 Description = param.Description,
-                Duration = param.Duration.ToString(),
-                ReleaseDate = param.ReleaseDate.ToString(),
+                Duration = param.Duration.HasValue ? param.Duration.Value.ToString() : null,
+                ReleaseDate = param.ReleaseDate.HasValue ? param.ReleaseDate.Value.ToString() : null,
                 Language = param.Language,
                 Publisher = param.Publisher,
                 Poster = param.Poster,
@@ -225,6 +227,19 @@ namespace ApiGateway.ServiceConnector.MovieService
                 }));
 
             return await client.UpdateMovieAsync(request);
+        }
+
+        public async Task<DeleteMovieGrpcReplyDTO> DeleteMovie(Guid id)
+        {
+            using var channel = GetMovieServiceChannel();
+            var client = new MovieGrpcService.MovieGrpcServiceClient(channel);
+
+            var request = new DeleteMovieGrpcRequestDTO
+            {
+                Id = id.ToString()
+            };
+
+            return await client.DeleteMovieAsync(request);
         }
     }
 }

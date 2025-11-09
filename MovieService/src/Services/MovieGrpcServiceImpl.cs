@@ -1,8 +1,9 @@
 using AutoMapper;
 using Grpc.Core;
 using MovieGrpc;
-using MovieService.DomainLogic;
 using MovieService.DataTransferObject.Parameter;
+using MovieService.DomainLogic;
+using System.Text.Json;
 
 namespace MovieService.Services
 {
@@ -20,9 +21,11 @@ namespace MovieService.Services
         private readonly GetMoviesLogic _getMoviesLogic;
         private readonly CreateMovieLogic _createMovieLogic;
         private readonly UpdateMovieLogic _updateMovieLogic;
+        private readonly DeleteMovieLogic _deleteMovieLogic;
+
         public MovieGrpcServiceImpl(IMapper mapper, 
-                                    GetGenresLogic getGenresLogic, 
-                                    CreateGenreLogic createGenreLogic, 
+                                    GetGenresLogic getGenresLogic,
+                                    CreateGenreLogic createGenreLogic,
                                     UpdateGenreLogic updateGenreLogic,
                                     DeleteGenreLogic deleteGenreLogic,
                                     GetPersonsLogic getPersonsLogic,
@@ -31,7 +34,8 @@ namespace MovieService.Services
                                     DeletePersonLogic deletePersonLogic,
                                     GetMoviesLogic getMoviesLogic,
                                     CreateMovieLogic createMovieLogic,
-                                    UpdateMovieLogic updateMovieLogic)
+                                    UpdateMovieLogic updateMovieLogic,
+                                    DeleteMovieLogic deleteMovieLogic)
         {
             _mapper = mapper;
             _getGenresLogic = getGenresLogic;
@@ -47,6 +51,7 @@ namespace MovieService.Services
             _getMoviesLogic = getMoviesLogic;
             _createMovieLogic = createMovieLogic;
             _updateMovieLogic = updateMovieLogic;
+            _deleteMovieLogic = deleteMovieLogic;
         }
 
         public override async Task<GetGenresGrpcReplyDTO> GetGenres(GetGenresGrpcRequestDTO request, ServerCallContext context)
@@ -141,12 +146,19 @@ namespace MovieService.Services
 
         public override async Task<UpdatePersonGrpcReplyDTO> UpdatePerson(UpdatePersonGrpcRequestDTO request, ServerCallContext context)
         {
+            DateOnly? birthDate = null;
+            if (!string.IsNullOrWhiteSpace(request.BirthDate)
+                && DateOnly.TryParse(request.BirthDate, out var parsedBirthDate))
+            {
+                birthDate = parsedBirthDate;
+            }
+
             var result = await _updatePersonLogic.Execute(new UpdatePersonParam
             {
                 Id = Guid.Parse(request.Id),
                 FullName = request.FullName,
                 Gender = request.Gender,
-                BirthDate = DateOnly.Parse(request.BirthDate),
+                BirthDate = birthDate,
                 Nationality = request.Nationality,
                 Bio = request.Bio,
                 ImageUrl = request.ImageUrl,
@@ -215,15 +227,36 @@ namespace MovieService.Services
 
         public override async Task<UpdateMovieGrpcReplyDTO> UpdateMovie(UpdateMovieGrpcRequestDTO request, ServerCallContext context)
         {
+            Console.WriteLine("Huy");
+            Console.WriteLine("=== Received UpdateMovie Request ===");
+            Console.WriteLine(JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                WriteIndented = true // in ??p, d? ??c
+            }));
+
+            TimeSpan? duration = null;
+            if (!string.IsNullOrWhiteSpace(request.Duration)
+                && TimeSpan.TryParse(request.Duration, out var parsedDuration))
+            {
+                duration = parsedDuration;
+            }
+
+            DateOnly? releaseDate = null;
+            if (!string.IsNullOrWhiteSpace(request.ReleaseDate)
+                && DateOnly.TryParse(request.ReleaseDate, out var parsedReleaseDate))
+            {
+                releaseDate = parsedReleaseDate;
+            }
+
             var result = await _updateMovieLogic.Execute(new UpdateMovieParam
             {
                 Id = Guid.Parse(request.Id),
                 Name = request.Name,
                 Description = request.Description,
-                Duration = TimeSpan.Parse(request.Duration),
+                Duration = duration,
                 Language = request.Language,
                 Publisher = request.Publisher,
-                ReleaseDate = DateOnly.Parse(request.ReleaseDate),
+                ReleaseDate = releaseDate,
                 Poster = request.Poster,
                 TrailerUrl = request.TrailerUrl,
                 Country = request.Country,
@@ -240,6 +273,16 @@ namespace MovieService.Services
             });
 
             return _mapper.Map<UpdateMovieGrpcReplyDTO>(result);
+        }
+
+        public override async Task<DeleteMovieGrpcReplyDTO> DeleteMovie(DeleteMovieGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _deleteMovieLogic.Execute(new DeleteMovieParam
+            {
+                Id = Guid.Parse(request.Id)
+            });
+
+            return _mapper.Map<DeleteMovieGrpcReplyDTO>(result);
         }
     }
 }
