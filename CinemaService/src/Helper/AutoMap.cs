@@ -71,6 +71,20 @@ namespace CinemaService.Helper
 
             CreateMap<UpdateSeatsResultData, UpdateSeatsGrpcReplyDTO>();
             CreateMap<UpdateSeatsDataResult, UpdateSeatsGrpcReplyDataDTO>();
+
+            CreateMap<GetShowtimesResultData, GetShowtimesGrpcReplyDTO>();
+            CreateMap<GetShowtimesDataResult, GetShowtimesGrpcReplyDataDTO>();
+            CreateMap<GetRoomTypeDataResult, GetRoomTypeGrpcReplyDataDTO>();
+            CreateMap<ShowtimeDataResult, ShowtimeGrpcReplyDataDTO>();
+
+            CreateMap<CreateShowtimeResultData, CreateShowtimeGrpcReplyDTO>();
+            CreateMap<CreateShowtimeDataResult, CreateShowtimeGrpcReplyDataDTO>();
+
+            CreateMap<UpdateShowtimeResultData, UpdateShowtimeGrpcReplyDTO>();
+            CreateMap<UpdateShowtimeDataResult, UpdateShowtimeGrpcReplyDataDTO>();
+
+            CreateMap<GetShowtimeSeatsResultData, GetShowtimeSeatsGrpcReplyDTO>();
+            CreateMap<GetShowtimeSeatsDataResult, GetShowtimeSeatsGrpcReplyDataDTO>();
         }
     }
 }

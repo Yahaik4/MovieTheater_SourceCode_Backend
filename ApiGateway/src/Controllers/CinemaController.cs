@@ -663,5 +663,174 @@ namespace ApiGateway.Controllers
                 };
             }
         }
+
+
+        [Authorize(Roles = "admin")]
+        [HttpGet("showtimes/{movieId}")]
+        public async Task<GetShowtimesResultDTO> GetShowtimes(Guid movieId, [FromQuery] GetShowtimesRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetShowtimes(null, movieId, param.Date, param.Country);
+
+                return  new GetShowtimesResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data
+                        .Select(c => new GetShowtimesDataResult
+                        {
+                            CinemaId = Guid.Parse(c.CinemaId),
+                            CinemaName = c.CinemaName,
+                            Address = c.Address,
+                            RoomTypes = c.RoomTypes
+                                .Select(rt => new GetRoomTypeDataResult
+                                {
+                                    RoomTypeId = Guid.Parse(rt.RoomTypeId),
+                                    RoomTypeName = rt.RoomTypeName,
+                                    Showtimes = rt.Showtimes
+                                        .Select(st => new ShowtimeDataResult
+                                        {
+                                            ShowtimeId = Guid.Parse(st.ShowtimeId),
+                                            StartTime = st.StartTime,
+                                            EndTime = st.EndTime
+                                        })
+                                        .OrderBy(st => st.StartTime)
+                                        .ToList()
+                                })
+                                .ToList()
+                        })
+                        .ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new GetShowtimesResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                    Data = new List<GetShowtimesDataResult>()
+                };
+            }
+        }
+
+        [HttpPost("showtime")]
+        public async Task<CreateShowtimeResultDTO> CreateShowtime(CreateShowtimeRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.CreateShowtime(param.MovieId, param.RoomId, param.StartTime,param.EndTime,  param.Status);
+
+                return new CreateShowtimeResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreateShowtimeDataResult
+                    {
+                        ShowtimeId = Guid.Parse(result.Data.ShowtimeId),
+                        MovieId = Guid.Parse(result.Data.MovieId),
+                        RoomId = Guid.Parse(result.Data.RoomId),
+                        MovieName = result.Data.MovieName,
+                        RoomNumber = result.Data.RoomNumber,
+                        StartTime = result.Data.StartTime,
+                        EndTime = result.Data.EndTime,
+                        Status = result.Data.Status
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new CreateShowtimeResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut("showtime/{id}")]
+        public async Task<UpdateShowtimeResultDTO> UpdateShowtime(Guid id, [FromBody] UpdateShowtimeRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.UpdateShowtime(id, param);
+
+                return new UpdateShowtimeResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new UpdateShowtimeDataResult
+                    {
+                        ShowtimeId = Guid.Parse(result.Data.ShowtimeId),
+                        MovieId = Guid.Parse(result.Data.MovieId),
+                        RoomId = Guid.Parse(result.Data.RoomId),
+                        StartTime = result.Data.StartTime,
+                        EndTime = result.Data.EndTime,
+                        MovieName = result.Data.MovieName,
+                        RoomNumber = result.Data.RoomNumber,
+                        Status = result.Data.Status
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new UpdateShowtimeResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpGet("showtime-seats/{showtimeId}")]
+        public async Task<GetShowtimeSeatsResultDTO> GetShowtimeseats(Guid showtimeId)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetShowtimeSeats(showtimeId);
+
+                return new GetShowtimeSeatsResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(sts => new GetShowtimeSeatsDataResult
+                    {
+                        SeatId = Guid.Parse(sts.SeatId),
+                        SeatCode = sts.SeatCode,
+                        Label = sts.Label,
+                        Status = sts.Status,
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new GetShowtimeSeatsResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
     }
 }

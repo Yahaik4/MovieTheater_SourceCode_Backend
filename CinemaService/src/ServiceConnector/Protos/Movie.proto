@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "MovieGrpc";
+
+package Movie;
+
+service MovieGrpcService {
+	rpc GetMovies(GetMoviesGrpcRequestDTO) returns (GetMoviesGrpcReplyDTO);
+}
+
+message GetMoviesGrpcRequestDTO {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue country = 3;
+	google.protobuf.StringValue status = 4;
+}
+
+message GetMoviesGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetMoviesGrpcReplyDataDTO Data = 4;
+}
+
+message GetMoviesGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+	string description = 3;
+	string releaseDate = 4; 
+	string duration = 5;
+	string publisher = 6;
+	string country = 7;
+	string language = 8;
+	string poster = 9;
+	string trailerUrl = 10;
+	string status = 11;
+	repeated MovieGenreGrpcReplyDataDTO genres = 12;
+	repeated MoviePersonGrpcReplyDataDTO persons = 13;
+}
+
+message MovieGenreGrpcReplyDataDTO {
+	string genreId = 1;
+	string genreName = 2;
+}
+
+message MoviePersonGrpcReplyDataDTO {
+	string personId = 1;
+	string fullName = 2;
+	string role = 3;
+}

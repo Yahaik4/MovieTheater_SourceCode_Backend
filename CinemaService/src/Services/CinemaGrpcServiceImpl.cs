@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using CinemaGrpc;
+using CinemaService.DataTransferObject.Parameter;
 using CinemaService.DomainLogic;
 using Grpc.Core;
-using CinemaService.DataTransferObject.Parameter;
+using System.Globalization;
+using System.Text.Json;
 
 namespace CinemaService.Services
 {
@@ -27,6 +29,10 @@ namespace CinemaService.Services
         private readonly DeleteRoomLogic _deleteRoomLogic;
         private readonly GetAllSeatLogic _getAllSeatLogic;
         private readonly UpdateSeatLogic _updateSeatLogic;
+        private readonly GetShowtimesLogic _getShowtimesLogic;
+        private readonly CreateShowtimeLogic _createShowtimeLogic;
+        private readonly UpdateShowtimeLogic _updateShowtimeLogic;
+        private readonly GetShowtimeSeatsLogic _getShowtimeSeatsLogic;
 
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
@@ -46,7 +52,11 @@ namespace CinemaService.Services
                                     UpdateRoomLogic updateRoomLogic,
                                     DeleteRoomLogic deleteRoomLogic,
                                     GetAllSeatLogic getAllSeatLogic,
-                                    UpdateSeatLogic updateSeatLogic) 
+                                    UpdateSeatLogic updateSeatLogic,
+                                    GetShowtimesLogic getShowtimesLogic,
+                                    CreateShowtimeLogic createShowtimeLogic,
+                                    UpdateShowtimeLogic updateShowtimeLogic,
+                                    GetShowtimeSeatsLogic getShowtimeSeatsLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -67,6 +77,10 @@ namespace CinemaService.Services
             _deleteRoomLogic = deleteRoomLogic;
             _getAllSeatLogic = getAllSeatLogic;
             _updateSeatLogic = updateSeatLogic;
+            _getShowtimesLogic = getShowtimesLogic;
+            _createShowtimeLogic = createShowtimeLogic;
+            _updateShowtimeLogic = updateShowtimeLogic;
+            _getShowtimeSeatsLogic = getShowtimeSeatsLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -367,5 +381,120 @@ namespace CinemaService.Services
             return _mapper.Map<UpdateSeatsGrpcReplyDTO>(result);
         }
 
+        public override async Task<GetShowtimesGrpcReplyDTO> GetShowtimes(GetShowtimesGrpcRequestDTO request, ServerCallContext context)
+        {
+            Guid? id = null;
+            if (!string.IsNullOrWhiteSpace(request.Id)
+                && Guid.TryParse(request.Id, out var parsedId))
+            {
+                id = parsedId;
+            }
+
+            Console.WriteLine(JsonSerializer.Serialize(request));
+
+            var result = await _getShowtimesLogic.Execute(new GetShowtimesParam
+            {
+                Id = id,
+                MovieId = Guid.Parse(request.MovieId),
+                Country = request.Country,
+                Date = DateOnly.Parse(request.Date),
+            });
+
+            return _mapper.Map<GetShowtimesGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CreateShowtimeGrpcReplyDTO> CreateShowtime(CreateShowtimeGrpcRequestDTO request, ServerCallContext context)
+        {
+            Console.WriteLine(JsonSerializer.Serialize(request));
+
+            // Parse datetime, handle AM/PM input, convert sang UTC
+            DateTime startTime = DateTime.Parse(request.StartTime, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
+            DateTime endTime = DateTime.Parse(request.EndTime, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
+
+            // Nếu EndTime <= StartTime, nghĩa là qua nửa đêm
+            if (endTime <= startTime)
+                endTime = endTime.AddDays(1);
+
+            var result = await _createShowtimeLogic.Execute(new CreateShowtimeParam
+            {
+                MovieId = Guid.Parse(request.MovieId),
+                RoomId = Guid.Parse(request.RoomId),
+                StartTime = startTime.ToUniversalTime(),
+                EndTime = endTime.ToUniversalTime(),
+                Status = request.Status,
+            });
+
+            return _mapper.Map<CreateShowtimeGrpcReplyDTO>(result);
+        }
+
+        public override async Task<UpdateShowtimeGrpcReplyDTO> UpdateShowtime(UpdateShowtimeGrpcRequestDTO request, ServerCallContext context)
+        {
+            Console.WriteLine(JsonSerializer.Serialize(request));
+
+            Guid? movieId = null;
+            if (!string.IsNullOrWhiteSpace(request.Id)
+                && Guid.TryParse(request.MovieId, out var movieParsedId))
+            {
+                movieId = movieParsedId;
+            }
+
+            Guid? roomId = null;
+            if (!string.IsNullOrWhiteSpace(request.Id)
+                && Guid.TryParse(request.RoomId, out var roomParsedId))
+            {
+                roomId = roomParsedId;
+            }
+
+            DateTime? startTime = null;
+            DateTime? endTime = null;
+
+            if (!string.IsNullOrEmpty(request.StartTime))
+            {
+                startTime = DateTime.Parse(request.StartTime, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
+
+                // Nếu EndTime <= StartTime, nghĩa là qua nửa đêm
+                if (!string.IsNullOrEmpty(request.EndTime))
+                {
+                    endTime = DateTime.Parse(request.EndTime, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
+
+                    if (endTime <= startTime)
+                        endTime = endTime.Value.AddDays(1);
+                }
+
+                // Convert sang UTC
+                startTime = startTime.Value.ToUniversalTime();
+                if (endTime.HasValue)
+                    endTime = endTime.Value.ToUniversalTime();
+            }
+            else if (!string.IsNullOrEmpty(request.EndTime))
+            {
+                // Trường hợp chỉ có EndTime được truyền, vẫn parse
+                endTime = DateTime.Parse(request.EndTime, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
+                endTime = endTime.Value.ToUniversalTime();
+            }
+
+
+            var result = await _updateShowtimeLogic.Execute(new UpdateShowtimeParam
+            {
+                Id = Guid.Parse(request.Id),
+                MovieId = movieId,
+                RoomId = roomId,
+                StartTime = startTime,
+                EndTime = endTime,
+                Status = request.Status,
+            });
+
+            return _mapper.Map<UpdateShowtimeGrpcReplyDTO>(result);
+        } 
+
+        public override async Task<GetShowtimeSeatsGrpcReplyDTO> GetShowtimeSeats(GetShowtimeSeatsGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getShowtimeSeatsLogic.Execute(new GetShowtimeSeatsParam
+            {
+                showtimeId = Guid.Parse(request.Id)
+            });
+
+            return _mapper.Map<GetShowtimeSeatsGrpcReplyDTO>(result);
+        }
     }
 }

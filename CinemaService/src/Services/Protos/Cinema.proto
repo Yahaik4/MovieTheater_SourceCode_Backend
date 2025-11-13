@@ -1,5 +1,7 @@
 ﻿syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
+
 option csharp_namespace = "CinemaGrpc";
 
 package Cinema;
@@ -28,6 +30,11 @@ service CinemaGrpcService {
 	rpc UpdateSeatType(UpdateSeatTypeGrpcRequestDTO) returns (UpdateSeatTypeGrpcReplyDTO);
 	rpc DeleteSeatType(DeleteSeatTypeGrpcRequestDTO) returns (DeleteSeatTypeGrpcReplyDTO);
 
+	rpc GetShowtimes(GetShowtimesGrpcRequestDTO) returns (GetShowtimesGrpcReplyDTO);
+	rpc CreateShowtime(CreateShowtimeGrpcRequestDTO) returns (CreateShowtimeGrpcReplyDTO);
+	rpc UpdateShowtime(UpdateShowtimeGrpcRequestDTO) returns (UpdateShowtimeGrpcReplyDTO);
+
+	rpc GetShowtimeSeats(GetShowtimeSeatsGrpcRequestDTO) returns (GetShowtimeSeatsGrpcReplyDTO);
 }
 
 message GetAllCinemasGrpcRequestDTO {
@@ -408,4 +415,108 @@ message UpdateSeatsGrpcReplyDataDTO {
     bool isActive = 5;
     string Status = 6;
     string SeatType = 7;
+}
+
+message GetShowtimesGrpcRequestDTO {
+	google.protobuf.StringValue id = 1;
+	string movieId = 2;
+	string country = 3;
+	string date = 4;
+}
+
+message GetShowtimesGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetShowtimesGrpcReplyDataDTO Data = 4;
+}
+
+message GetShowtimesGrpcReplyDataDTO {
+	string cinemaId = 1;
+	string cinemaName = 2;
+	string address = 3;
+	repeated GetRoomTypeGrpcReplyDataDTO roomTypes = 4;
+}
+
+message GetRoomTypeGrpcReplyDataDTO {
+	string roomTypeId = 1;
+	string roomTypeName = 2;
+	repeated ShowtimeGrpcReplyDataDTO showtimes = 3;
+}
+
+message ShowtimeGrpcReplyDataDTO {
+	string showtimeId = 1;
+	string startTime = 2;
+	string endTime = 3;
+}
+
+message CreateShowtimeGrpcRequestDTO {
+	string movieId = 1;
+	string roomId = 2;
+	string startTime = 3;
+	string endTime = 4;
+	string status = 5;
+}
+
+message CreateShowtimeGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreateShowtimeGrpcReplyDataDTO Data = 4;
+}
+
+message CreateShowtimeGrpcReplyDataDTO {
+	string showtimeId = 1;
+	string movieId = 2;
+	string movieName = 3;
+	string roomId = 4;
+	int32 roomNumber = 5;
+	string startTime = 6;
+	string endTime = 7;
+	string status = 8;
+}
+
+message UpdateShowtimeGrpcRequestDTO {
+	string id = 1;
+	google.protobuf.StringValue movieId = 2;
+	google.protobuf.StringValue roomId = 3;
+	google.protobuf.StringValue startTime = 4;
+	google.protobuf.StringValue endTime = 5;
+	google.protobuf.StringValue status = 6;
+}
+
+message UpdateShowtimeGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateShowtimeGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateShowtimeGrpcReplyDataDTO {
+	string showtimeId = 1;
+	string movieId = 2;
+	string movieName = 3;
+	string roomId = 4;
+	int32 roomNumber = 5;
+	string startTime = 6;
+	string endTime = 7;
+	string status = 8;
+}
+
+message GetShowtimeSeatsGrpcRequestDTO {
+	string id = 1;
+}
+
+message GetShowtimeSeatsGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetShowtimeSeatsGrpcReplyDataDTO Data = 4;
+}
+
+message GetShowtimeSeatsGrpcReplyDataDTO {
+	string seatId = 1;
+	string seatCode = 2;
+	string label = 3;
+	string status = 4;
 }

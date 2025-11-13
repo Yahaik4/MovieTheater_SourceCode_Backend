@@ -14,6 +14,8 @@ namespace CinemaService.Data
         public DbSet<RoomType> RoomTypes { get; set; }
         public DbSet<Seat> Seats { get; set; }
         public DbSet<SeatType> SeatTypes { get; set; }
+        public DbSet<Showtime> Showtimes { get; set; }
+        public DbSet<ShowtimeSeat> ShowtimeSeats { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +43,27 @@ namespace CinemaService.Data
                     .WithMany(r => r.Seats)
                     .HasForeignKey(s => s.RoomId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Showtime>(entity =>
+            {
+                entity.HasOne(st => st.Room)
+                    .WithMany(r => r.Showtimes)
+                    .HasForeignKey(st => st.RoomId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(st => st.ShowtimeSeats)
+                    .WithOne(sts => sts.Showtime)
+                    .HasForeignKey(sts => sts.ShowTimeId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ShowtimeSeat>(entity =>
+            {
+                entity.HasOne(sts => sts.Seat)
+                    .WithMany(s => s.ShowtimeSeats)
+                    .HasForeignKey(sts => sts.SeatId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
         }

@@ -1,4 +1,5 @@
-﻿using ApiGateway.Helper;
+﻿using ApiGateway.DataTransferObject.Parameter;
+using ApiGateway.Helper;
 using ApiGateway.ServiceConnector;
 using AuthenticationGrpc;
 using CinemaGrpc;
@@ -326,6 +327,70 @@ namespace ApiGateway.ServiceConnector.CinemaService
                 request.SeatTypeId = seatTypeId.Value.ToString();
 
             return await client.UpdateSeatsAsync(request);
+        }
+
+        public async Task<GetShowtimesGrpcReplyDTO> GetShowtimes(Guid? id, Guid movieId, DateOnly date, string country)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetShowtimesGrpcRequestDTO
+            {
+                Id = id.ToString(),
+                MovieId = movieId.ToString(),
+                Date = date.ToString(),
+                Country = country
+            };
+
+            return await client.GetShowtimesAsync(request);
+        }
+
+        public async Task<CreateShowtimeGrpcReplyDTO> CreateShowtime(Guid movieId, Guid roomId, DateTime startTime, DateTime endTime, string status)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new CreateShowtimeGrpcRequestDTO
+            {
+                MovieId = movieId.ToString(),
+                RoomId = roomId.ToString(),
+                StartTime = startTime.ToString(),
+                EndTime = endTime.ToString(),
+                Status = status
+            };
+
+            return await client.CreateShowtimeAsync(request);
+        }
+
+        public async Task<UpdateShowtimeGrpcReplyDTO> UpdateShowtime(Guid id, UpdateShowtimeRequestParam param)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new UpdateShowtimeGrpcRequestDTO
+            {
+                Id = id.ToString(),
+                MovieId = param.MovieId.ToString(),
+                RoomId = param.RoomId.ToString(),
+                StartTime = param.StartTime.ToString(),
+                EndTime = param.EndTime.ToString(),
+                Status = param.Status
+            };
+
+            return await client.UpdateShowtimeAsync(request);
+        }
+
+        public async Task<GetShowtimeSeatsGrpcReplyDTO> GetShowtimeSeats(Guid showtimeId)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetShowtimeSeatsGrpcRequestDTO
+            {
+                Id = showtimeId.ToString(),
+            };
+
+            return await client.GetShowtimeSeatsAsync(request);
         }
     }
 }

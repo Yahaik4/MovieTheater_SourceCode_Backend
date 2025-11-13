@@ -1,3 +1,4 @@
+using ApiGateway.ServiceConnector.MovieService;
 using CinemaService.Data;
 using CinemaService.DomainLogic;
 using CinemaService.Helper;
@@ -40,6 +41,8 @@ void RegisterRepository()
     services.AddScoped<IRoomTypeRepository, RoomTypeRepository>();
     services.AddScoped<ISeatTypeRepository, SeatTypeRepository>();
     services.AddScoped<ISeatRepository, SeatRepository>();
+    services.AddScoped<IShowtimeRepository, ShowtimeRepository>();
+    services.AddScoped<IShowtimeSeatRepository, ShowtimeSeatRepository>();
 
     // logic DJ
     services.AddScoped<GetAllCinemaLogic>();
@@ -65,8 +68,14 @@ void RegisterRepository()
     services.AddScoped<UpdateSeatTypeLogic>();
     services.AddScoped<DeleteSeatTypeLogic>();
 
-    //services.AddScoped<ProfileServiceConnector>();
-    //services.AddHttpContextAccessor();
+    services.AddScoped<GetShowtimesLogic>();
+    services.AddScoped<CreateShowtimeLogic>();
+    services.AddScoped<UpdateShowtimeLogic>();
+
+    services.AddScoped<GetShowtimeSeatsLogic>();
+
+    builder.Services.AddScoped<MovieServiceConnector>();
+    builder.Services.AddHttpContextAccessor();
 }
 
 void RegisterGrpcServicePublish()

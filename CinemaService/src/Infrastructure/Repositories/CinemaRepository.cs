@@ -53,5 +53,23 @@ namespace CinemaService.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return cinema;
         }
+
+        public async Task<IEnumerable<Cinema>> GetCinemasWithShowtimes(Guid movieId, DateOnly date, string country)
+        {
+            var startDate = DateTime.SpecifyKind(date.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+            var endDate = DateTime.SpecifyKind(date.ToDateTime(TimeOnly.MaxValue), DateTimeKind.Utc);
+
+            return await _context.Cinemas
+                .Include(c => c.Rooms.Where(r => !r.IsDeleted))
+                    .ThenInclude(r => r.Showtimes
+                        .Where(st => st.Status == "open"
+                                     && st.MovieId == movieId
+                                     && st.StartTime >= startDate
+                                     && st.StartTime <= endDate))
+                .Include(c => c.Rooms)
+                    .ThenInclude(r => r.RoomType)
+                .Where(c => c.City == country && !c.IsDeleted)
+                .ToListAsync();
+        }
     }
 }

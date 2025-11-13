@@ -13,5 +13,6 @@ namespace CinemaService.Infrastructure.EF.Models
         public RoomType RoomType { get; set; }
         public Cinema Cinema { get; set; }
         public ICollection<Seat> Seats { get; set; }
+        public ICollection<Showtime> Showtimes { get; set; }
     }
 }
