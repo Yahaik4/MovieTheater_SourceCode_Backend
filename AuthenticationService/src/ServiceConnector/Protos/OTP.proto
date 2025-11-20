@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option csharp_namespace = "OTPGrpc";
+
+package OTP;
+
+service OTPGrpcService {
+	rpc CreateOTP(CreateOTPGrpcRequestDTO) returns (CreateOTPGrpcReplyDTO);
+}
+
+message CreateOTPGrpcRequestDTO {
+	string userId = 1;
+}
+
+message CreateOTPGrpcReplyDTO {
+	bool result = 1;
+	string message = 2;
+	int32 statusCode = 3;
+	CreateOTPGrpcReplyDataDTO data = 4;
+}
+
+message CreateOTPGrpcReplyDataDTO {
+	string code = 1;
+	string expiry = 2;
+}

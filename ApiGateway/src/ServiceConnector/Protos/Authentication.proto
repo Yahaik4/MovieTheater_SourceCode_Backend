@@ -59,4 +59,9 @@ message RegisterGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;
+	RegisterGrpcReplyDataDTO Data = 4;
+}
+
+message RegisterGrpcReplyDataDTO {
+	string userId = 1;
 }

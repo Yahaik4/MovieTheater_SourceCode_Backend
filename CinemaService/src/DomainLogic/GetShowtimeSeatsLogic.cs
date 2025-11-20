@@ -35,10 +35,13 @@ namespace CinemaService.DomainLogic
                 StatusCode = StatusCodeEnum.Success,
                 Data = showtimeSeats.Select(sts => new GetShowtimeSeatsDataResult
                 {
-                    SeatId = sts.Id,
+                    ShowtimeSeatId = sts.Id,
+                    RoomNumber = sts.Showtime.Room.RoomNumber,
                     Status = sts.Status,
                     SeatCode = sts.Seat.SeatCode,
                     Label = sts.Seat.Label,
+                    Price = sts.Price,
+                    SeatType = sts.Seat.SeatType.Type,
                 }).ToList()
             };
         }

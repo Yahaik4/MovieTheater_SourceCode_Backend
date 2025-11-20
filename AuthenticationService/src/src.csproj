@@ -10,7 +10,8 @@
 
   <ItemGroup>
 	<Protobuf Include="Services\Protos\Authentication.proto" GrpcServices="Server" />
-	  <Protobuf Include="ServiceConnector\Protos\Profile.proto" GrpcServices="Client" />
+	<Protobuf Include="ServiceConnector\Protos\OTP.proto" GrpcServices="Client" />
+	<Protobuf Include="ServiceConnector\Protos\Profile.proto" GrpcServices="Client" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
     </PackageReference>
     <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.5.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
   </ItemGroup>
 

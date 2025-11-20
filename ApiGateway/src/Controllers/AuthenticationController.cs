@@ -1,6 +1,7 @@
 ﻿using ApiGateway.DataTransferObject.Parameter;
 using ApiGateway.DataTransferObject.ResultData;
 using ApiGateway.ServiceConnector.AuthenticationService;
+using ApiGateway.ServiceConnector.OTPService;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -13,10 +14,12 @@ namespace ApiGateway.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly AuthenticationServiceConnector _authenticationConnector;
+        private readonly OTPServiceConnector _otpServiceConnector;
 
-        public AuthenticationController(AuthenticationServiceConnector authenticationServiceConnector)
+        public AuthenticationController(AuthenticationServiceConnector authenticationServiceConnector, OTPServiceConnector otpServiceConnector)
         {
             _authenticationConnector = authenticationServiceConnector;
+            _otpServiceConnector = otpServiceConnector;
         }
 
         [HttpPost("sign-in")]
@@ -184,6 +187,10 @@ namespace ApiGateway.Controllers
                     Result = result.Result,
                     Message = result.Message,
                     StatusCode = result.StatusCode,
+                    Data = new RegisterDataResult
+                    {
+                        UserId = Guid.Parse(result.Data.UserId), 
+                    }
                 };
             }
             catch (RpcException ex)
@@ -199,5 +206,34 @@ namespace ApiGateway.Controllers
                 };
             }
         }
+
+        [HttpPost("verify-otp")]
+        public async Task<VerifyOTPResultDTO> VerifyOTP(VerifyOTPRequestParam param)
+        {
+            try
+            {
+                var result = await _otpServiceConnector.VerifyOTP(param.UserId, param.Code);
+
+                return new VerifyOTPResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"Login Error: {message}");
+
+                return new VerifyOTPResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
     }
 }

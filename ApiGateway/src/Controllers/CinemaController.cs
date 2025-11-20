@@ -1,11 +1,14 @@
 ﻿using ApiGateway.DataTransferObject.Parameter;
 using ApiGateway.DataTransferObject.ResultData;
+using ApiGateway.Helper;
 using ApiGateway.ServiceConnector.CinemaService;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Utils;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ApiGateway.Controllers
 {
@@ -14,11 +17,13 @@ namespace ApiGateway.Controllers
     [Route("api")]
     public class CinemaController : ControllerBase
     {
+        private readonly ICurrentUserService _currentUserService;
         private readonly CinemaServiceConnector _cinemaServiceConnector;
 
-        public CinemaController(CinemaServiceConnector cinemaServiceConnector)
+        public CinemaController(CinemaServiceConnector cinemaServiceConnector, ICurrentUserService currentUserService)
         {
             _cinemaServiceConnector = cinemaServiceConnector;
+            _currentUserService = currentUserService;
         }
 
         [HttpGet("cinemas")]
@@ -665,7 +670,7 @@ namespace ApiGateway.Controllers
         }
 
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [HttpGet("showtimes/{movieId}")]
         public async Task<GetShowtimesResultDTO> GetShowtimes(Guid movieId, [FromQuery] GetShowtimesRequestParam param)
         {
@@ -812,10 +817,13 @@ namespace ApiGateway.Controllers
                     StatusCode = result.StatusCode,
                     Data = result.Data.Select(sts => new GetShowtimeSeatsDataResult
                     {
-                        SeatId = Guid.Parse(sts.SeatId),
+                        ShowtimeSeatId = Guid.Parse(sts.ShowtimeSeatId),
+                        RoomNumber = sts.RoomNumber,
                         SeatCode = sts.SeatCode,
                         Label = sts.Label,
                         Status = sts.Status,
+                        Price = decimal.Parse(sts.Price),
+                        SeatType = sts.SeatType
                     }).ToList()
                 };
             }
@@ -825,6 +833,61 @@ namespace ApiGateway.Controllers
                 Log.Error($"GetShowtimes Error: {message}");
 
                 return new GetShowtimeSeatsResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [HttpPost("create-booking")]
+        public async Task<CreateBookingResultDTO> CreateBooking(CreateBookingRequestParam param)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                     ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                //foreach (var claim in User.Claims) { Console.WriteLine($"{claim.Type}: {claim.Value}"); }
+
+                if (userId == null) {
+                    throw new Exception("Not found userId in Token");
+                }
+                var result = await _cinemaServiceConnector.CreateBooking(userId, param.ShowtimeId, param.ShowtimeSeatIds);
+
+                return new CreateBookingResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreateBookingDataResult
+                    {
+                        BookingId = Guid.Parse(result.Data.BookingId),
+                        CinemaName = result.Data.CinemaName,
+                        NumberOfSeats = result.Data.NumberOfSeats,
+                        MovieName = result.Data.MovieName,
+                        StartTime = DateTime.Parse(result.Data.StartTime),
+                        EndTime = DateTime.Parse(result.Data.EndTime),
+                        RoomNumber = result.Data.RoomNumber,
+                        TotalPrice = decimal.Parse(result.Data.TotalPrice),
+                        BookingSeats = result.Data.BookingSeats.Select(bs => new BookingSeatsDataResult
+                        {
+                            SeatId = Guid.Parse(bs.SeatId),
+                            SeatCode = bs.SeatCode,
+                            SeatType = bs.SeatType,
+                            Label = bs.Label,
+                            Price = decimal.Parse(bs.Price),
+                        }).ToList()
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new CreateBookingResultDTO
                 {
                     Result = false,
                     Message = message,

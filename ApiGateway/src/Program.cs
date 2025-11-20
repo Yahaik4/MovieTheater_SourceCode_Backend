@@ -2,6 +2,7 @@ using ApiGateway.Helper;
 using ApiGateway.ServiceConnector.AuthenticationService;
 using ApiGateway.ServiceConnector.CinemaService;
 using ApiGateway.ServiceConnector.MovieService;
+using ApiGateway.ServiceConnector.OTPService;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -9,6 +10,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
@@ -71,7 +73,7 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<AuthenticationServiceConnector>();
 builder.Services.AddScoped<CinemaServiceConnector>();
 builder.Services.AddScoped<MovieServiceConnector>();
-builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<OTPServiceConnector>();
 
 var app = builder.Build();
 

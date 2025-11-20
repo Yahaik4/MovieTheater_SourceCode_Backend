@@ -11,5 +11,7 @@ namespace CinemaService.Infrastructure.EF.Models
         public string Status { get; set; }  // Scheduled // Open // Cancelled // Completed
         public Room Room { get; set; }
         public ICollection<ShowtimeSeat> ShowtimeSeats { get; set; }
+        public ICollection<Booking> Bookings { get; set; }
+
     }
 }

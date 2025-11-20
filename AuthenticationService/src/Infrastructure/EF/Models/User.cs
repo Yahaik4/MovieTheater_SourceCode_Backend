@@ -7,6 +7,7 @@ namespace AuthenticationService.Infrastructure.EF.Models
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string Role { get; set; } = "customer";
+        public bool IsVerified { get; set; } = false;
         public ICollection<Session> Sessions { get; set; }
     }
 }

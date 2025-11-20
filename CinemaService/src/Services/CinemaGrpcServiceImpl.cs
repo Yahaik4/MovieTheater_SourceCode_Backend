@@ -33,6 +33,7 @@ namespace CinemaService.Services
         private readonly CreateShowtimeLogic _createShowtimeLogic;
         private readonly UpdateShowtimeLogic _updateShowtimeLogic;
         private readonly GetShowtimeSeatsLogic _getShowtimeSeatsLogic;
+        private readonly CreateBookingLogic _createBookingLogic;
 
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
@@ -56,7 +57,8 @@ namespace CinemaService.Services
                                     GetShowtimesLogic getShowtimesLogic,
                                     CreateShowtimeLogic createShowtimeLogic,
                                     UpdateShowtimeLogic updateShowtimeLogic,
-                                    GetShowtimeSeatsLogic getShowtimeSeatsLogic) 
+                                    GetShowtimeSeatsLogic getShowtimeSeatsLogic,
+                                    CreateBookingLogic createBookingLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -81,6 +83,7 @@ namespace CinemaService.Services
             _createShowtimeLogic = createShowtimeLogic;
             _updateShowtimeLogic = updateShowtimeLogic;
             _getShowtimeSeatsLogic = getShowtimeSeatsLogic;
+            _createBookingLogic = createBookingLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -495,6 +498,19 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<GetShowtimeSeatsGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CreateBookingGrpcReplyDTO> CreateBooking(CreateBookingGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _createBookingLogic.Execute(new CreateBookingParam
+            {
+                UserId = Guid.Parse(request.UserId),
+                ShowtimeId = Guid.Parse(request.ShowtimeId),
+                ShowtimeSeatIds = request.ShowtimeSeatIds.Select(s => Guid.Parse(s)).ToList(),
+
+            });
+
+            return _mapper.Map<CreateBookingGrpcReplyDTO>(result);
         }
     }
 }

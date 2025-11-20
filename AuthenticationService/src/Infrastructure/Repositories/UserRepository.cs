@@ -42,7 +42,7 @@ namespace AuthenticationService.Infrastructure.Repositories
 
         public async Task<User> GetUserByEmail(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.IsVerified == true && u.IsDeleted == false);
         }
 
         public async Task<User> UpdateUser(User user)

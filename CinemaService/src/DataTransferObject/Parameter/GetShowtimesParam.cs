@@ -6,7 +6,7 @@ namespace CinemaService.DataTransferObject.Parameter
     {
         public Guid? Id { get; set; }
         public Guid MovieId { get; set; }
-        public string Country { get; set; }
+        public string? Country { get; set; }
         public DateOnly Date {  get; set; }
     }
 }

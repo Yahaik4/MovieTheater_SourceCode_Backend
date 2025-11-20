@@ -42,15 +42,15 @@ namespace AuthenticationService.DomainLogic
                 throw new UnauthorizedException("Account locked.");
             }
 
-            //if (!VerifyPassword(param.Password, user.Password))
-            //{
-            //    return new LoginResultData
-            //    {
-            //        Result = false,
-            //        Message = "Invalid password",
-            //        Data = null
-            //    };
-            //}
+            if (!VerifyPassword(param.Password, user.Password))
+            {
+                return new LoginResultData
+                {
+                    Result = false,
+                    Message = "Invalid password",
+                    Data = null
+                };
+            }
 
             var accessToken = _jwtToken.GenerateAccessToken(user.Id, user.Email, user.Role);
             var sessionId = Guid.NewGuid();

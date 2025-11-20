@@ -1,5 +1,6 @@
 ﻿using CinemaService.Infrastructure.EF.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace CinemaService.Data
 {
@@ -16,6 +17,7 @@ namespace CinemaService.Data
         public DbSet<SeatType> SeatTypes { get; set; }
         public DbSet<Showtime> Showtimes { get; set; }
         public DbSet<ShowtimeSeat> ShowtimeSeats { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,8 +66,24 @@ namespace CinemaService.Data
                     .WithMany(s => s.ShowtimeSeats)
                     .HasForeignKey(sts => sts.SeatId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(sts => sts.Booking)
+                    .WithMany(b => b.ShowtimeSeats)
+                    .HasForeignKey(sts => sts.BookingId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
+            modelBuilder.Entity<Booking>(entity =>
+            {
+                entity.HasOne(b => b.Showtime)
+                      .WithMany(st => st.Bookings)
+                      .HasForeignKey(b => b.ShowtimeId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Booking>()
+                        .Property(b => b.BookingSeats)
+                        .HasColumnType("jsonb");
         }
     }
 }

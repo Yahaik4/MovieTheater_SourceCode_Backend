@@ -23,7 +23,8 @@ namespace CinemaService.DomainLogic
                                    IRoomRepository roomRepository,
                                    IShowtimeSeatRepository showtimeSeatRepository,
                                    MovieServiceConnector movieServiceConnector,
-                                   ISeatRepository seatRepository)
+                                   ISeatRepository seatRepository,
+                                   IRoomTypeRepository roomTypeRepository)
         {
             _showtimeRepository = showtimeRepository;
             _roomRepository = roomRepository;
@@ -34,12 +35,6 @@ namespace CinemaService.DomainLogic
 
         public async Task<UpdateShowtimeResultData> Execute(UpdateShowtimeParam param)
         {
-            Console.WriteLine("=== Received UpdateShowtimeParam ===");
-            Console.WriteLine(JsonSerializer.Serialize(param, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            }));
-
             var showtime = await _showtimeRepository.GetShowtimeById(param.Id);
 
             if (showtime == null)
@@ -61,16 +56,7 @@ namespace CinemaService.DomainLogic
             }
             else
             {
-                Console.WriteLine("movieId: ", showtime.MovieId);
                 var movie = await _movieServiceConnector.GetMovies(showtime.MovieId, null, null, null);
-                Console.WriteLine("movie: ", movie);
-
-                Console.WriteLine("=== Movie Response ===");
-                Console.WriteLine(JsonSerializer.Serialize(movie, new JsonSerializerOptions
-                {
-                    WriteIndented = true // in đẹp, dễ đọc
-                }));
-
                 movieData = movie.Data.First();
             }
 
@@ -82,6 +68,8 @@ namespace CinemaService.DomainLogic
 
                 showtime.RoomId = param.RoomId.Value;
             }
+
+            var currentRoom = await _roomRepository.GetRoomById(showtime.RoomId);
 
             if (param.StartTime.HasValue)
                 showtime.StartTime = param.StartTime.Value;
@@ -117,7 +105,7 @@ namespace CinemaService.DomainLogic
                     if (seats.Any())
                     {
                         var seatIds = seats.Where(s => s.isActive).Select(s => s.Id).ToList();
-                        await _showtimeSeatRepository.CreateShowtimeSeats(showtime.Id, seatIds);
+                        await _showtimeSeatRepository.CreateShowtimeSeats(showtime.Id, seatIds, currentRoom.RoomType.BasePrice);
                     }
                 }
 

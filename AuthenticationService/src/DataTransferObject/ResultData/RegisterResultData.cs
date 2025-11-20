@@ -9,6 +9,6 @@ namespace AuthenticationService.DataTransferObject.ResultData
 
     public class RegisterDataResult
     {
-
+        public Guid UserId { get; set; }
     }
 }

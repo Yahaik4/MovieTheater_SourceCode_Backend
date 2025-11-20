@@ -2,6 +2,7 @@
 using CinemaService.Infrastructure.EF.Models;
 using CinemaService.Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CinemaService.Infrastructure.Repositories
 {
@@ -14,9 +15,56 @@ namespace CinemaService.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _context.Database.BeginTransactionAsync();
+        }
+
+        public async Task<List<ShowtimeSeat>> GetSeatsForBookingAsync(List<Guid> seatIds, Guid showtimeId)
+        {
+            var seatIdsArray = seatIds.ToArray();
+
+            // Lock the ShowtimeSeats rows
+            var showtimeSeats = await _context.ShowtimeSeats
+                .FromSqlInterpolated($@"
+                    SELECT * FROM ""ShowtimeSeats""
+                    WHERE ""ShowTimeId"" = {showtimeId}
+                      AND ""Id"" = ANY({seatIdsArray})
+                      AND ""Status"" = 'available'
+                    FOR UPDATE
+                ")
+                .ToListAsync();
+
+            // Load related Seat data (within the same transaction)
+            if (showtimeSeats.Any())
+            {
+                var seatIdsToLoad = showtimeSeats.Select(sts => sts.SeatId).Distinct().ToArray();
+
+                var seats = await _context.Seats
+                    .Where(s => seatIdsToLoad.Contains(s.Id))
+                    .Include(s => s.SeatType)
+                    .ToListAsync();
+
+                // Map seats to showtimeSeats
+                var seatDict = seats.ToDictionary(s => s.Id);
+                foreach (var sts in showtimeSeats)
+                {
+                    if (seatDict.TryGetValue(sts.SeatId, out var seat))
+                    {
+                        sts.Seat = seat;
+                    }
+                }
+            }
+
+            return showtimeSeats;
+        }
+
         public async Task<IEnumerable<ShowtimeSeat>> GetShowtimeSeatsByShowtimeId(Guid showtimeId)
         {
             var showtimeSeats = await _context.ShowtimeSeats.Include(sts => sts.Seat)
+                                                                .ThenInclude(s => s.SeatType)
+                                                            .Include(sts => sts.Showtime)
+                                                                .ThenInclude(st => st.Room)
                                                             .Where(sts => sts.ShowTimeId == showtimeId)
                                                             .ToListAsync();
 
@@ -30,20 +78,29 @@ namespace CinemaService.Infrastructure.Repositories
                 .ToList();
         }
 
-        public async Task<IEnumerable<ShowtimeSeat>> CreateShowtimeSeats(Guid showtimeId, List<Guid> seatIds)
+        public async Task<IEnumerable<ShowtimeSeat>> CreateShowtimeSeats(Guid showtimeId, List<Guid> seatIds, decimal basePriceRoom)
         {
-            var showtimeSeats = seatIds.Select(seatId => new ShowtimeSeat
+            var seats = await _context.Seats.Include(s => s.SeatType).Where(s => seatIds.Contains(s.Id)).ToListAsync();
+
+            var showtimeSeats = seats.Select(seat => new ShowtimeSeat
             {
                 Id = Guid.NewGuid(),
                 ShowTimeId = showtimeId,
-                SeatId = seatId,
-                Status = "Available"
+                SeatId = seat.Id,
+                Status = "available",
+                Price = basePriceRoom + seat.SeatType.ExtraPrice,
             }).ToList();
 
             await _context.ShowtimeSeats.AddRangeAsync(showtimeSeats);
             await _context.SaveChangesAsync();
 
             return showtimeSeats;
+        }
+
+        public async Task UpdateSeatsAsync(List<ShowtimeSeat> seats)
+        {
+            _context.ShowtimeSeats.UpdateRange(seats);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> DeleteShowtimeSeatsByShowtimeId(Guid showtimeId)

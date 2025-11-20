@@ -12,6 +12,7 @@ namespace ApiGateway.ServiceConnector
         public ServiceConnectorConfigOption AuthenticationService { get; set; } = new ServiceConnectorConfigOption();
         public ServiceConnectorConfigOption CinemaService { get; set; } = new ServiceConnectorConfigOption();
         public ServiceConnectorConfigOption MovieService { get; set; } = new ServiceConnectorConfigOption();
+        public ServiceConnectorConfigOption OTPService { get; set; } = new ServiceConnectorConfigOption();
 
     }
     public class BaseServiceConnector
@@ -38,6 +39,10 @@ namespace ApiGateway.ServiceConnector
                 MovieService = new ServiceConnectorConfigOption
                 {
                     Endpoint = _configuration["ServiceConnector:MovieService:Endpoint"] ?? string.Empty
+                },
+                OTPService = new ServiceConnectorConfigOption
+                {
+                    Endpoint = _configuration["ServiceConnector:OTPService:Endpoint"] ?? string.Empty
                 }
             };
         }
@@ -66,6 +71,8 @@ namespace ApiGateway.ServiceConnector
 
         protected GrpcChannel GetMovieServiceChannel()
             => GetGrpcChannel(GetServiceConnectorConfig().MovieService.Endpoint);
+        protected GrpcChannel GetOTPServiceChannel()
+            => GetGrpcChannel(GetServiceConnectorConfig().OTPService.Endpoint);
 
     }
 }

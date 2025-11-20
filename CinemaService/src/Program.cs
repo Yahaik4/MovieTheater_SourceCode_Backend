@@ -6,6 +6,7 @@ using CinemaService.Infrastructure.Repositories;
 using CinemaService.Infrastructure.Repositories.Interfaces;
 using CinemaService.Services;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Shared.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,15 @@ var services = builder.Services;
     });
 }
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+
+dataSourceBuilder.EnableDynamicJson();
+
+var dataSource = dataSourceBuilder.Build();
+
+
 RegisterRepository();
 var app = builder.Build();
 RegisterGrpcServicePublish();
@@ -33,7 +43,8 @@ RegisterGrpcServicePublish();
 void RegisterRepository()
 {
     services.AddDbContext<CinemaDbContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        options.UseNpgsql(dataSource)
+    );
 
     // repository DJ
     services.AddScoped<ICinemaRepository, CinemaRepository>();
@@ -43,6 +54,7 @@ void RegisterRepository()
     services.AddScoped<ISeatRepository, SeatRepository>();
     services.AddScoped<IShowtimeRepository, ShowtimeRepository>();
     services.AddScoped<IShowtimeSeatRepository, ShowtimeSeatRepository>();
+    services.AddScoped<IBookingRepository, BookingRepository>();
 
     // logic DJ
     services.AddScoped<GetAllCinemaLogic>();
@@ -73,6 +85,7 @@ void RegisterRepository()
     services.AddScoped<UpdateShowtimeLogic>();
 
     services.AddScoped<GetShowtimeSeatsLogic>();
+    services.AddScoped<CreateBookingLogic>();
 
     builder.Services.AddScoped<MovieServiceConnector>();
     builder.Services.AddHttpContextAccessor();

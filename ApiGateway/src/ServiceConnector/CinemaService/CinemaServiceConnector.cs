@@ -1,13 +1,7 @@
 ﻿using ApiGateway.DataTransferObject.Parameter;
 using ApiGateway.Helper;
-using ApiGateway.ServiceConnector;
-using AuthenticationGrpc;
 using CinemaGrpc;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using System;
-using System.Net;
-using System.Xml.Linq;
 
 namespace ApiGateway.ServiceConnector.CinemaService
 {
@@ -329,7 +323,7 @@ namespace ApiGateway.ServiceConnector.CinemaService
             return await client.UpdateSeatsAsync(request);
         }
 
-        public async Task<GetShowtimesGrpcReplyDTO> GetShowtimes(Guid? id, Guid movieId, DateOnly date, string country)
+        public async Task<GetShowtimesGrpcReplyDTO> GetShowtimes(Guid? id, Guid movieId, DateOnly date, string? country)
         {
             using var channel = GetCinemaServiceChannel();
             var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
@@ -391,6 +385,22 @@ namespace ApiGateway.ServiceConnector.CinemaService
             };
 
             return await client.GetShowtimeSeatsAsync(request);
+        }
+
+        public async Task<CreateBookingGrpcReplyDTO> CreateBooking(string userId, Guid showtimeId, List<Guid> showtimeSeatIds)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new CreateBookingGrpcRequestDTO
+            {
+                UserId = userId,
+                ShowtimeId = showtimeId.ToString()
+            };
+
+            request.ShowtimeSeatIds.AddRange(showtimeSeatIds.Select(x => x.ToString()));
+
+            return await client.CreateBookingAsync(request);
         }
     }
 }

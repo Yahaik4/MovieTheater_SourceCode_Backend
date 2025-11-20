@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Shared.Contracts\Messages\" />
     <Folder Include="Shared.Contracts\Parameters\" />
   </ItemGroup>
 

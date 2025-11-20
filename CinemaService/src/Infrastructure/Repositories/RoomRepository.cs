@@ -53,7 +53,7 @@ namespace CinemaService.Infrastructure.Repositories
 
         public async Task<Room?> GetRoomById(Guid roomId)
         {
-            return await _context.Rooms.FirstOrDefaultAsync(r => r.Id == roomId);
+            return await _context.Rooms.Include(r => r.RoomType).FirstOrDefaultAsync(r => r.Id == roomId);
         }
 
         public async Task<Room> UpdateRoom(Room room)

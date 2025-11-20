@@ -1,15 +1,6 @@
 ﻿using ApiGateway.DataTransferObject.Parameter;
 using ApiGateway.Helper;
-using ApiGateway.ServiceConnector;
-using CinemaGrpc;
-using Grpc.Core;
-using Microsoft.AspNetCore.Http.HttpResults;
 using MovieGrpc;
-using System.Diagnostics.Metrics;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Xml.Linq;
 
 namespace ApiGateway.ServiceConnector.MovieService
 {

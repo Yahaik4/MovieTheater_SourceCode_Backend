@@ -7,6 +7,7 @@ using AuthenticationService.DomainLogic;
 using AuthenticationService.ServiceConnector.ProfileService;
 using AuthenticationService.Infrastructure.Repositories;
 using AuthenticationService.Services;
+using AuthenticationService.ServiceConnector;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,7 +48,9 @@ void RegisterRepository()
     services.AddScoped<RefreshTokenLogic>();
     services.AddScoped<LogoutLogic>();
     services.AddScoped<RegisterLogic>();
+    services.AddScoped<RabbitMqPublisher>();
 
+    services.AddScoped<OTPServiceConnector>();
     services.AddScoped<ProfileServiceConnector>();
     services.AddHttpContextAccessor();
 }

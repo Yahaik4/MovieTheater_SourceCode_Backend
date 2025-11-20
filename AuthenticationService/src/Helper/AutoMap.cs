@@ -21,6 +21,7 @@ namespace AuthenticationService.Helper
 
             // RegisterMapping
             CreateMap<RegisterResultData, RegisterGrpcReplyDTO>();
+            CreateMap<RegisterDataResult, RegisterGrpcReplyDataDTO>();
         }
     }
 }

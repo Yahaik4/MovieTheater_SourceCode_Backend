@@ -10,6 +10,7 @@ namespace AuthenticationService.ServiceConnector
     public class ServiceConnectorConfig
     {
         public ServiceConnectorConfigOption ProfileService { get; set; } = new ServiceConnectorConfigOption();
+        public ServiceConnectorConfigOption OTPService { get; set; } = new ServiceConnectorConfigOption();
     }
     public class BaseServiceConnector
     {
@@ -27,6 +28,10 @@ namespace AuthenticationService.ServiceConnector
                 ProfileService = new ServiceConnectorConfigOption
                 {
                     Endpoint = _configuration["ServiceConnector:ProfileService:Endpoint"] ?? string.Empty
+                },
+                OTPService = new ServiceConnectorConfigOption
+                {
+                    Endpoint = _configuration["ServiceConnector:OTPService:Endpoint"] ?? string.Empty
                 }
             };
         }
@@ -49,5 +54,7 @@ namespace AuthenticationService.ServiceConnector
 
         protected GrpcChannel GetProfileServiceChannel()
             => GetGrpcChannel(GetServiceConnectorConfig().ProfileService.Endpoint);
+        protected GrpcChannel GetOTPServiceChannel()
+            => GetGrpcChannel(GetServiceConnectorConfig().OTPService.Endpoint);
     }
 }

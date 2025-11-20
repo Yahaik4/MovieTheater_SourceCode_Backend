@@ -8,6 +8,6 @@ namespace CinemaService.Infrastructure.Repositories.Interfaces
         Task<Cinema?> GetCinemaById(Guid cinemaId);
         Task<Cinema> CreateCinema(Cinema cinema);
         Task<Cinema> UpdateCinema(Cinema cinema);
-        Task<IEnumerable<Cinema>> GetCinemasWithShowtimes(Guid movieId, DateOnly date, string country);
+        Task<IEnumerable<Cinema>> GetCinemasWithShowtimes(Guid movieId, DateOnly date, string? country);
     }
 }

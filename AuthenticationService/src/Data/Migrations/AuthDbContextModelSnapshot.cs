@@ -22,7 +22,7 @@ namespace src.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("src.Infrastructure.EF.Models.Session", b =>
+            modelBuilder.Entity("AuthenticationService.Infrastructure.EF.Models.Session", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,7 +66,7 @@ namespace src.Data.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("src.Infrastructure.EF.Models.User", b =>
+            modelBuilder.Entity("AuthenticationService.Infrastructure.EF.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,6 +83,9 @@ namespace src.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsVerified")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Password")
@@ -105,9 +108,9 @@ namespace src.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("src.Infrastructure.EF.Models.Session", b =>
+            modelBuilder.Entity("AuthenticationService.Infrastructure.EF.Models.Session", b =>
                 {
-                    b.HasOne("src.Infrastructure.EF.Models.User", "User")
+                    b.HasOne("AuthenticationService.Infrastructure.EF.Models.User", "User")
                         .WithMany("Sessions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -117,7 +120,7 @@ namespace src.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("src.Infrastructure.EF.Models.User", b =>
+            modelBuilder.Entity("AuthenticationService.Infrastructure.EF.Models.User", b =>
                 {
                     b.Navigation("Sessions");
                 });

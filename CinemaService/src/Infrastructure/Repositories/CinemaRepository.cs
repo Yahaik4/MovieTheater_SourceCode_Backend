@@ -54,7 +54,7 @@ namespace CinemaService.Infrastructure.Repositories
             return cinema;
         }
 
-        public async Task<IEnumerable<Cinema>> GetCinemasWithShowtimes(Guid movieId, DateOnly date, string country)
+        public async Task<IEnumerable<Cinema>> GetCinemasWithShowtimes(Guid movieId, DateOnly date, string? country)
         {
             var startDate = DateTime.SpecifyKind(date.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
             var endDate = DateTime.SpecifyKind(date.ToDateTime(TimeOnly.MaxValue), DateTimeKind.Utc);
@@ -68,7 +68,7 @@ namespace CinemaService.Infrastructure.Repositories
                                      && st.StartTime <= endDate))
                 .Include(c => c.Rooms)
                     .ThenInclude(r => r.RoomType)
-                .Where(c => c.City == country && !c.IsDeleted)
+                .Where(c => (country == null || c.City == country) && !c.IsDeleted)
                 .ToListAsync();
         }
     }
