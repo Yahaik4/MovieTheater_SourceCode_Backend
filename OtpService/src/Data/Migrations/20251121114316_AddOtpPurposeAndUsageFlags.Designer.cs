@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OTPService.Data;
@@ -11,9 +12,11 @@ using OTPService.Data;
 namespace OTPService.Data.Migrations
 {
     [DbContext(typeof(OTPDbContext))]
-    partial class OTPDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251121114316_AddOtpPurposeAndUsageFlags")]
+    partial class AddOtpPurposeAndUsageFlags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

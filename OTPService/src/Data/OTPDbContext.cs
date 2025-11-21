@@ -15,7 +15,7 @@ namespace OTPService.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<OTP>()
-                .HasIndex(o => o.UserId)
+                .HasIndex(o => new { o.UserId, o.Purpose })
                 .IsUnique();
         }
     }

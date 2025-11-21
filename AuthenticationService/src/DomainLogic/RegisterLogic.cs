@@ -1,13 +1,13 @@
-﻿using AuthenticationService.Enums;
-using AuthenticationService.DataTransferObject.Parameter;
+﻿using AuthenticationService.DataTransferObject.Parameter;
 using AuthenticationService.DataTransferObject.ResultData;
 using AuthenticationService.Infrastructure.EF.Models;
 using AuthenticationService.Infrastructure.Repositories.Interfaces;
 using AuthenticationService.ServiceConnector;
 using AuthenticationService.ServiceConnector.ProfileService;
-using Shared.Contracts.Enums;
+using Shared.Contracts.Constants;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
+using Shared.Contracts.Enums;
 using src.Shared.Contracts.Messages;
 using System.Security.Cryptography;
 using System.Text;
@@ -35,11 +35,18 @@ namespace AuthenticationService.DomainLogic
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var existed = await _userRepository.GetUserByEmail(param.Email);
+            var existed = await _userRepository.GetUserByEmailIncludingUnverified(param.Email);
 
             if (existed != null)
             {
-                throw new ValidationException("Email is registerted");
+                if (existed.IsVerified)
+                {
+                    throw new ValidationException("Email is registerted");
+                }
+
+                existed.IsDeleted = true;
+                existed.UpdatedAt = DateTime.UtcNow;
+                await _userRepository.UpdateUser(existed);
             }
 
             var newUser = new User
@@ -53,7 +60,7 @@ namespace AuthenticationService.DomainLogic
 
             try
             {
-                var otp = await _otpServiceConnector.CreateOTP(newUser.Id);
+                var otp = await _otpServiceConnector.CreateOTP(newUser.Id, OtpPurposeConstants.Register);
 
                 if (!otp.Result)
                 {
@@ -65,7 +72,7 @@ namespace AuthenticationService.DomainLogic
                 {
                     Email = newUser.Email,
                     Otp = otp.Data.Code,
-                    Purpose = "Register"
+                    Purpose = OtpPurposeConstants.Register
                 };
                 _rabbitMqPublisher.PublishSendOtp(otpMessage);
 

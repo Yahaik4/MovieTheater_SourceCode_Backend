@@ -48,6 +48,7 @@ void RegisterRepository()
     services.AddScoped<RefreshTokenLogic>();
     services.AddScoped<LogoutLogic>();
     services.AddScoped<RegisterLogic>();
+    services.AddScoped<VerifyAccountLogic>();
     services.AddScoped<RabbitMqPublisher>();
 
     services.AddScoped<OTPServiceConnector>();

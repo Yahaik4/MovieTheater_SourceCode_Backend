@@ -4,7 +4,8 @@ namespace OTPService.Infrastructure.Repositories.Interfaces
 {
     public interface IOTPRepository
     {
-        Task<OTP?> GetOTPbyUserId(Guid userId);
-        Task<OTP> CreateOTP(Guid userId, string code, TimeSpan expiry);
+        Task<OTP?> GetOTPByUserAsync(Guid userId, string purpose);
+        Task<OTP> CreateOrUpdateOTP(Guid userId, string code, TimeSpan expiry, string purpose);
+        Task<bool> MarkOtpAsDeletedAsync(OTP otp);
     }
 }

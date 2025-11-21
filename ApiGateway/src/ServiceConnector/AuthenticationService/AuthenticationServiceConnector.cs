@@ -74,5 +74,18 @@ namespace ApiGateway.ServiceConnector.AuthenticationService
             return await client.RegisterAsync(request);
         }
 
+        public async Task<VerifyAccountGrpcReplyDTO> VerifyAccount(Guid userId)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new VerifyAccountGrpcRequestDTO
+            {
+                UserId = userId.ToString(),
+            };
+
+            return await client.VerifyAccountAsync(request);
+        }
+
     }
 }

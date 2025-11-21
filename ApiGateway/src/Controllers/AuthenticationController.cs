@@ -5,6 +5,7 @@ using ApiGateway.ServiceConnector.OTPService;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using Shared.Contracts.Constants;
 using Shared.Utils;
 
 namespace ApiGateway.Controllers
@@ -187,16 +188,18 @@ namespace ApiGateway.Controllers
                     Result = result.Result,
                     Message = result.Message,
                     StatusCode = result.StatusCode,
-                    Data = new RegisterDataResult
-                    {
-                        UserId = Guid.Parse(result.Data.UserId), 
-                    }
+                    Data = result.Data == null 
+                        ? null 
+                        : new RegisterDataResult
+                        {
+                            UserId = Guid.Parse(result.Data.UserId)  // ← chỉ parse khi Data != null
+                        }
                 };
             }
             catch (RpcException ex)
             {
                 var (statusCode, message) = RpcExceptionParser.Parse(ex);
-                Log.Error($"Login Error: {message}");
+                Log.Error($"Register Error: {message}");
 
                 return new RegisterResultDTO
                 {
@@ -212,7 +215,30 @@ namespace ApiGateway.Controllers
         {
             try
             {
-                var result = await _otpServiceConnector.VerifyOTP(param.UserId, param.Code);
+                var result = await _otpServiceConnector.VerifyOTP(param.UserId, param.Code, param.Purpose);
+
+                if (!result.Result)
+                {
+                    return new VerifyOTPResultDTO
+                    {
+                        Result = false,
+                        Message = result.Message,
+                        StatusCode = result.StatusCode,
+                    };
+                }
+
+                if (!string.IsNullOrWhiteSpace(param.Purpose) &&
+                    param.Purpose.Equals(OtpPurposeConstants.Register, StringComparison.OrdinalIgnoreCase))
+                {
+                    var verifyAccount = await _authenticationConnector.VerifyAccount(param.UserId);
+
+                    return new VerifyOTPResultDTO
+                    {
+                        Result = verifyAccount.Result,
+                        Message = verifyAccount.Message,
+                        StatusCode = verifyAccount.StatusCode,
+                    };
+                }
 
                 return new VerifyOTPResultDTO
                 {

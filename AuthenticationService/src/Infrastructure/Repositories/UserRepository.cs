@@ -45,6 +45,11 @@ namespace AuthenticationService.Infrastructure.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.IsVerified == true && u.IsDeleted == false);
         }
 
+        public async Task<User?> GetUserByEmailIncludingUnverified(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.IsDeleted == false);
+        }
+
         public async Task<User> UpdateUser(User user)
         {
             await _context.SaveChangesAsync();

@@ -1,4 +1,5 @@
-﻿using Shared.Contracts.Interfaces;
+﻿using Shared.Contracts.Constants;
+using Shared.Contracts.Interfaces;
 
 namespace OTPService.DataTransferObject.Parameter
 {
@@ -6,5 +7,6 @@ namespace OTPService.DataTransferObject.Parameter
     {
         public Guid UserId { get; set; }
         public string Code { get; set; }
+        public string Purpose { get; set; } = OtpPurposeConstants.Register;
     }
 }

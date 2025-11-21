@@ -4,6 +4,7 @@ using AuthenticationService.Helper;
 using AuthenticationService.Infrastructure.Repositories.Interfaces;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
+using Shared.Contracts.Enums;
 
 namespace AuthenticationService.DomainLogic
 {

@@ -11,6 +11,7 @@ service OTPGrpcService {
 
 message CreateOTPGrpcRequestDTO {
 	string userId = 1;
+	string purpose = 2;
 }
 
 message CreateOTPGrpcReplyDTO {
@@ -28,6 +29,7 @@ message CreateOTPGrpcReplyDataDTO {
 message VerifyOTPGrpcRequestDTO {
 	string userId = 1;
 	string code = 2;
+	string purpose = 3;
 }
 
 message VerifyOTPGrpcReplyDTO {

@@ -1,6 +1,7 @@
 ﻿using OTPService.DataTransferObject.Parameter;
 using OTPService.DataTransferObject.ResultData;
 using OTPService.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Constants;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
@@ -18,7 +19,7 @@ namespace OTPService.DomainLogic
 
         public async Task<VerifyOTPResultData> Execute(VerifyOTPParam param)
         {
-            var otp = await _otpRepository.GetOTPbyUserId(param.UserId);
+            var otp = await _otpRepository.GetOTPByUserAsync(param.UserId, param.Purpose ?? OtpPurposeConstants.Register);
 
             if (otp == null)
             {
@@ -40,6 +41,8 @@ namespace OTPService.DomainLogic
                     StatusCode = StatusCodeEnum.BadRequest
                 };
             }
+
+            await _otpRepository.MarkOtpAsDeletedAsync(otp);
 
             return new VerifyOTPResultData
             {

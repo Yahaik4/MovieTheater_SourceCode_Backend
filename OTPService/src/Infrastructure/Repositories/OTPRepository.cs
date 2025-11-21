@@ -2,6 +2,7 @@
 using OTPService.Data;
 using OTPService.Infrastructure.EF.Models;
 using OTPService.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Constants;
 
 namespace OTPService.Infrastructure.Repositories
 {
@@ -14,14 +15,18 @@ namespace OTPService.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<OTP> CreateOTP(Guid userId, string code, TimeSpan expiry)
+        public async Task<OTP> CreateOrUpdateOTP(Guid userId, string code, TimeSpan expiry, string purpose)
         {
-            var old = await _context.OTPs.FirstOrDefaultAsync(o => o.UserId == userId);
+            var normalizedPurpose = purpose.ToLowerInvariant();
+            var old = await _context.OTPs.FirstOrDefaultAsync(o => o.UserId == userId && o.Purpose == normalizedPurpose);
 
             if (old != null)
             {
                 old.Code = code;
                 old.ExpiryAt = DateTime.UtcNow.Add(expiry);
+                old.IsDeleted = false;
+                old.Purpose = normalizedPurpose;
+                old.UpdatedAt = DateTime.UtcNow;
 
                 _context.OTPs.Update(old);
                 await _context.SaveChangesAsync();
@@ -33,6 +38,7 @@ namespace OTPService.Infrastructure.Repositories
                 UserId = userId,
                 Code = code,
                 ExpiryAt = DateTime.UtcNow.Add(expiry),
+                Purpose = normalizedPurpose,
             };
 
             await _context.OTPs.AddAsync(otp);
@@ -42,9 +48,20 @@ namespace OTPService.Infrastructure.Repositories
         }
 
 
-        public async Task<OTP?> GetOTPbyUserId(Guid userId)
+        public async Task<OTP?> GetOTPByUserAsync(Guid userId, string purpose)
         {
-            return await _context.OTPs.FirstOrDefaultAsync(o => o.UserId == userId);
+            var normalizedPurpose = purpose.ToLowerInvariant();
+            return await _context.OTPs.FirstOrDefaultAsync(o => o.UserId == userId && o.Purpose == normalizedPurpose && o.IsDeleted == false);
+        }
+
+        public async Task<bool> MarkOtpAsDeletedAsync(OTP otp)
+        {
+            otp.IsDeleted = true;
+            otp.UpdatedAt = DateTime.UtcNow;
+
+            _context.OTPs.Update(otp);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

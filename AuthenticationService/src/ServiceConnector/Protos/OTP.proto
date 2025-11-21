@@ -10,6 +10,7 @@ service OTPGrpcService {
 
 message CreateOTPGrpcRequestDTO {
 	string userId = 1;
+	string purpose = 2;
 }
 
 message CreateOTPGrpcReplyDTO {

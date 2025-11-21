@@ -37,6 +37,7 @@ void RegisterRepository()
     services.AddScoped<IOTPRepository, OTPRepository>();
 
     services.AddScoped<CreateOTPLogic>();
+    services.AddScoped<VerifyOTPLogic>();
 }
 
 void RegisterGrpcServicePublish()

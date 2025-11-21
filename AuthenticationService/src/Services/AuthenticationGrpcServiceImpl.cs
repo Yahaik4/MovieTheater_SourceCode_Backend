@@ -13,18 +13,21 @@ namespace AuthenticationService.Services
         private readonly RefreshTokenLogic _refreshTokenLogic;
         private readonly LogoutLogic _logoutLogic;
         private readonly RegisterLogic _registerLogic;
+        private readonly VerifyAccountLogic _verifyAccountLogic;
 
         public AuthenticationGrpcServiceImpl(IMapper mapper, 
                                             LoginLogic loginLogic, 
                                             RefreshTokenLogic refreshTokenLogic, 
                                             LogoutLogic logoutLogic, 
-                                            RegisterLogic registerLogic) 
+                                            RegisterLogic registerLogic,
+                                            VerifyAccountLogic verifyAccountLogic) 
         {
             _mapper = mapper;
             _loginLogic = loginLogic;
             _refreshTokenLogic = refreshTokenLogic;
             _logoutLogic = logoutLogic;
             _registerLogic = registerLogic;
+            _verifyAccountLogic = verifyAccountLogic;
         }
 
         public override async Task<LoginGrpcReplyDTO> Login(LoginGrpcRequestDTO request, ServerCallContext context)
@@ -73,6 +76,16 @@ namespace AuthenticationService.Services
             });
 
             return _mapper.Map<RegisterGrpcReplyDTO>(result);
+        }
+
+        public override async Task<VerifyAccountGrpcReplyDTO> VerifyAccount(VerifyAccountGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _verifyAccountLogic.Execute(new VerifyAccountParam
+            {
+                UserId = Guid.Parse(request.UserId)
+            });
+
+            return _mapper.Map<VerifyAccountGrpcReplyDTO>(result);
         }
     }
 }

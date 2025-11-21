@@ -1,4 +1,5 @@
 ﻿using OTPGrpc;
+using Shared.Contracts.Constants;
 
 namespace AuthenticationService.ServiceConnector.ProfileService
 {
@@ -11,14 +12,19 @@ namespace AuthenticationService.ServiceConnector.ProfileService
             _serviceConnectorConfig = GetServiceConnectorConfig();
         }
 
-        public async Task<CreateOTPGrpcReplyDTO> CreateOTP(Guid userId)
+        public async Task<CreateOTPGrpcReplyDTO> CreateOTP(Guid userId, string purpose)
         {
             using var channel = GetOTPServiceChannel();
             var client = new OTPGrpcService.OTPGrpcServiceClient(channel);
 
+            var normalizedPurpose = string.IsNullOrWhiteSpace(purpose)
+                ? OtpPurposeConstants.Register
+                : purpose.ToLowerInvariant();
+
             var request = new CreateOTPGrpcRequestDTO
             {
                 UserId = userId.ToString(),
+                Purpose = normalizedPurpose
             };
 
             return await client.CreateOTPAsync(request);

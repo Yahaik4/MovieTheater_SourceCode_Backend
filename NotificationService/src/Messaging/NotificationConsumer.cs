@@ -24,9 +24,9 @@ namespace CinemaService.Messaging
             var factory = new ConnectionFactory()
             {
                 HostName = "localhost",
-                Port = 5673,
-                UserName = "admin",
-                Password = "123"
+                Port = 5672,
+                UserName = "guest",
+                Password = "guest"
             };
 
             _connection = factory.CreateConnection();
@@ -67,10 +67,12 @@ namespace CinemaService.Messaging
                     Console.WriteLine($"[MESSAGE RECEIVED] Email:{message.Email}, Purpose:{message.Purpose}");
 
                     // Phân loại xử lý theo Purpose
-                    switch (message.Purpose)
+                    var purpose = message.Purpose?.ToLowerInvariant();
+                    switch (purpose)
                     {
-                        case "Register":
-                        case "ForgotPassword":
+                        case "register":
+                        case "forgotpassword":
+                        case "reset_password":
                             if (!string.IsNullOrEmpty(message.Otp))
                                 await _emailService.SendOtpAsync(message.Email, message.Otp);
                             break;

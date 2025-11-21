@@ -1,6 +1,7 @@
 ﻿using OTPService.DataTransferObject.Parameter;
 using OTPService.DataTransferObject.ResultData;
 using OTPService.Infrastructure.Repositories.Interfaces;
+using Shared.Contracts.Constants;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
@@ -25,7 +26,7 @@ namespace OTPService.DomainLogic
 
             var code = GenerateRandomOtp(6);
             TimeSpan expiry = TimeSpan.FromMinutes(5);
-            var otp = await _otpRepository.CreateOTP(param.UserId, code, expiry);
+            var otp = await _otpRepository.CreateOrUpdateOTP(param.UserId, code, expiry, param.Purpose ?? OtpPurposeConstants.Register);
 
             return new CreateOTPResultData
             {
