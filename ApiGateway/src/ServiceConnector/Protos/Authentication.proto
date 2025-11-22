@@ -10,6 +10,9 @@ service AuthenticationGrpcService {
 	rpc Logout(RefreshTokenGrpcRequestDTO) returns (LogoutGrpcReplyDTO);
 	rpc Register(RegisterGrpcRequestDTO) returns (RegisterGrpcReplyDTO);
 	rpc VerifyAccount(VerifyAccountGrpcRequestDTO) returns (VerifyAccountGrpcReplyDTO);
+	rpc ResendOTP(ResendOTPRequest) returns (ResendOTPReply);
+	rpc ResetPassword(ResetPasswordRequest) returns (ResetpassWordReply);
+	rpc VerifyResetPassword(ResetPasswordRequest) returns (ResetpassWordReply);
 }
 
 message LoginGrpcRequestDTO {
@@ -75,4 +78,33 @@ message VerifyAccountGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;
+}
+
+message ResendOTPRequest {
+  string email = 1;
+  string purpose = 2;
+}
+
+message ResendOTPReply {
+  bool result = 1;
+  string message = 2;
+  int32 statusCode = 3;
+  ResendOTPReplyData data = 4;
+}
+
+message ResendOTPReplyData {
+  string code = 1;
+  string expiry = 2;
+}
+
+message ResetPasswordRequest {
+  string email = 1;
+  string otp = 2;
+  string newPassword = 3;
+}
+
+message ResetpassWordReply {
+  bool result = 1;
+  string message = 2;
+  int32 statusCode = 3;
 }

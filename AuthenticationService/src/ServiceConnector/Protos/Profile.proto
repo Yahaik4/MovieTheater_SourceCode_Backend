@@ -19,3 +19,15 @@ message CreateProfileGrpcReplyDTO {
 	string Message = 2;
 	int32 StatusCode = 3;
 }
+
+message ResetPasswordRequest {
+  string email = 1;
+  string otp = 2;
+  string newPassword = 3;
+}
+
+message ResetpassWordReply {
+  bool result = 1;
+  string message = 2;
+  int32 statusCode = 3;
+}

@@ -14,13 +14,17 @@ namespace AuthenticationService.Services
         private readonly LogoutLogic _logoutLogic;
         private readonly RegisterLogic _registerLogic;
         private readonly VerifyAccountLogic _verifyAccountLogic;
-
+        private readonly ResendOtpLogic _resendOtpLogic;
+        private readonly ResetPasswordLogic _resetPasswordLogic;
         public AuthenticationGrpcServiceImpl(IMapper mapper, 
                                             LoginLogic loginLogic, 
                                             RefreshTokenLogic refreshTokenLogic, 
                                             LogoutLogic logoutLogic, 
                                             RegisterLogic registerLogic,
-                                            VerifyAccountLogic verifyAccountLogic) 
+                                            VerifyAccountLogic verifyAccountLogic,
+                                            ResendOtpLogic resendOtpLogic,
+                                            ResetPasswordLogic resetPasswordLogic
+                                            ) 
         {
             _mapper = mapper;
             _loginLogic = loginLogic;
@@ -28,6 +32,8 @@ namespace AuthenticationService.Services
             _logoutLogic = logoutLogic;
             _registerLogic = registerLogic;
             _verifyAccountLogic = verifyAccountLogic;
+            _resendOtpLogic = resendOtpLogic;
+            _resetPasswordLogic = resetPasswordLogic;
         }
 
         public override async Task<LoginGrpcReplyDTO> Login(LoginGrpcRequestDTO request, ServerCallContext context)
@@ -86,6 +92,28 @@ namespace AuthenticationService.Services
             });
 
             return _mapper.Map<VerifyAccountGrpcReplyDTO>(result);
+        }
+
+        public override async Task<ResendOTPReply> ResendOTP(ResendOTPRequest request, ServerCallContext context)
+        {
+            var result = await _resendOtpLogic.Execute(request.Email, request.Purpose);
+            return result;
+        }
+
+        public override async Task<ResetpassWordReply> VerifyResetPassword(ResetPasswordRequest request, ServerCallContext context)
+        {
+            var result = await _resetPasswordLogic.Execute(
+                email: request.Email,
+                otp: request.Otp,
+                newPassword: request.NewPassword
+            );
+
+            return new ResetpassWordReply
+            {
+                Result = result.Result,
+                Message = result.Message,
+                StatusCode = result.StatusCode
+            };
         }
     }
 }

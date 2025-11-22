@@ -192,7 +192,7 @@ namespace ApiGateway.Controllers
                         ? null 
                         : new RegisterDataResult
                         {
-                            UserId = Guid.Parse(result.Data.UserId)  // ← chỉ parse khi Data != null
+                            UserId = Guid.Parse(result.Data.UserId)
                         }
                 };
             }
@@ -210,16 +210,16 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [HttpPost("verify-otp")]
-        public async Task<VerifyOTPResultDTO> VerifyOTP(VerifyOTPRequestParam param)
+        [HttpPost("verify-account")]
+        public async Task<VerifyAccountResultDTO> VerifyOTP(VerifyAccountRequestParam param)
         {
             try
             {
-                var result = await _otpServiceConnector.VerifyOTP(param.UserId, param.Code, param.Purpose);
+                var result = await _otpServiceConnector.VerifyOTP(param.UserId, param.Code, OtpPurposeConstants.Register);
 
                 if (!result.Result)
                 {
-                    return new VerifyOTPResultDTO
+                    return new VerifyAccountResultDTO
                     {
                         Result = false,
                         Message = result.Message,
@@ -227,32 +227,22 @@ namespace ApiGateway.Controllers
                     };
                 }
 
-                if (!string.IsNullOrWhiteSpace(param.Purpose) &&
-                    param.Purpose.Equals(OtpPurposeConstants.Register, StringComparison.OrdinalIgnoreCase))
-                {
-                    var verifyAccount = await _authenticationConnector.VerifyAccount(param.UserId);
+                var verifyAccount = await _authenticationConnector.VerifyAccount(param.UserId);
 
-                    return new VerifyOTPResultDTO
-                    {
-                        Result = verifyAccount.Result,
-                        Message = verifyAccount.Message,
-                        StatusCode = verifyAccount.StatusCode,
-                    };
-                }
-
-                return new VerifyOTPResultDTO
+                return new VerifyAccountResultDTO
                 {
-                    Result = result.Result,
-                    Message = result.Message,
-                    StatusCode = result.StatusCode,
+                    Result = verifyAccount.Result,
+                    Message = verifyAccount.Message,
+                    StatusCode = verifyAccount.StatusCode,
                 };
+                
             }
             catch (RpcException ex)
             {
                 var (statusCode, message) = RpcExceptionParser.Parse(ex);
                 Log.Error($"Login Error: {message}");
 
-                return new VerifyOTPResultDTO
+                return new VerifyAccountResultDTO
                 {
                     Result = false,
                     Message = message,
@@ -261,5 +251,81 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [HttpPost("resend-otp")]
+        public async Task<ResendOTPResultDTO> ResendOTP(ResendOTPRequestParam param)
+        {
+            try
+            {
+                var result = await _authenticationConnector.ResendOTP(param.email, param.Purpose);
+
+                return new ResendOTPResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data == null ? null : new ResendOTPDataResult
+                    {
+                        Code = result.Data.Code,
+                        Expiry = result.Data.Expiry
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new ResendOTPResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<ForgotPasswordResultDTO> ForgotPassword([FromBody] ForgotPasswordRequestParam param)
+        {
+            try
+            {
+                var result = await _authenticationConnector.ResendOTP(param.Email, OtpPurposeConstants.ResetPassword);
+
+                return new ForgotPasswordResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new ForgotPasswordResultDTO { Result = false, Message = message, StatusCode = (int)statusCode };
+            }
+        }
+
+        [HttpPost("verify-password")]
+        public async Task<VerifyPasswordResultDTO> VerifyPassword([FromBody] VerifyPasswordRequestParam param)
+        {
+            try
+            {
+                var result = await _authenticationConnector.VerifyAndResetPassword(
+                    email: param.Email,
+                    otp: param.Otp,
+                    newPassword: param.NewPassword
+                );
+
+                return new VerifyPasswordResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new VerifyPasswordResultDTO { Result = false, Message = message, StatusCode = (int)statusCode };
+            }
+        }
     }
 }

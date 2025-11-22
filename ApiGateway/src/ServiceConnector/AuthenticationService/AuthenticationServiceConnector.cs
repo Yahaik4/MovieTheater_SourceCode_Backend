@@ -1,6 +1,7 @@
 ﻿using ApiGateway.ServiceConnector;
 using AuthenticationGrpc;
 using Grpc.Core;
+using OTPGrpc;
 
 namespace ApiGateway.ServiceConnector.AuthenticationService
 {
@@ -87,5 +88,33 @@ namespace ApiGateway.ServiceConnector.AuthenticationService
             return await client.VerifyAccountAsync(request);
         }
 
+        public async Task<ResendOTPReply> ResendOTP(string email, string? purpose = null)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new ResendOTPRequest
+            {
+                Email = email,
+                Purpose = purpose ?? string.Empty
+            };
+
+            return await client.ResendOTPAsync(request);
+        }
+
+        public async Task<ResetpassWordReply> VerifyAndResetPassword(string email, string otp, string newPassword)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new ResetPasswordRequest
+            {
+                Email = email,
+                Otp = otp,
+                NewPassword = newPassword
+            };
+
+            return await client.VerifyResetPasswordAsync(request);
+        }
     }
 }

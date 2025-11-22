@@ -23,23 +23,13 @@ namespace OTPService.DomainLogic
 
             if (otp == null)
             {
-                return new VerifyOTPResultData
-                {
-                    Result = false,
-                    Message = "OTP not found",
-                    StatusCode = StatusCodeEnum.NotFound
-                };
+                throw new NotFoundException("OTP not found");
             }
 
 
             if (otp.Code != param.Code || otp.ExpiryAt < DateTime.UtcNow)
             {
-                return new VerifyOTPResultData
-                {
-                    Result = false,
-                    Message = "Invalid OTP code",
-                    StatusCode = StatusCodeEnum.BadRequest
-                };
+                throw new ValidationException("Invalid OTP code");
             }
 
             await _otpRepository.MarkOtpAsDeletedAsync(otp);

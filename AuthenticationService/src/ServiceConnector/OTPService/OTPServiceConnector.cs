@@ -12,6 +12,8 @@ namespace AuthenticationService.ServiceConnector.ProfileService
             _serviceConnectorConfig = GetServiceConnectorConfig();
         }
 
+        
+
         public async Task<CreateOTPGrpcReplyDTO> CreateOTP(Guid userId, string purpose)
         {
             using var channel = GetOTPServiceChannel();
@@ -28,6 +30,25 @@ namespace AuthenticationService.ServiceConnector.ProfileService
             };
 
             return await client.CreateOTPAsync(request);
+        }
+
+        public async Task<VerifyOTPGrpcReplyDTO> VerifyOTP(Guid userId, string code, string purpose)
+        {
+            using var channel = GetOTPServiceChannel();
+            var client = new OTPGrpcService.OTPGrpcServiceClient(channel);
+
+            var normalizedPurpose = string.IsNullOrWhiteSpace(purpose)
+                ? OtpPurposeConstants.Register
+                : purpose.ToLowerInvariant();
+
+            var request = new VerifyOTPGrpcRequestDTO
+            {
+                UserId = userId.ToString(),
+                Code = code,
+                Purpose = normalizedPurpose
+            };
+
+            return await client.VerifyOTPAsync(request);
         }
     }
 }
