@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ServiceConnector\Protos\Payment.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.32.0" />
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
     <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
@@ -30,6 +34,7 @@
 		<Protobuf Include="ServiceConnector\Protos\Cinema.proto" GrpcServices="Client" />
 		<Protobuf Include="ServiceConnector\Protos\Movie.proto" GrpcServices="Client" />
 		<Protobuf Include="ServiceConnector\Protos\OTP.proto" GrpcServices="Client" />
+		<Protobuf Include="ServiceConnector\Protos\Payment.proto" GrpcServices="Client" />
 	</ItemGroup>
 
 </Project>

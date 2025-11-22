@@ -1,7 +1,6 @@
 ﻿using ApiGateway.DataTransferObject.Parameter;
 using ApiGateway.Helper;
 using CinemaGrpc;
-using Grpc.Core;
 
 namespace ApiGateway.ServiceConnector.CinemaService
 {

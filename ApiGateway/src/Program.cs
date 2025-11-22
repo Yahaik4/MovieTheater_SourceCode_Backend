@@ -3,6 +3,7 @@ using ApiGateway.ServiceConnector.AuthenticationService;
 using ApiGateway.ServiceConnector.CinemaService;
 using ApiGateway.ServiceConnector.MovieService;
 using ApiGateway.ServiceConnector.OTPService;
+using ApiGateway.ServiceConnector.PaymentService;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -68,12 +69,25 @@ builder.Services.AddSwaggerGen(option =>
 
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                .AllowCredentials()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddScoped<AuthenticationServiceConnector>();
 builder.Services.AddScoped<CinemaServiceConnector>();
 builder.Services.AddScoped<MovieServiceConnector>();
 builder.Services.AddScoped<OTPServiceConnector>();
+builder.Services.AddScoped<PaymentServiceConnector>();
 
 var app = builder.Build();
 
@@ -83,6 +97,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 

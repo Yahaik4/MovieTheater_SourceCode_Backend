@@ -33,7 +33,9 @@ namespace CinemaService.Services
         private readonly CreateShowtimeLogic _createShowtimeLogic;
         private readonly UpdateShowtimeLogic _updateShowtimeLogic;
         private readonly GetShowtimeSeatsLogic _getShowtimeSeatsLogic;
+        private readonly GetBookingLogic _getBookingLogic;
         private readonly CreateBookingLogic _createBookingLogic;
+        private readonly UpdateBookingLogic _updateBookingLogic;
 
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
@@ -58,7 +60,9 @@ namespace CinemaService.Services
                                     CreateShowtimeLogic createShowtimeLogic,
                                     UpdateShowtimeLogic updateShowtimeLogic,
                                     GetShowtimeSeatsLogic getShowtimeSeatsLogic,
-                                    CreateBookingLogic createBookingLogic) 
+                                    GetBookingLogic getBookingLogic,
+                                    CreateBookingLogic createBookingLogic,
+                                    UpdateBookingLogic updateBookingLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -83,7 +87,9 @@ namespace CinemaService.Services
             _createShowtimeLogic = createShowtimeLogic;
             _updateShowtimeLogic = updateShowtimeLogic;
             _getShowtimeSeatsLogic = getShowtimeSeatsLogic;
+            _getBookingLogic = getBookingLogic;
             _createBookingLogic = createBookingLogic;
+            _updateBookingLogic = updateBookingLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -500,17 +506,37 @@ namespace CinemaService.Services
             return _mapper.Map<GetShowtimeSeatsGrpcReplyDTO>(result);
         }
 
+        public override async Task<GetBookingGrpcReplyDTO> GetBooking(GetBookingGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getBookingLogic.Execute(new GetBookingParam
+            {
+                BookingId = Guid.Parse(request.BookingId),
+            });
+
+            return _mapper.Map<GetBookingGrpcReplyDTO>(result);
+        }
+
         public override async Task<CreateBookingGrpcReplyDTO> CreateBooking(CreateBookingGrpcRequestDTO request, ServerCallContext context)
         {
             var result = await _createBookingLogic.Execute(new CreateBookingParam
             {
                 UserId = Guid.Parse(request.UserId),
                 ShowtimeId = Guid.Parse(request.ShowtimeId),
-                ShowtimeSeatIds = request.ShowtimeSeatIds.Select(s => Guid.Parse(s)).ToList(),
-
+                ShowtimeSeatIds = request.ShowtimeSeatIds.Select(s => Guid.Parse(s)).ToList()
             });
 
             return _mapper.Map<CreateBookingGrpcReplyDTO>(result);
+        }
+
+        public override async Task<UpdateBookingGrpcReplyDTO> UpdateBooking(UpdateBookingGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _updateBookingLogic.Execute(new UpdateBookingParam
+            {
+                BookingId = Guid.Parse(request.BookingId),
+                Status = request.Status
+            });
+
+            return _mapper.Map<UpdateBookingGrpcReplyDTO>(result);
         }
     }
 }

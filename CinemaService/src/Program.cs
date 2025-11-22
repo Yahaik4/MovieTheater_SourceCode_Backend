@@ -35,6 +35,8 @@ dataSourceBuilder.EnableDynamicJson();
 
 var dataSource = dataSourceBuilder.Build();
 
+builder.Services.AddHostedService<ShowtimeSeatCleanupService>();
+builder.Services.AddHostedService<BookingCleanupService>();
 
 RegisterRepository();
 var app = builder.Build();
@@ -85,7 +87,10 @@ void RegisterRepository()
     services.AddScoped<UpdateShowtimeLogic>();
 
     services.AddScoped<GetShowtimeSeatsLogic>();
+
+    services.AddScoped<GetBookingLogic>();
     services.AddScoped<CreateBookingLogic>();
+    services.AddScoped<UpdateBookingLogic>();
 
     builder.Services.AddScoped<MovieServiceConnector>();
     builder.Services.AddHttpContextAccessor();

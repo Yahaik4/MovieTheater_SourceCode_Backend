@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option csharp_namespace = "PaymentGrpc";
+
+package Payment;
+
+service PaymentGrpcService {
+	rpc CreateTransaction(CreateTransactionGrpcRequestDTO) returns (CreateTransactionGrpcReplyDTO);
+}
+
+message CreateTransactionGrpcRequestDTO {
+	string bookingId = 1;
+    string userId = 2;
+    string currency = 3;
+    string paymentMethod = 4;
+}
+
+message CreateTransactionGrpcReplyDTO {
+	bool result = 1;
+	string message = 2;
+	int32 statusCode = 3;
+	CreateTransactionGrpcReplyDataDTO data = 4;
+}
+
+message CreateTransactionGrpcReplyDataDTO {
+	string transactionId = 1;
+    string paymentIntentId = 2;
+    string clientSecret = 3;
+    string amount = 4;
+    string currency = 5;
+    string status = 6;
+    string createdAt = 7;
+}

@@ -4,6 +4,9 @@ namespace CinemaService.Infrastructure.Repositories.Interfaces
 {
     public interface IBookingRepository
     {
+        Task<Booking?> GetBookingById(Guid id);
         Task<Booking> CreateBooking(Booking booking);
+        Task<Booking> UpdateBooking(Booking booking)
+        Task UpdateExpiredBookingsStatusAsync();
     }
 }

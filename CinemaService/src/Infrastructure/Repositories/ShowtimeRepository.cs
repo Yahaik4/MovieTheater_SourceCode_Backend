@@ -37,5 +37,43 @@ namespace CinemaService.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return showtime;
         }
+
+        public async Task CompleteEndedShowtimesAsync()
+        {
+            const int batchSize = 1000;
+
+            var endedShowtimes = await _context.Showtimes
+                .Where(s => s.EndTime < DateTime.UtcNow && s.Status != "Completed")
+                .ToListAsync();
+
+            if (endedShowtimes.Count == 0)
+                return;
+
+            foreach (var show in endedShowtimes)
+            {
+                show.Status = "completed";
+            }
+
+            await _context.SaveChangesAsync();
+
+            bool hasMore = true;
+
+            while (hasMore)
+            {
+                var seatsToDelete = await _context.ShowtimeSeats
+                    .Where(ss => ss.Showtime.EndTime < DateTime.UtcNow)
+                    .Take(batchSize)
+                    .ToListAsync();
+
+                if (seatsToDelete.Count == 0)
+                {
+                    hasMore = false;
+                    break;
+                }
+
+                _context.ShowtimeSeats.RemoveRange(seatsToDelete);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

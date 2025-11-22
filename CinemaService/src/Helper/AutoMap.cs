@@ -86,9 +86,16 @@ namespace CinemaService.Helper
             CreateMap<GetShowtimeSeatsResultData, GetShowtimeSeatsGrpcReplyDTO>();
             CreateMap<GetShowtimeSeatsDataResult, GetShowtimeSeatsGrpcReplyDataDTO>();
 
+            CreateMap<GetBookingResultData, GetBookingGrpcReplyDTO>();
+            CreateMap<GetBookingDataResult, GetBookingGrpcReplyDataDTO>();
+
             CreateMap<CreateBookingResultData, CreateBookingGrpcReplyDTO>();
             CreateMap<CreateBookingDataResult, CreateBookingGrpcReplyDataDTO>();
             CreateMap<BookingSeatsDataResult, CreateBookingSeatsGrpcReplyDataDTO>();
+
+            CreateMap<UpdateBookingResultData, UpdateBookingGrpcReplyDTO>();
+            CreateMap<UpdateBookingDataResult, UpdateBookingGrpcReplyDataDTO>();
+            CreateMap<UpdateBookingSeatsDataResult, UpdateBookingSeatsGrpcReplyDataDTO>();
         }
     }
 }

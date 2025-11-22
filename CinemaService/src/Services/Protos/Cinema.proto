@@ -35,7 +35,10 @@ service CinemaGrpcService {
 	rpc UpdateShowtime(UpdateShowtimeGrpcRequestDTO) returns (UpdateShowtimeGrpcReplyDTO);
 
 	rpc GetShowtimeSeats(GetShowtimeSeatsGrpcRequestDTO) returns (GetShowtimeSeatsGrpcReplyDTO);
+
+	rpc GetBooking(GetBookingGrpcRequestDTO) returns (GetBookingGrpcReplyDTO);
 	rpc CreateBooking(CreateBookingGrpcRequestDTO) returns (CreateBookingGrpcReplyDTO);
+	rpc UpdateBooking(UpdateBookingGrpcRequestDTO) returns (UpdateBookingGrpcReplyDTO);
 }
 
 message GetAllCinemasGrpcRequestDTO {
@@ -556,4 +559,48 @@ message CreateBookingSeatsGrpcReplyDataDTO {
     string seatType = 3;
     string label = 4;
     string price = 5;
+}
+
+message GetBookingGrpcRequestDTO {
+	string bookingId = 1;
+}
+
+message GetBookingGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	GetBookingGrpcReplyDataDTO Data = 4;
+}
+
+message GetBookingGrpcReplyDataDTO {
+	string userId = 1;
+	string status = 2;
+	string totalPrice = 3;
+}
+
+message UpdateBookingGrpcRequestDTO {
+	string bookingId = 1;
+	string status = 2;
+}
+
+message UpdateBookingGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateBookingGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateBookingGrpcReplyDataDTO {
+	string bookingId = 1;
+	string status = 2;
+	repeated UpdateBookingSeatsGrpcReplyDataDTO bookingSeats = 3;
+}
+
+message UpdateBookingSeatsGrpcReplyDataDTO {
+	string seatId = 1;
+	string seatCode = 2;
+    string seatType = 3;
+    string label = 4;
+    string price = 5;
+	string status = 6;
 }

@@ -8,5 +8,6 @@ namespace CinemaService.Infrastructure.Repositories.Interfaces
         Task<Showtime?> GetShowtimeById (Guid id);
         Task<Showtime> CreateShowtime(Showtime showtime);
         Task<Showtime> UpdateShowtime(Showtime showtime);
+        Task CompleteEndedShowtimesAsync();
     }
 }
