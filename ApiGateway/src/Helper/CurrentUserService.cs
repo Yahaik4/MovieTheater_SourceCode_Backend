@@ -14,9 +14,9 @@ namespace ApiGateway.Helper
         private ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;
 
         public string? UserId =>
-    User?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value
-    ?? User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
-    ?? User?.FindFirst("sub")?.Value;
+            User?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value
+            ?? User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? User?.FindFirst("sub")?.Value;
 
         public string? Email =>
             User?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value
@@ -28,5 +28,10 @@ namespace ApiGateway.Helper
             ?? User?.FindFirst(ClaimTypes.Role)?.Value
             ?? User?.FindFirst("role")?.Value;
 
+        public string? Position =>
+            User?.FindFirst("position")?.Value;
+
+        public string? CinemaId =>
+            User?.FindFirst("cinema_id")?.Value;
     }
 }

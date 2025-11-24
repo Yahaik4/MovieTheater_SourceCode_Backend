@@ -57,6 +57,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPost("genre")]
         public async Task<CreateGenreResultDTO> GetGenres(CreateGenreRequestParam param)
         {
@@ -90,6 +91,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPut("genre/{id}")]
         public async Task<UpdateGenreResultDTO> UpdateGenre(Guid id, [FromBody] UpdateGenreRequestParam param)
         {
@@ -123,7 +125,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpDelete("genre/{id}")]
         public async Task<DeleteGenreResultDTO> DeleteGenre(Guid id)
         {
@@ -151,7 +153,7 @@ namespace ApiGateway.Controllers
                 };
             }
         }
-
+        
         [HttpGet("persons")]
         public async Task<GetPersonsResultDTO> GetPersons([FromQuery] GetPersonsRequestParam query)
         {
@@ -190,6 +192,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPost("person")]
         public async Task<CreatePersonResultDTO> CreatePerson(CreatePersonRequestParam param)
         {
@@ -228,6 +231,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPut("person/{id}")]
         public async Task<UpdatePersonResultDTO> UpdatePerson(Guid id, [FromBody] UpdatePersonRequestParam param)
         {
@@ -265,8 +269,8 @@ namespace ApiGateway.Controllers
                 };
             }
         }
-
-        [Authorize(Roles = "admin")]
+        
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpDelete("person/{id}")]
         public async Task<DeletePersonResultDTO> DeletePerson(Guid id)
         {
@@ -349,6 +353,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPost("movie")]
         public async Task<CreateMovieResultDTO> CreateMovie(CreateMovieRequestParam param)
         {
@@ -402,6 +407,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPatch("movie/{id}")]
         public async Task<UpdateMovieResultDTO> UpdateMovie(Guid id, UpdateMovieRequestParam param)
         {
@@ -455,7 +461,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpDelete("movie/{id}")]
         public async Task<DeleteMovieGrpcReplyDTO> DeleteMovie(Guid id)
         {

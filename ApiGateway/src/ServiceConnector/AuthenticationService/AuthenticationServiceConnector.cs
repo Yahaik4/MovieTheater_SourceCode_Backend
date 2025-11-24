@@ -116,5 +116,131 @@ namespace ApiGateway.ServiceConnector.AuthenticationService
 
             return await client.VerifyResetPasswordAsync(request);
         }
+        
+        public async Task<RegisterGrpcReplyDTO> AddUser(string fullName, string email, string password, string role, string? phoneNumber, string? dayOfBirth, string? gender, Guid? cinemaId, string? position, string? salary)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new AddUserGrpcRequestDTO
+            {
+                FullName = fullName,
+                Email = email,
+                Password = password,
+                Role = role,
+                PhoneNumber = phoneNumber ?? string.Empty,
+                DayOfBirth = dayOfBirth ?? string.Empty,
+                Gender = gender ?? string.Empty,
+                CinemaId = cinemaId?.ToString() ?? string.Empty,
+                Position = position ?? string.Empty,
+                Salary = salary ?? string.Empty
+            };
+
+            return await client.AddUserAsync(request);
+        }
+
+        public async Task<GetCustomersGrpcReplyDTO> GetCustomers(string? userId)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new GetUsersGrpcRequestDTO
+            {
+                UserId = userId ?? string.Empty   // rỗng = lấy tất cả
+            };
+
+            return await client.GetCustomersAsync(request);
+        }
+
+        public async Task<GetStaffsGrpcReplyDTO> GetStaffs(string? userId)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new GetUsersGrpcRequestDTO
+            {
+                UserId = userId ?? string.Empty
+            };
+
+            return await client.GetStaffsAsync(request);
+        }
+
+        public async Task<DeleteUserGrpcReplyDTO> DeleteUser(
+            Guid targetUserId,
+            string callerRole,
+            string? callerPosition)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new DeleteUserGrpcRequestDTO
+            {
+                TargetUserId = targetUserId.ToString(),
+                CallerRole = callerRole ?? string.Empty,
+                CallerPosition = callerPosition ?? string.Empty
+            };
+
+            return await client.DeleteUserAsync(request);
+        }
+
+        public async Task<UpdateCustomerGrpcReplyDTO> UpdateCustomer(
+            Guid targetUserId,
+            string callerRole,
+            string? callerPosition,
+            string? fullName,
+            string? phoneNumber,
+            string? dayOfBirth,
+            string? gender,
+            int? points)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new UpdateCustomerGrpcRequestDTO
+            {
+                TargetUserId = targetUserId.ToString(),
+                CallerRole = callerRole ?? string.Empty,
+                CallerPosition = callerPosition ?? string.Empty,
+                FullName = fullName ?? string.Empty,
+                PhoneNumber = phoneNumber ?? string.Empty,
+                DayOfBirth = dayOfBirth ?? string.Empty,
+                Gender = gender ?? string.Empty,
+                Points = points?.ToString() ?? string.Empty
+            };
+
+            return await client.UpdateCustomerAsync(request);
+        }
+
+        public async Task<UpdateStaffGrpcReplyDTO> UpdateStaff(
+            Guid targetUserId,
+            string callerRole,
+            string? callerPosition,
+            string? fullName,
+            string? phoneNumber,
+            string? dayOfBirth,
+            string? gender,
+            Guid? cinemaId,
+            string? position,
+            decimal? salary)
+        {
+            using var channel = GetAuthenticationServiceChannel();
+            var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
+
+            var request = new UpdateStaffGrpcRequestDTO
+            {
+                TargetUserId = targetUserId.ToString(),
+                CallerRole = callerRole ?? string.Empty,
+                CallerPosition = callerPosition ?? string.Empty,
+                FullName = fullName ?? string.Empty,
+                PhoneNumber = phoneNumber ?? string.Empty,
+                DayOfBirth = dayOfBirth ?? string.Empty,
+                Gender = gender ?? string.Empty,
+                CinemaId = cinemaId?.ToString() ?? string.Empty,
+                Position = position ?? string.Empty,
+                Salary = salary?.ToString() ?? string.Empty
+            };
+
+            return await client.UpdateStaffAsync(request);
+        }
     }
 }

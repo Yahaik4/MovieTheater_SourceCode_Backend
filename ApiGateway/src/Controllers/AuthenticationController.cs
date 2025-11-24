@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Contracts.Constants;
 using Shared.Utils;
+using Microsoft.AspNetCore.Authorization;
+using Shared.Contracts.Enums;
+using ApiGateway.Helper;
 
 namespace ApiGateway.Controllers
 {
@@ -16,11 +19,13 @@ namespace ApiGateway.Controllers
     {
         private readonly AuthenticationServiceConnector _authenticationConnector;
         private readonly OTPServiceConnector _otpServiceConnector;
+        private readonly ICurrentUserService _currentUserService;
 
-        public AuthenticationController(AuthenticationServiceConnector authenticationServiceConnector, OTPServiceConnector otpServiceConnector)
+        public AuthenticationController(AuthenticationServiceConnector authenticationServiceConnector, OTPServiceConnector otpServiceConnector, ICurrentUserService currentUserService)
         {
             _authenticationConnector = authenticationServiceConnector;
             _otpServiceConnector = otpServiceConnector;
+            _currentUserService = currentUserService;
         }
 
         [HttpPost("sign-in")]
@@ -210,6 +215,47 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [HttpPut("update-profile")]
+        [Authorize]
+        public async Task<UpdateUserResultDTO> UpdateCustomer(
+            [FromBody] UpdateUserRequestParam param)
+        {
+            try
+            {
+                var userId = _currentUserService.UserId;
+                var callerRole = _currentUserService.Role ?? string.Empty;
+                var callerPosition = _currentUserService.Position;
+
+                var result = await _authenticationConnector.UpdateCustomer(
+                    targetUserId: Guid.Parse(userId),
+                    callerRole: callerRole,
+                    callerPosition: callerPosition,
+                    fullName: param.FullName,
+                    phoneNumber: param.PhoneNumber,
+                    dayOfBirth: param.DayOfBirth,
+                    gender: param.Gender,
+                    points: null
+                );
+
+                return new UpdateUserResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode
+                };
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new UpdateUserResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
         [HttpPost("verify-account")]
         public async Task<VerifyAccountResultDTO> VerifyOTP(VerifyAccountRequestParam param)
         {
@@ -327,5 +373,6 @@ namespace ApiGateway.Controllers
                 return new VerifyPasswordResultDTO { Result = false, Message = message, StatusCode = (int)statusCode };
             }
         }
+
     }
 }

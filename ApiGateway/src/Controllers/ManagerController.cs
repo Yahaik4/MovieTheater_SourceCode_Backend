@@ -1,0 +1,359 @@
+using ApiGateway.DataTransferObject.Parameter;
+using ApiGateway.DataTransferObject.ResultData;
+using ApiGateway.ServiceConnector.AuthenticationService;
+using ApiGateway.ServiceConnector.OTPService;
+using Grpc.Core;
+using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using Shared.Contracts.Constants;
+using Shared.Utils;
+using Microsoft.AspNetCore.Authorization;
+using Shared.Contracts.Enums;
+using ApiGateway.Helper;
+
+namespace ApiGateway.Controllers
+{
+    [ApiController]
+    [Route("api")]
+    public class ManagerController : ControllerBase
+    {
+        private readonly AuthenticationServiceConnector _authenticationConnector;
+        private readonly ICurrentUserService _currentUserService;
+
+        public ManagerController(AuthenticationServiceConnector authenticationServiceConnector, ICurrentUserService currentUserService)
+        {
+            _authenticationConnector = authenticationServiceConnector;
+            _currentUserService = currentUserService;
+        }
+
+        [HttpPost("customer")]
+        [Authorize(Policy = "OperationsManagerOnly")]
+        public async Task<RegisterResultDTO> AddCustomer([FromBody] AddCustomerRequestParam param)
+        {
+            try
+            {
+                var result = await _authenticationConnector.AddUser(
+                    fullName: param.FullName,
+                    email: param.Email,
+                    password: param.Password,
+                    role: UserRoleEnum.Customer,
+                    phoneNumber: null,
+                    dayOfBirth: null,
+                    gender: null,
+                    cinemaId: null,
+                    position: null,
+                    salary: null
+                );
+
+                return new RegisterResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data == null
+                        ? null
+                        : new RegisterDataResult
+                        {
+                            UserId = Guid.Parse(result.Data.UserId)
+                        }
+                };
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new RegisterResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        private int GetPositionLevel(string? position)
+        {
+            if (string.IsNullOrWhiteSpace(position))
+                return 0;
+
+            position = position.ToLowerInvariant();
+
+            return position switch
+            {
+                StaffPositionEnum.Staff => 1,
+                StaffPositionEnum.CinemaManager => 2,
+                StaffPositionEnum.OperationsManager => 3,
+                _ => 0
+            };
+        }
+
+        [HttpPost("staff")]
+        [Authorize(Policy = "CinemaManagerOrHigher")]
+        public async Task<RegisterResultDTO> AddStaff([FromBody] AddStaffRequestParam param)
+        {
+            try
+            {
+                var callerRole = _currentUserService.Role;
+                var callerPosition = _currentUserService.Position;
+
+                if (callerRole != UserRoleEnum.Admin)
+                {
+                    int callerLevel = GetPositionLevel(callerPosition);
+                    int targetLevel = GetPositionLevel(param.Position);
+
+                    if (callerLevel <= targetLevel)
+                    {
+                        return new RegisterResultDTO
+                        {
+                            Result = false,
+                            Message = "You cannot create a staff member with same or higher position.",
+                            StatusCode = (int)StatusCodeEnum.Forbidden
+                        };
+                    }
+                }
+                
+                var result = await _authenticationConnector.AddUser(
+                    fullName: param.FullName,
+                    email: param.Email,
+                    password: param.Password,
+                    role: UserRoleEnum.Staff,        // luôn là staff
+                    phoneNumber: param.PhoneNumber,
+                    dayOfBirth: param.DayOfBirth,
+                    gender: param.Gender,
+                    cinemaId: param.CinemaId,
+                    position: param.Position,
+                    salary: param.Salary.ToString()
+                );
+
+                return new RegisterResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data == null
+                        ? null
+                        : new RegisterDataResult
+                        {
+                            UserId = Guid.Parse(result.Data.UserId)
+                        }
+                };
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new RegisterResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpGet("customers")]
+        public async Task<GetCustomersResultDTO> GetCustomers([FromQuery] Guid? userId)
+        {
+            try
+            {
+                var grpcResult = await _authenticationConnector.GetCustomers(
+                    userId: userId?.ToString()
+                );
+
+                return new GetCustomersResultDTO
+                {
+                    Result = grpcResult.Result,
+                    Message = grpcResult.Message,
+                    StatusCode = grpcResult.StatusCode,
+                    Data = grpcResult.Customers
+                        .Select(c => new CustomerDTO
+                        {
+                            UserId = Guid.Parse(c.User.UserId),
+                            FullName = c.User.FullName,
+                            Email = c.User.Email,
+                            Role = c.User.Role,
+                            IsVerified = c.User.IsVerified,
+                            PhoneNumber = c.PhoneNumber,
+                            DayOfBirth = c.DayOfBirth,
+                            Gender = c.Gender,
+                            Points = c.Points
+                        })
+                        .ToList()
+                };
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new GetCustomersResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                    Data = new List<CustomerDTO>()
+                };
+            }
+        }
+
+        [HttpGet("staffs")]
+        [Authorize(Policy = "StaffOrHigher")]
+        public async Task<GetStaffsResultDTO> GetStaffs([FromQuery] Guid? userId)
+        {
+            try
+            {
+                var grpcResult = await _authenticationConnector.GetStaffs(
+                    userId: userId?.ToString()
+                );
+
+                return new GetStaffsResultDTO
+                {
+                    Result = grpcResult.Result,
+                    Message = grpcResult.Message,
+                    StatusCode = grpcResult.StatusCode,
+                    Data = grpcResult.Staffs
+                        .Select(s => new StaffDTO
+                        {
+                            UserId = Guid.Parse(s.User.UserId),
+                            FullName = s.User.FullName,
+                            Email = s.User.Email,
+                            Role = s.User.Role,
+                            IsVerified = s.User.IsVerified,
+                            PhoneNumber = s.PhoneNumber,
+                            DayOfBirth = s.DayOfBirth,
+                            Gender = s.Gender,
+                            CinemaId = Guid.Parse(s.CinemaId),
+                            Position = s.Position,
+                            Salary = decimal.Parse(s.Salary)
+                        })
+                        .ToList()
+                };
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new GetStaffsResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                    Data = new List<StaffDTO>()
+                };
+            }
+        }
+
+        [HttpDelete("users/{userId:guid}")]
+        [Authorize(Policy = "CinemaManagerOrHigher")]
+        public async Task<DeleteUserResultDTO> DeleteUser([FromRoute] Guid userId)
+        {
+            try
+            {
+                var callerRole = _currentUserService.Role ?? string.Empty;
+                var callerPosition = _currentUserService.Position;
+
+                var result = await _authenticationConnector.DeleteUser(
+                    targetUserId: userId,
+                    callerRole: callerRole,
+                    callerPosition: callerPosition
+                );
+
+                return new DeleteUserResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode
+                };
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new DeleteUserResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpPut("customers/{userId:guid}")]
+        [Authorize(Policy = "OperationsManagerOnly")]
+        public async Task<UpdateUserResultDTO> UpdateCustomer(
+            [FromRoute] Guid userId,
+            [FromBody] UpdateCustomerRequestParam param)
+        {
+            try
+            {
+                var callerRole = _currentUserService.Role ?? string.Empty;
+                var callerPosition = _currentUserService.Position;
+
+                var result = await _authenticationConnector.UpdateCustomer(
+                    targetUserId: userId,
+                    callerRole: callerRole,
+                    callerPosition: callerPosition,
+                    fullName: param.FullName,
+                    phoneNumber: param.PhoneNumber,
+                    dayOfBirth: param.DayOfBirth,
+                    gender: param.Gender,
+                    points: param.Points
+                );
+
+                return new UpdateUserResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode
+                };
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new UpdateUserResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [HttpPut("staffs/{userId:guid}")]
+        [Authorize(Policy = "CinemaManagerOrHigher")]
+        public async Task<UpdateUserResultDTO> UpdateStaff(
+            [FromRoute] Guid userId,
+            [FromBody] UpdateStaffRequestParam param)
+        {
+            try
+            {
+                var callerRole = _currentUserService.Role ?? string.Empty;
+                var callerPosition = _currentUserService.Position;
+
+                var result = await _authenticationConnector.UpdateStaff(
+                    targetUserId: userId,
+                    callerRole: callerRole,
+                    callerPosition: callerPosition,
+                    fullName: param.FullName,
+                    phoneNumber: param.PhoneNumber,
+                    dayOfBirth: param.DayOfBirth,
+                    gender: param.Gender,
+                    cinemaId: param.CinemaId,
+                    position: param.Position,
+                    salary: param.Salary
+                );
+
+                return new UpdateUserResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode
+                };
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                return new UpdateUserResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+    }
+}

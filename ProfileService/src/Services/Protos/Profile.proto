@@ -1,21 +1,102 @@
 ﻿syntax = "proto3";
 
 option csharp_namespace = "ProfileGrpc";
-
 package Profile;
 
 service ProfileGrpcService {
-	rpc CreateProfile(CreateProfileGrpcRequestDTO) returns (CreateProfileGrpcReplyDTO);
+    rpc CreateProfile(CreateProfileGrpcRequestDTO) returns (CreateProfileGrpcReplyDTO);
+    rpc GetStaffByUserId (GetStaffByUserIdRequest) returns (GetStaffByUserIdReply);
+    rpc GetCustomerByUserId (GetCustomerByUserIdRequest) returns (GetCustomerByUserIdReply);
+    rpc DeleteCustomerByUserId (DeleteProfileByUserIdRequest) returns (DeleteProfileReply);
+    rpc DeleteStaffByUserId    (DeleteProfileByUserIdRequest) returns (DeleteProfileReply);
+    rpc UpdateCustomerByUserId (UpdateCustomerByUserIdRequest) returns (UpdateProfileGrpcReplyDTO);
+    rpc UpdateStaffByUserId    (UpdateStaffByUserIdRequest)    returns (UpdateProfileGrpcReplyDTO);
 }
 
 message CreateProfileGrpcRequestDTO {
-	string FullName = 1;
-	string Role = 2;
-	string UserId = 3;
+    string FullName = 1;
+    string Role = 2;
+    string UserId = 3;
+
+    // optional fields for customer
+    string PhoneNumber = 4;
+    string DayOfBirth = 5;
+    string Gender = 6;
+
+    // staff only
+    string CinemaId = 7;
+    string Position = 8;
+    string Salary = 9;
 }
 
 message CreateProfileGrpcReplyDTO {
-	bool Result = 1;
-	string Message = 2;
-	int32 StatusCode = 3;
+    bool Result = 1;
+    string Message = 2;
+    int32 StatusCode = 3;
+}
+
+message GetStaffByUserIdRequest {
+    string UserId = 1;
+}
+
+message GetStaffByUserIdReply {
+    bool Found = 1;
+    string UserId = 2;
+    string FullName = 3;
+    string PhoneNumber = 4;
+    string DayOfBirth  = 5;
+    string Gender = 6;
+    string CinemaId = 7;
+    string Position = 8;
+    string Salary = 9;
+}
+
+message GetCustomerByUserIdRequest {
+  string UserId = 1;
+}
+
+message GetCustomerByUserIdReply {
+  bool   Found       = 1;
+  string UserId      = 2;
+  string FullName    = 3;
+  string PhoneNumber = 4;
+  string DayOfBirth  = 5;
+  string Gender      = 6;
+  int32  Points      = 7;
+}
+
+message DeleteProfileByUserIdRequest {
+  string UserId = 1;
+}
+
+message DeleteProfileReply {
+  bool   Result     = 1;
+  string Message    = 2;
+  int32  StatusCode = 3;
+}
+
+message UpdateCustomerByUserIdRequest {
+  string UserId      = 1;
+  string FullName    = 2;
+  string PhoneNumber = 3;
+  string DayOfBirth  = 4;
+  string Gender      = 5;
+  string Points      = 6;
+}
+
+message UpdateStaffByUserIdRequest {
+  string UserId      = 1;
+  string FullName    = 2;
+  string PhoneNumber = 3;
+  string DayOfBirth  = 4;
+  string Gender      = 5;
+  string CinemaId    = 6;
+  string Position    = 7;
+  string Salary      = 8;
+}
+
+message UpdateProfileGrpcReplyDTO {
+  bool   Result     = 1;
+  string Message    = 2;
+  int32  StatusCode = 3;
 }

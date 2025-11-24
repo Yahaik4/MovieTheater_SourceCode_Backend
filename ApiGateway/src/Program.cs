@@ -6,11 +6,11 @@ using ApiGateway.ServiceConnector.OTPService;
 using ApiGateway.ServiceConnector.PaymentService;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication("Bearer")
@@ -28,17 +28,69 @@ builder.Services.AddAuthentication("Bearer")
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:AccessTokenKey"]))
         };
-
     });
 
 builder.Services.AddControllers();
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireAssertion(ctx =>
+        {
+            var role = ctx.User.FindFirst(ClaimTypes.Role)?.Value;
+            return role == "admin"; 
+        }));
+
+
+    options.AddPolicy("OperationsManagerOnly", policy =>
+        policy.RequireAssertion(ctx =>
+        {
+            var role = ctx.User.FindFirst(ClaimTypes.Role)?.Value;
+            var position = ctx.User.FindFirst("position")?.Value;
+
+            // (2) Admin override quyền
+            if (role == "admin")
+                return true;
+
+            return role == "staff" && position == "operations_manager";
+        }));
+
+    options.AddPolicy("CinemaManagerOrHigher", policy =>
+        policy.RequireAssertion(ctx =>
+        {
+            var role = ctx.User.FindFirst(ClaimTypes.Role)?.Value;
+            var position = ctx.User.FindFirst("position")?.Value;
+
+            if (role == "admin")
+                return true;
+
+            if (role != "staff" || position == null)
+                return false;
+
+            return position == "cinema_manager" || position == "operations_manager";
+        }));
+
+    options.AddPolicy("StaffOrHigher", policy =>
+    policy.RequireAssertion(ctx =>
+    {
+        var role = ctx.User.FindFirst(ClaimTypes.Role)?.Value;
+        var position = ctx.User.FindFirst("position")?.Value;
+
+        if (role == "admin")
+            return true;
+
+        if (role != "staff")
+            return false;
+
+        if (string.IsNullOrWhiteSpace(position))
+            return false;
+
+        return position == "cinema_manager" 
+            || position == "operations_manager"
+            || position == "staff";
+    }));
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
@@ -66,7 +118,6 @@ builder.Services.AddSwaggerGen(option =>
             new string[]{}
         }
     });
-
 });
 
 builder.Services.AddCors(options =>
@@ -91,7 +142,6 @@ builder.Services.AddScoped<PaymentServiceConnector>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -56,6 +56,12 @@ void RegisterRepository()
     services.AddScoped<OTPServiceConnector>();
     services.AddScoped<ProfileServiceConnector>();
     services.AddHttpContextAccessor();
+    services.AddScoped<AddUserLogic>();
+    services.AddScoped<GetCustomersLogic>();
+    services.AddScoped<GetStaffsLogic>();
+    services.AddScoped<DeleteUserLogic>();
+    services.AddScoped<UpdateCustomerLogic>();
+    services.AddScoped<UpdateStaffLogic>();
 }
 
 void RegisterGrpcServicePublish()

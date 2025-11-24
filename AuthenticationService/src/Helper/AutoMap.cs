@@ -25,6 +25,38 @@ namespace AuthenticationService.Helper
 
             // VerifyAccountMapping
             CreateMap<VerifyAccountResultData, VerifyAccountGrpcReplyDTO>();
+            CreateMap<GetCustomersResultData, GetCustomersGrpcReplyDTO>()
+                .ForMember(dest => dest.Customers, opt => opt.MapFrom(src => src.Data));
+
+            CreateMap<CustomerWithProfileResultData, CustomerWithProfileGrpcDTO>()
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => new UserInfoGrpcDTO
+                {
+                    UserId = src.UserId.ToString(),
+                    FullName = src.FullName,
+                    Email = src.Email,
+                    Role = src.Role,
+                    IsVerified = src.IsVerified
+                }));
+
+            // GetStaffsMapping
+            CreateMap<GetStaffsResultData, GetStaffsGrpcReplyDTO>()
+                .ForMember(dest => dest.Staffs, opt => opt.MapFrom(src => src.Data));
+
+            CreateMap<StaffWithProfileResultData, StaffWithProfileGrpcDTO>()
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => new UserInfoGrpcDTO
+                {
+                    UserId = src.UserId.ToString(),
+                    FullName = src.FullName,
+                    Email = src.Email,
+                    Role = src.Role,
+                    IsVerified = src.IsVerified
+                }));
+
+            CreateMap<DeleteUserResultData, DeleteUserGrpcReplyDTO>();
+
+            CreateMap<UpdateCustomerResultData, UpdateCustomerGrpcReplyDTO>();
+            CreateMap<UpdateStaffResultData, UpdateStaffGrpcReplyDTO>();
         }
+        
     }
 }

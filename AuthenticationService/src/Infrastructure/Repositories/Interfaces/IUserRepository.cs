@@ -11,5 +11,6 @@ namespace AuthenticationService.Infrastructure.Repositories.Interfaces
         Task<User> UpdateUser(User user);
         Task<bool> DeleteUser(User user);
         Task<bool> RemoveUser(User user);
+        Task<List<User>> GetUsers(Guid? userId, string? role);
     }
 }

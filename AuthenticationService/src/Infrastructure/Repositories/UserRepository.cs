@@ -55,5 +55,20 @@ namespace AuthenticationService.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return user;
         }
+
+        public async Task<List<User>> GetUsers(Guid? userId, string? role)
+        {
+            var query = _context.Users.AsQueryable();
+
+            if (userId.HasValue)
+                query = query.Where(x => x.Id == userId.Value);
+
+            if (!string.IsNullOrWhiteSpace(role))
+                query = query.Where(x => x.Role == role);
+
+            query = query.Where(x => !x.IsDeleted);
+
+            return await query.ToListAsync();
+        }
     }
 }

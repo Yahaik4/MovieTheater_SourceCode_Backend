@@ -11,8 +11,13 @@ service AuthenticationGrpcService {
 	rpc Register(RegisterGrpcRequestDTO) returns (RegisterGrpcReplyDTO);
 	rpc VerifyAccount(VerifyAccountGrpcRequestDTO) returns (VerifyAccountGrpcReplyDTO);
 	rpc ResendOTP(ResendOTPRequest) returns (ResendOTPReply);
-	rpc ResetPassword(ResetPasswordRequest) returns (ResetpassWordReply);
 	rpc VerifyResetPassword(ResetPasswordRequest) returns (ResetpassWordReply);
+	rpc AddUser (AddUserGrpcRequestDTO) returns (RegisterGrpcReplyDTO);
+	rpc GetCustomers (GetUsersGrpcRequestDTO) returns (GetCustomersGrpcReplyDTO);
+  rpc GetStaffs    (GetUsersGrpcRequestDTO) returns (GetStaffsGrpcReplyDTO);
+  rpc DeleteUser (DeleteUserGrpcRequestDTO) returns (DeleteUserGrpcReplyDTO);
+  rpc UpdateCustomer (UpdateCustomerGrpcRequestDTO) returns (UpdateCustomerGrpcReplyDTO);
+  rpc UpdateStaff    (UpdateStaffGrpcRequestDTO)    returns (UpdateStaffGrpcReplyDTO);
 }
 
 message LoginGrpcRequestDTO {
@@ -107,4 +112,112 @@ message ResetpassWordReply {
   bool result = 1;
   string message = 2;
   int32 statusCode = 3;
+}
+
+message AddUserGrpcRequestDTO {
+  string fullName = 1;
+  string email = 2;
+  string password = 3;
+  string role = 4;
+
+  string phoneNumber = 5;
+  string dayOfBirth = 6;
+  string gender = 7;
+  string cinemaId = 8;
+  string position = 9;
+  string salary = 10;
+}
+
+message GetUsersGrpcRequestDTO {
+  string userId = 1;
+}
+
+message UserInfoGrpcDTO {
+  string userId     = 1;
+  string fullName   = 2;
+  string email      = 3;
+  string role       = 4;
+  bool   isVerified = 5;
+}
+
+message CustomerWithProfileGrpcDTO {
+  UserInfoGrpcDTO user       = 1;
+  string phoneNumber         = 2;
+  string dayOfBirth          = 3;
+  string gender              = 4;
+  int32  points              = 5;
+}
+
+message GetCustomersGrpcReplyDTO {
+  bool   result     = 1;
+  string message    = 2;
+  int32  statusCode = 3;
+  repeated CustomerWithProfileGrpcDTO customers = 4;
+}
+
+message StaffWithProfileGrpcDTO {
+  UserInfoGrpcDTO user       = 1;
+  string phoneNumber         = 2;
+  string dayOfBirth          = 3;
+  string gender              = 4;
+  string cinemaId            = 5;
+  string position            = 6;
+  string salary              = 7;
+}
+
+message GetStaffsGrpcReplyDTO {
+  bool   result     = 1;
+  string message    = 2;
+  int32  statusCode = 3;
+  repeated StaffWithProfileGrpcDTO staffs = 4;
+}
+
+message DeleteUserGrpcRequestDTO {
+  string targetUserId   = 1;
+  string callerRole     = 2;
+  string callerPosition = 3;
+}
+
+message DeleteUserGrpcReplyDTO {
+  bool   result     = 1;
+  string message    = 2;
+  int32  statusCode = 3;
+}
+
+message UpdateCustomerGrpcRequestDTO {
+  string TargetUserId   = 1;
+  string CallerRole     = 2;
+  string CallerPosition = 3;
+
+  string FullName       = 4;
+  string PhoneNumber    = 5;
+  string DayOfBirth     = 6;
+  string Gender         = 7;
+  string Points         = 8;
+}
+
+message UpdateCustomerGrpcReplyDTO {
+  bool   Result     = 1;
+  string Message    = 2;
+  int32  StatusCode = 3;
+}
+
+message UpdateStaffGrpcRequestDTO {
+  string TargetUserId   = 1;
+  string CallerRole     = 2;
+  string CallerPosition = 3;
+
+  string FullName       = 4;
+  string PhoneNumber    = 5;
+  string DayOfBirth     = 6;
+  string Gender         = 7;
+  string CinemaId       = 8;
+  string Position       = 9;
+  string Salary         = 10;
+}
+
+message UpdateStaffGrpcReplyDTO {
+  bool   Result     = 1;
+  string Message    = 2;
+  int32  StatusCode = 3;
 }

@@ -10,5 +10,6 @@ namespace ProfileService.Data
         }
 
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Staff> Staffs { get; set; }
     }
 }

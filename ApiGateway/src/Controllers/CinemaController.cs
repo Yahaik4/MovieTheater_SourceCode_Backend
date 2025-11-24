@@ -67,7 +67,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPost("cinema")]
         public async Task<CreateCinemaResultDTO> CreateCinema(CreateCinemaRequestParam param)
         {
@@ -109,7 +109,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPut("cinema/{id}")]
         public async Task<UpdateCinemaResultDTO> UpdateCinema(Guid id, [FromBody] UpdateCinemaRequestParam param)
         {
@@ -149,7 +149,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpDelete("cinema/{id}")]
         public async Task<DeleteCinemaResultDTO> DeleteCinema(Guid id)
         {
@@ -211,7 +211,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPost("room-type")]
         public async Task<CreateRoomTypeResultDTO> CreateRoomType(CreateRoomTypeRequestParam param)
         {
@@ -247,7 +247,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPut("room-type/{id}")]
         public async Task<UpdateRoomTypeResultDTO> UpdateRoomType(Guid id, [FromBody] UpdateRoomTypeRequestParam param)
         {
@@ -281,6 +281,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpDelete("room-type/{id}")]
         public async Task<DeleteRoomTypeResultDTO> DeleteRoomType(Guid id)
         {
@@ -342,7 +343,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPost("seat-type")]
         public async Task<CreateSeatTypeResultDTO> CreateSeatType(CreateSeatTypeRequestParam param)
         {
@@ -378,7 +379,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPut("seat-type/{id}")]
         public async Task<UpdateSeatTypeResultDTO> UpdateSeatType(Guid id, [FromBody] UpdateSeatTypeRequestParam param)
         {
@@ -412,6 +413,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "OperationsManagerOnly")]
         [HttpDelete("seat-type/{id}")]
         public async Task<DeleteSeatTypeResultDTO> DeleteSeatType(Guid id)
         {
@@ -477,7 +479,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "CinemaManagerOrHigher")]
         [HttpPost("room")]
         public async Task<CreateRoomResultDTO> CreateRoom(CreateRoomRequestParam param)
         {
@@ -528,7 +530,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "CinemaManagerOrHigher")]
         [HttpPut("room/{id}")]
         public async Task<UpdateRoomResultDTO> UpdateRoom(Guid id, [FromBody] UpdateRoomRequestParam param)
         {
@@ -565,6 +567,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "CinemaManagerOrHigher")]
         [HttpDelete("room/{id}")]
         public async Task<DeleteRoomResultDTO> DeleteRoom(Guid id)
         {
@@ -631,6 +634,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "CinemaManagerOrHigher")]
         [HttpPatch("seats")]
         public async Task<UpdateSeatsResultDTO> UpdateSeats(UpdateSeatsRequestParam param)
         {
@@ -724,6 +728,7 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [Authorize(Policy = "CinemaManagerOrHigher")]
         [HttpPost("showtime")]
         public async Task<CreateShowtimeResultDTO> CreateShowtime(CreateShowtimeRequestParam param)
         {
@@ -763,7 +768,7 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Policy = "CinemaManagerOrHigher")]
         [HttpPut("showtime/{id}")]
         public async Task<UpdateShowtimeResultDTO> UpdateShowtime(Guid id, [FromBody] UpdateShowtimeRequestParam param)
         {

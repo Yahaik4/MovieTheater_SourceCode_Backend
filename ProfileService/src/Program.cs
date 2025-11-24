@@ -41,6 +41,7 @@ void RegisterRepository()
 
     services.AddScoped<ICustomerRepository, CustomerRepository>();
     services.AddScoped<CreateProfileLogic>();
+    services.AddScoped<IStaffRepository, StaffRepository>();
 }
 
 void RegisterGrpcServicePublish()

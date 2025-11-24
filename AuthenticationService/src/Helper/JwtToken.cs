@@ -16,15 +16,30 @@ namespace AuthenticationService.Helper
             _configuration = configuration;
         }
 
-        public string GenerateAccessToken(Guid userId, string email, string role)
+        public string GenerateAccessToken(
+            Guid userId,
+            string email,
+            string role,
+            string? position = null,
+            Guid? cinemaId = null)
         {
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, email),
                 new Claim(ClaimTypes.Role , role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            if (!string.IsNullOrEmpty(position))
+            {
+                claims.Add(new Claim("position", position));
+            }
+
+            if (cinemaId.HasValue)
+            {
+                claims.Add(new Claim("cinema_id", cinemaId.Value.ToString()));
+            }
 
             var SECRET_KEY = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_configuration["JwtSettings:AccessTokenKey"])
