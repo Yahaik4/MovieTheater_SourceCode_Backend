@@ -18,6 +18,7 @@ namespace CinemaService.DataTransferObject.ResultData
         public int NumberOfSeats { get; set; } 
         public decimal TotalPrice { get; set; }
         public List<BookingSeatsDataResult> BookingSeats { get; set; }
+        public List<BookingFoodDrinkDataResult> BookingFoodDrinks { get; set; }
     }
 
     public class BookingSeatsDataResult
@@ -27,5 +28,17 @@ namespace CinemaService.DataTransferObject.ResultData
         public string SeatType { get; set; }
         public string Label { get; set; }
         public decimal Price { get; set; }
+    }
+
+    public class BookingFoodDrinkDataResult
+    {
+        public Guid FoodDrinkId { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public string Size { get; set; }
+
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal TotalPrice { get; set; }
     }
 }

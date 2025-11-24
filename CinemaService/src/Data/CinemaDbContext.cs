@@ -1,6 +1,5 @@
 ﻿using CinemaService.Infrastructure.EF.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace CinemaService.Data
 {
@@ -18,9 +17,14 @@ namespace CinemaService.Data
         public DbSet<Showtime> Showtimes { get; set; }
         public DbSet<ShowtimeSeat> ShowtimeSeats { get; set; }
         public DbSet<Booking> Bookings { get; set; }
-        
+
+        // NEW
+        public DbSet<FoodDrink> FoodDrinks { get; set; }
+        public DbSet<BookingItem> BookingItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // ROOM
             modelBuilder.Entity<Room>(entity =>
             {
                 entity.HasOne(r => r.Cinema)
@@ -34,6 +38,7 @@ namespace CinemaService.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // SEAT
             modelBuilder.Entity<Seat>(entity =>
             {
                 entity.HasOne(s => s.SeatType)
@@ -47,6 +52,7 @@ namespace CinemaService.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // SHOWTIME
             modelBuilder.Entity<Showtime>(entity =>
             {
                 entity.HasOne(st => st.Room)
@@ -60,6 +66,7 @@ namespace CinemaService.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // SHOWTIME SEAT
             modelBuilder.Entity<ShowtimeSeat>(entity =>
             {
                 entity.HasOne(sts => sts.Seat)
@@ -73,17 +80,80 @@ namespace CinemaService.Data
                     .OnDelete(DeleteBehavior.SetNull);
             });
 
+            // ========== FoodDrink ==========
+            modelBuilder.Entity<FoodDrink>(entity =>
+            {
+                entity.ToTable("FoodDrink");
+
+                entity.Property(e => e.Id)
+                      .HasColumnType("uuid");
+
+                entity.Property(e => e.Name)
+                      .HasMaxLength(50)
+                      .IsRequired();
+
+                entity.Property(e => e.Type)
+                      .HasMaxLength(50)
+                      .IsRequired();
+
+                entity.Property(e => e.Size)
+                      .HasMaxLength(50)
+                      .IsRequired();
+
+                entity.Property(e => e.Price)
+                      .HasColumnType("numeric(10,2)")
+                      .IsRequired();
+            });
+
+            // ========== BookingItem ==========
+            modelBuilder.Entity<BookingItem>(entity =>
+            {
+                entity.ToTable("Booking_Items");
+
+                entity.Property(e => e.Id)
+                      .HasColumnType("uuid");
+
+                entity.Property(e => e.BookingId)
+                      .HasColumnType("uuid")
+                      .IsRequired();
+
+                entity.Property(e => e.ItemId)
+                      .HasColumnType("uuid")
+                      .IsRequired();
+
+                entity.Property(e => e.Quantity)
+                      .IsRequired();
+
+                entity.Property(e => e.UnitPrice)
+                      .HasColumnType("numeric(10,2)")
+                      .IsRequired();
+
+                entity.Property(e => e.TotalPrice)
+                      .HasColumnType("numeric(10,2)")
+                      .IsRequired();
+
+                entity.HasOne(e => e.FoodDrink)
+                      .WithMany(f => f.BookingItems)
+                      .HasForeignKey(e => e.ItemId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Booking)
+                      .WithMany(b => b.BookingItems)
+                      .HasForeignKey(e => e.BookingId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // BOOKING
             modelBuilder.Entity<Booking>(entity =>
             {
                 entity.HasOne(b => b.Showtime)
                       .WithMany(st => st.Bookings)
                       .HasForeignKey(b => b.ShowtimeId)
                       .OnDelete(DeleteBehavior.Restrict);
-            });
 
-            modelBuilder.Entity<Booking>()
-                        .Property(b => b.BookingSeats)
-                        .HasColumnType("jsonb");
+                entity.Property(b => b.BookingSeats)
+                      .HasColumnType("jsonb");
+            });
         }
     }
 }

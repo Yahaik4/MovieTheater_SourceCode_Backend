@@ -386,7 +386,11 @@ namespace ApiGateway.ServiceConnector.CinemaService
             return await client.GetShowtimeSeatsAsync(request);
         }
 
-        public async Task<CreateBookingGrpcReplyDTO> CreateBooking(string userId, Guid showtimeId, List<Guid> showtimeSeatIds)
+        public async Task<CreateBookingGrpcReplyDTO> CreateBooking(
+            string userId, 
+            Guid showtimeId, 
+            List<Guid> showtimeSeatIds,
+            List<CreateBookingFoodDrinkRequestItem>? foodDrinkItems)
         {
             using var channel = GetCinemaServiceChannel();
             var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
@@ -399,7 +403,93 @@ namespace ApiGateway.ServiceConnector.CinemaService
 
             request.ShowtimeSeatIds.AddRange(showtimeSeatIds.Select(x => x.ToString()));
 
+            if (foodDrinkItems != null && foodDrinkItems.Any())
+            {
+                request.FoodDrinkItems.AddRange(
+                    foodDrinkItems.Select(x => new CreateBookingFoodDrinkItemGrpcDTO
+                    {
+                        FoodDrinkId = x.FoodDrinkId.ToString(),
+                        Quantity = x.Quantity
+                    }));
+            }
+
             return await client.CreateBookingAsync(request);
+        }
+        public async Task<GetAllFoodDrinksGrpcReplyDTO> GetAllFoodDrinks(Guid? id, string? name, string? type, string? size)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetAllFoodDrinksGrpcRequestDTO();
+
+            if (id.HasValue)
+                request.Id = id.Value.ToString();
+
+            if (!string.IsNullOrWhiteSpace(name))
+                request.Name = name;
+
+            if (!string.IsNullOrWhiteSpace(type))
+                request.Type = type;
+
+            if (!string.IsNullOrWhiteSpace(size))
+                request.Size = size;
+
+            return await client.GetAllFoodDrinksAsync(request);
+        }
+
+        public async Task<CreateFoodDrinkGrpcReplyDTO> CreateFoodDrink(string name, string type, string size, decimal price)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new CreateFoodDrinkGrpcRequestDTO
+            {
+                Name = name,
+                Type = type,
+                Size = size,
+                Price = price.ToString(),
+                CreatedBy = _currentUserService.UserId ?? _currentUserService.Email ?? "System"
+            };
+
+            return await client.CreateFoodDrinkAsync(request);
+        }
+
+        public async Task<UpdateFoodDrinkGrpcReplyDTO> UpdateFoodDrink(Guid id, UpdateFoodDrinkRequestParam param)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new UpdateFoodDrinkGrpcRequestDTO
+            {
+                Id = id.ToString()
+            };
+
+            if (!string.IsNullOrWhiteSpace(param.Name))
+                request.Name = param.Name;
+
+            if (!string.IsNullOrWhiteSpace(param.Type))
+                request.Type = param.Type;
+
+            if (!string.IsNullOrWhiteSpace(param.Size))
+                request.Size = param.Size;
+
+            if (param.Price.HasValue)
+                request.Price = param.Price.Value.ToString();
+
+            return await client.UpdateFoodDrinkAsync(request);
+        }
+
+        public async Task<DeleteFoodDrinkGrpcReplyDTO> DeleteFoodDrink(Guid id)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new DeleteFoodDrinkGrpcRequestDTO
+            {
+                Id = id.ToString()
+            };
+
+            return await client.DeleteFoodDrinkAsync(request);
         }
     }
 }

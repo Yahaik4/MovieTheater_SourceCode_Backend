@@ -3,6 +3,7 @@ using CinemaService.Data;
 using CinemaService.DomainLogic;
 using CinemaService.Helper;
 using CinemaService.Infrastructure.Repositories;
+using CinemaService.Infrastructure.Repositories.Implementations;
 using CinemaService.Infrastructure.Repositories.Interfaces;
 using CinemaService.Services;
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +58,7 @@ void RegisterRepository()
     services.AddScoped<IShowtimeRepository, ShowtimeRepository>();
     services.AddScoped<IShowtimeSeatRepository, ShowtimeSeatRepository>();
     services.AddScoped<IBookingRepository, BookingRepository>();
+    services.AddScoped<IFoodDrinkRepository, FoodDrinkRepository>();
 
     // logic DJ
     services.AddScoped<GetAllCinemaLogic>();
@@ -91,6 +93,11 @@ void RegisterRepository()
     services.AddScoped<GetBookingLogic>();
     services.AddScoped<CreateBookingLogic>();
     services.AddScoped<UpdateBookingLogic>();
+
+    services.AddScoped<GetAllFoodDrinkLogic>();
+    services.AddScoped<CreateFoodDrinkLogic>();
+    services.AddScoped<UpdateFoodDrinkLogic>();
+    services.AddScoped<DeleteFoodDrinkLogic>();
 
     builder.Services.AddScoped<MovieServiceConnector>();
     builder.Services.AddHttpContextAccessor();

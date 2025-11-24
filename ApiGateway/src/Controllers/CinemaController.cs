@@ -846,6 +846,149 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [HttpGet("food-drinks")]
+        public async Task<GetAllFoodDrinkResultDTO> GetAllFoodDrinks([FromQuery] GetAllFoodDrinkRequestParam query)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetAllFoodDrinks(
+                    query.Id, query.Name, query.Type, query.Size);
+
+                return new GetAllFoodDrinkResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(fd => new GetAllFoodDrinkDataResult
+                    {
+                        Id = Guid.Parse(fd.Id),
+                        Name = fd.Name,
+                        Type = fd.Type,
+                        Size = fd.Size,
+                        Price = decimal.Parse(fd.Price)
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetAllFoodDrinks Error: {message}");
+
+                return new GetAllFoodDrinkResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpPost("food-drink")]
+        public async Task<CreateFoodDrinkResultDTO> CreateFoodDrink(CreateFoodDrinkRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.CreateFoodDrink(
+                    param.Name, param.Type, param.Size, param.Price);
+
+                return new CreateFoodDrinkResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreateFoodDrinkDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Name = result.Data.Name,
+                        Type = result.Data.Type,
+                        Size = result.Data.Size,
+                        Price = decimal.Parse(result.Data.Price),
+                        CreatedBy = result.Data.CreatedBy
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"CreateFoodDrink Error: {message}");
+
+                return new CreateFoodDrinkResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpPut("food-drink/{id}")]
+        public async Task<UpdateFoodDrinkResultDTO> UpdateFoodDrink(Guid id, [FromBody] UpdateFoodDrinkRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.UpdateFoodDrink(id, param);
+
+                return new UpdateFoodDrinkResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new UpdateFoodDrinkDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Name = result.Data.Name,
+                        Type = result.Data.Type,
+                        Size = result.Data.Size,
+                        Price = decimal.Parse(result.Data.Price)
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"UpdateFoodDrink Error: {message}");
+
+                return new UpdateFoodDrinkResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpDelete("food-drink/{id}")]
+        public async Task<DeleteFoodDrinkResultDTO> DeleteFoodDrink(Guid id)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.DeleteFoodDrink(id);
+
+                return new DeleteFoodDrinkResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"DeleteFoodDrink Error: {message}");
+
+                return new DeleteFoodDrinkResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize]
         [HttpPost("create-booking")]
         public async Task<CreateBookingResultDTO> CreateBooking(CreateBookingRequestParam param)
         {
@@ -859,7 +1002,8 @@ namespace ApiGateway.Controllers
                 if (userId == null) {
                     throw new Exception("Not found userId in Token");
                 }
-                var result = await _cinemaServiceConnector.CreateBooking(userId, param.ShowtimeId, param.ShowtimeSeatIds);
+                
+                var result = await _cinemaServiceConnector.CreateBooking(userId, param.ShowtimeId, param.ShowtimeSeatIds, param.FoodDrinkItems);
 
                 return new CreateBookingResultDTO
                 {
@@ -883,6 +1027,17 @@ namespace ApiGateway.Controllers
                             SeatType = bs.SeatType,
                             Label = bs.Label,
                             Price = decimal.Parse(bs.Price),
+                        }).ToList(),
+                        BookingFoodDrinks = result.Data.BookingFoodDrinks
+                        .Select(f => new BookingFoodDrinkDataResult
+                        {
+                            FoodDrinkId = Guid.Parse(f.FoodDrinkId),
+                            Name        = f.Name,
+                            Type        = f.Type,
+                            Size        = f.Size,
+                            Quantity    = f.Quantity,
+                            UnitPrice   = decimal.Parse(f.UnitPrice),
+                            TotalPrice  = decimal.Parse(f.TotalPrice)
                         }).ToList()
                     }
                 };

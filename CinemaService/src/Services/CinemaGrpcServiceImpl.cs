@@ -36,7 +36,10 @@ namespace CinemaService.Services
         private readonly GetBookingLogic _getBookingLogic;
         private readonly CreateBookingLogic _createBookingLogic;
         private readonly UpdateBookingLogic _updateBookingLogic;
-
+        private readonly GetAllFoodDrinkLogic _getAllFoodDrinkLogic;
+        private readonly CreateFoodDrinkLogic _createFoodDrinkLogic;
+        private readonly UpdateFoodDrinkLogic _updateFoodDrinkLogic;
+        private readonly DeleteFoodDrinkLogic _deleteFoodDrinkLogic;
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
                                     GetAllCinemaLogic getAllCinemaLogic, 
@@ -62,7 +65,11 @@ namespace CinemaService.Services
                                     GetShowtimeSeatsLogic getShowtimeSeatsLogic,
                                     GetBookingLogic getBookingLogic,
                                     CreateBookingLogic createBookingLogic,
-                                    UpdateBookingLogic updateBookingLogic) 
+                                    UpdateBookingLogic updateBookingLogic,
+                                    GetAllFoodDrinkLogic getAllFoodDrinkLogic,
+                                    CreateFoodDrinkLogic createFoodDrinkLogic,
+                                    UpdateFoodDrinkLogic updateFoodDrinkLogic,
+                                    DeleteFoodDrinkLogic deleteFoodDrinkLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -90,6 +97,11 @@ namespace CinemaService.Services
             _getBookingLogic = getBookingLogic;
             _createBookingLogic = createBookingLogic;
             _updateBookingLogic = updateBookingLogic;
+            _updateBookingLogic = updateBookingLogic;
+            _getAllFoodDrinkLogic = getAllFoodDrinkLogic;
+            _createFoodDrinkLogic = createFoodDrinkLogic;
+            _updateFoodDrinkLogic = updateFoodDrinkLogic;
+            _deleteFoodDrinkLogic = deleteFoodDrinkLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -518,12 +530,23 @@ namespace CinemaService.Services
 
         public override async Task<CreateBookingGrpcReplyDTO> CreateBooking(CreateBookingGrpcRequestDTO request, ServerCallContext context)
         {
-            var result = await _createBookingLogic.Execute(new CreateBookingParam
+            var param = new CreateBookingParam
             {
                 UserId = Guid.Parse(request.UserId),
                 ShowtimeId = Guid.Parse(request.ShowtimeId),
-                ShowtimeSeatIds = request.ShowtimeSeatIds.Select(s => Guid.Parse(s)).ToList()
-            });
+                ShowtimeSeatIds = request.ShowtimeSeatIds.Select(s => Guid.Parse(s)).ToList(),
+            };
+
+            if (request.FoodDrinkItems != null && request.FoodDrinkItems.Count > 0)
+            {
+                param.FoodDrinkItems = request.FoodDrinkItems.Select(x => new CreateBookingFoodDrinkItemParam
+                {
+                    FoodDrinkId = Guid.Parse(x.FoodDrinkId),
+                    Quantity = x.Quantity
+                }).ToList();
+            }
+
+            var result = await _createBookingLogic.Execute(param);
 
             return _mapper.Map<CreateBookingGrpcReplyDTO>(result);
         }
@@ -537,6 +560,63 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<UpdateBookingGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetAllFoodDrinksGrpcReplyDTO> GetAllFoodDrinks(GetAllFoodDrinksGrpcRequestDTO request, ServerCallContext context)
+        {
+            Guid? id = null;
+            if (!string.IsNullOrWhiteSpace(request.Id) && Guid.TryParse(request.Id, out var parsedId))
+            {
+                id = parsedId;
+            }
+
+            var result = await _getAllFoodDrinkLogic.Execute(new GetAllFoodDrinkParam
+            {
+                Id = id,
+                Name = request.Name,
+                Type = request.Type,
+                Size = request.Size,
+            });
+
+            return _mapper.Map<GetAllFoodDrinksGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CreateFoodDrinkGrpcReplyDTO> CreateFoodDrink(CreateFoodDrinkGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _createFoodDrinkLogic.Execute(new CreateFoodDrinkParam
+            {
+                Name = request.Name,
+                Type = request.Type,
+                Size = request.Size,
+                Price = decimal.Parse(request.Price),
+                CreatedBy = request.CreatedBy
+            });
+
+            return _mapper.Map<CreateFoodDrinkGrpcReplyDTO>(result);
+        }
+
+        public override async Task<UpdateFoodDrinkGrpcReplyDTO> UpdateFoodDrink(UpdateFoodDrinkGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _updateFoodDrinkLogic.Execute(new UpdateFoodDrinkParam
+            {
+                Id = Guid.Parse(request.Id),
+                Name = request.Name,
+                Type = request.Type,
+                Size = request.Size,
+                Price = string.IsNullOrWhiteSpace(request.Price) ? null : decimal.Parse(request.Price)
+            });
+
+            return _mapper.Map<UpdateFoodDrinkGrpcReplyDTO>(result);
+        }
+
+        public override async Task<DeleteFoodDrinkGrpcReplyDTO> DeleteFoodDrink(DeleteFoodDrinkGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _deleteFoodDrinkLogic.Execute(new DeleteFoodDrinkParam
+            {
+                Id = Guid.Parse(request.Id),
+            });
+
+            return _mapper.Map<DeleteFoodDrinkGrpcReplyDTO>(result);
         }
     }
 }

@@ -35,7 +35,15 @@ service CinemaGrpcService {
 	rpc UpdateShowtime(UpdateShowtimeGrpcRequestDTO) returns (UpdateShowtimeGrpcReplyDTO);
 
 	rpc GetShowtimeSeats(GetShowtimeSeatsGrpcRequestDTO) returns (GetShowtimeSeatsGrpcReplyDTO);
+
+	rpc GetBooking(GetBookingGrpcRequestDTO) returns (GetBookingGrpcReplyDTO);
 	rpc CreateBooking(CreateBookingGrpcRequestDTO) returns (CreateBookingGrpcReplyDTO);
+	rpc UpdateBooking(UpdateBookingGrpcRequestDTO) returns (UpdateBookingGrpcReplyDTO);
+
+	rpc GetAllFoodDrinks (GetAllFoodDrinksGrpcRequestDTO) returns (GetAllFoodDrinksGrpcReplyDTO);
+    rpc CreateFoodDrink (CreateFoodDrinkGrpcRequestDTO) returns (CreateFoodDrinkGrpcReplyDTO);
+    rpc UpdateFoodDrink (UpdateFoodDrinkGrpcRequestDTO) returns (UpdateFoodDrinkGrpcReplyDTO);
+    rpc DeleteFoodDrink (DeleteFoodDrinkGrpcRequestDTO) returns (DeleteFoodDrinkGrpcReplyDTO);
 }
 
 message GetAllCinemasGrpcRequestDTO {
@@ -529,6 +537,12 @@ message CreateBookingGrpcRequestDTO {
 	string userId = 1;
 	string showtimeId = 2;
 	repeated string showtimeSeatIds = 3;
+	repeated CreateBookingFoodDrinkItemGrpcDTO FoodDrinkItems = 4;
+}
+
+message CreateBookingFoodDrinkItemGrpcDTO {
+  string FoodDrinkId = 1;
+  int32 Quantity = 2;
 }
 
 message CreateBookingGrpcReplyDTO {
@@ -548,6 +562,7 @@ message CreateBookingGrpcReplyDataDTO {
     int32 numberOfSeats = 7;
     string totalPrice = 8;
 	repeated CreateBookingSeatsGrpcReplyDataDTO bookingSeats = 9;
+	repeated CreateBookingFoodDrinkGrpcReplyDataDTO BookingFoodDrinks = 10;
 }
 
 message CreateBookingSeatsGrpcReplyDataDTO {
@@ -556,4 +571,137 @@ message CreateBookingSeatsGrpcReplyDataDTO {
     string seatType = 3;
     string label = 4;
     string price = 5;
+}
+
+message CreateBookingFoodDrinkGrpcReplyDataDTO {
+  string FoodDrinkId = 1;
+  string Name = 2;
+  string Type = 3;
+  string Size = 4;
+  int32 Quantity = 5;
+  string UnitPrice = 6;
+  string TotalPrice = 7;
+}
+
+message GetBookingGrpcRequestDTO {
+	string bookingId = 1;
+}
+
+message GetBookingGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	GetBookingGrpcReplyDataDTO Data = 4;
+}
+
+message GetBookingGrpcReplyDataDTO {
+	string userId = 1;
+	string status = 2;
+	string totalPrice = 3;
+}
+
+message UpdateBookingGrpcRequestDTO {
+	string bookingId = 1;
+	string status = 2;
+}
+
+message UpdateBookingGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateBookingGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateBookingGrpcReplyDataDTO {
+	string bookingId = 1;
+	string status = 2;
+	repeated UpdateBookingSeatsGrpcReplyDataDTO bookingSeats = 3;
+}
+
+message UpdateBookingSeatsGrpcReplyDataDTO {
+	string seatId = 1;
+	string seatCode = 2;
+    string seatType = 3;
+    string label = 4;
+    string price = 5;
+	string status = 6;
+}
+
+message GetAllFoodDrinksGrpcRequestDTO {
+    string Id = 1;
+    string Name = 2;
+    string Type = 3;
+    string Size = 4;
+}
+
+message GetAllFoodDrinksGrpcReplyDTO {
+    bool Result = 1;
+    string Message = 2;
+    int32 StatusCode = 3;
+    repeated GetAllFoodDrinksGrpcReplyDataDTO Data = 4;
+}
+
+message GetAllFoodDrinksGrpcReplyDataDTO {
+    string Id = 1;
+    string Name = 2;
+    string Type = 3;
+    string Size = 4;
+    string Price = 5;
+}
+
+message CreateFoodDrinkGrpcRequestDTO {
+    string Name = 1;
+    string Type = 2;
+    string Size = 3;
+    string Price = 4;
+    string CreatedBy = 5;
+}
+
+message CreateFoodDrinkGrpcReplyDTO {
+    bool Result = 1;
+    string Message = 2;
+    int32 StatusCode = 3;
+    CreateFoodDrinkGrpcReplyDataDTO Data = 4;
+}
+
+message CreateFoodDrinkGrpcReplyDataDTO {
+    string Id = 1;
+    string Name = 2;
+    string Type = 3;
+    string Size = 4;
+    string Price = 5;
+    string CreatedBy = 6;
+}
+
+message UpdateFoodDrinkGrpcRequestDTO {
+    string Id = 1;
+    string Name = 2;
+    string Type = 3;
+    string Size = 4;
+    string Price = 5;
+}
+
+message UpdateFoodDrinkGrpcReplyDTO {
+    bool Result = 1;
+    string Message = 2;
+    int32 StatusCode = 3;
+    UpdateFoodDrinkGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateFoodDrinkGrpcReplyDataDTO {
+    string Id = 1;
+    string Name = 2;
+    string Type = 3;
+    string Size = 4;
+    string Price = 5;
+}
+
+message DeleteFoodDrinkGrpcRequestDTO {
+    string Id = 1;
+}
+
+message DeleteFoodDrinkGrpcReplyDTO {
+    bool Result = 1;
+    string Message = 2;
+    int32 StatusCode = 3;
 }

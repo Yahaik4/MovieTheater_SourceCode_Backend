@@ -17,18 +17,21 @@ namespace CinemaService.DomainLogic
         private readonly IShowtimeRepository _showtimeRepository;
         private readonly ICinemaRepository _cinemaRepository;
         private readonly MovieServiceConnector _movieServiceConnector;
+        private readonly IFoodDrinkRepository _foodDrinkRepository;
 
         public CreateBookingLogic(IShowtimeSeatRepository showtimeSeatRepository, 
                                   IBookingRepository bookingRepository, 
                                   IShowtimeRepository showtimeRepository, 
                                   ICinemaRepository cinemaRepository,
-                                  MovieServiceConnector movieServiceConnector)
+                                  MovieServiceConnector movieServiceConnector,
+                                  IFoodDrinkRepository foodDrinkRepository)
         {
             _showtimeSeatRepository = showtimeSeatRepository;
             _bookingRepository = bookingRepository;
             _showtimeRepository = showtimeRepository;
             _cinemaRepository = cinemaRepository;
             _movieServiceConnector = movieServiceConnector;
+            _foodDrinkRepository = foodDrinkRepository; 
         }
 
         public async Task<CreateBookingResultData> Execute(CreateBookingParam param)
@@ -46,6 +49,52 @@ namespace CinemaService.DomainLogic
             if (showtimeSeats.Count != param.ShowtimeSeatIds.Count)
                 throw new ConflictException("Some seats are no longer available");
 
+            var seatsTotalPrice = showtimeSeats.Sum(s => s.Price);
+            decimal foodTotalPrice = 0;
+
+            var bookingItems = new List<BookingItem>();
+
+            if (param.FoodDrinkItems != null && param.FoodDrinkItems.Any())
+            {
+                if (param.FoodDrinkItems.Any(x => x.Quantity <= 0))
+                    throw new ValidationException("Food & drink quantity must be greater than 0");
+
+                var groupedItems = param.FoodDrinkItems
+                    .GroupBy(x => x.FoodDrinkId)
+                    .Select(g => new
+                    {
+                        FoodDrinkId = g.Key,
+                        Quantity = g.Sum(x => x.Quantity)
+                    })
+                    .ToList();
+
+                var foodIds = groupedItems.Select(x => x.FoodDrinkId).Distinct().ToList();
+                var foodEntities = await _foodDrinkRepository.GetByIdsAsync(foodIds);
+
+                if (foodEntities.Count != foodIds.Count)
+                    throw new ValidationException("Some foods/drinks are not available");
+
+                foreach (var item in groupedItems)
+                {
+                    var food = foodEntities.First(x => x.Id == item.FoodDrinkId);
+
+                    var unitPrice = food.Price;
+                    var totalPrice = unitPrice * item.Quantity;
+
+                    foodTotalPrice += totalPrice;
+
+                    bookingItems.Add(new BookingItem
+                    {
+                        Id = Guid.NewGuid(),
+                        BookingId = Guid.Empty,
+                        ItemId = food.Id,
+                        Quantity = item.Quantity,
+                        UnitPrice = unitPrice,
+                        TotalPrice = totalPrice
+                    });
+                }
+            }
+
             var booking = new Booking
             {
                 Id = Guid.NewGuid(),
@@ -54,7 +103,7 @@ namespace CinemaService.DomainLogic
                 Status = "pending",
                 ExpiredAt = DateTime.UtcNow + TimeSpan.FromMinutes(5),
                 NumberOfSeats = showtimeSeats.Count,
-                TotalPrice = showtimeSeats.Sum(s => s.Price),
+                TotalPrice = seatsTotalPrice + foodTotalPrice,
                 ShowtimeSeats = showtimeSeats,
                 BookingSeats = showtimeSeats.Select(sts => new BookingSeat
                 {
@@ -63,7 +112,8 @@ namespace CinemaService.DomainLogic
                     SeatType = sts.Seat.SeatType.Type,
                     Label = sts.Seat.Label,
                     Price = sts.Price
-                }).ToList()
+                }).ToList(),
+                BookingItems = bookingItems
             };
 
             var newBooking = await _bookingRepository.CreateBooking(booking);
@@ -104,6 +154,20 @@ namespace CinemaService.DomainLogic
                         Label = bs.Label,
                         Price = bs.Price,
                     }).ToList(),
+
+                    // NEW
+                    BookingFoodDrinks = newBooking.BookingItems?
+                        .Select(bi => new BookingFoodDrinkDataResult
+                        {
+                            FoodDrinkId = bi.ItemId,
+                            Name       = bi.FoodDrink?.Name,
+                            Type       = bi.FoodDrink?.Type,
+                            Size       = bi.FoodDrink?.Size,
+                            Quantity   = bi.Quantity,
+                            UnitPrice  = bi.UnitPrice,
+                            TotalPrice = bi.TotalPrice
+                        })
+                        .ToList() ?? new List<BookingFoodDrinkDataResult>()
                 }
             };
         }
