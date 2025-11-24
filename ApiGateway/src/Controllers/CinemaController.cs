@@ -990,7 +990,7 @@ namespace ApiGateway.Controllers
 
         [Authorize]
         [HttpPost("create-booking")]
-        public async Task<CreateBookingResultDTO> CreateBooking(CreateBookingRequestParam param)
+        public async Task<CreateBookingResultDTO> CreateBooking(CreateUserBookingRequestParam param)
         {
             try
             {

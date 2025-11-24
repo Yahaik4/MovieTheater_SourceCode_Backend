@@ -10,6 +10,7 @@ using Shared.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Shared.Contracts.Enums;
 using ApiGateway.Helper;
+using ApiGateway.ServiceConnector.CinemaService;
 
 namespace ApiGateway.Controllers
 {
@@ -19,11 +20,13 @@ namespace ApiGateway.Controllers
     {
         private readonly AuthenticationServiceConnector _authenticationConnector;
         private readonly ICurrentUserService _currentUserService;
+        private readonly CinemaServiceConnector _cinemaServiceConnector;
 
-        public ManagerController(AuthenticationServiceConnector authenticationServiceConnector, ICurrentUserService currentUserService)
+        public ManagerController(AuthenticationServiceConnector authenticationServiceConnector, CinemaServiceConnector cinemaServiceConnector, ICurrentUserService currentUserService)
         {
             _authenticationConnector = authenticationServiceConnector;
             _currentUserService = currentUserService;
+            _cinemaServiceConnector = cinemaServiceConnector;
         }
 
         [HttpPost("customer")]
@@ -352,6 +355,76 @@ namespace ApiGateway.Controllers
                     Result = false,
                     Message = message,
                     StatusCode = (int)statusCode
+                };
+            }
+        }
+
+        [Authorize(Policy = "StaffOrHigher")]
+        [HttpPost("staff-booking")]
+        public async Task<CreateBookingResultDTO> CreateBooking(CreateStaffBookingRequestParam param)
+        {
+            try
+            {
+
+                //foreach (var claim in User.Claims) { Console.WriteLine($"{claim.Type}: {claim.Value}"); }
+                if(param.UserId == null)
+                {
+                    return new CreateBookingResultDTO
+                    {
+                        Result = false,
+                        Message = "UserId is required",
+                        StatusCode = 401
+                    };
+                }
+                var result = await _cinemaServiceConnector.CreateBooking(param.UserId.ToString(), param.ShowtimeId, param.ShowtimeSeatIds, param.FoodDrinkItems);
+
+                return new CreateBookingResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreateBookingDataResult
+                    {
+                        BookingId = Guid.Parse(result.Data.BookingId),
+                        CinemaName = result.Data.CinemaName,
+                        NumberOfSeats = result.Data.NumberOfSeats,
+                        MovieName = result.Data.MovieName,
+                        StartTime = DateTime.Parse(result.Data.StartTime),
+                        EndTime = DateTime.Parse(result.Data.EndTime),
+                        RoomNumber = result.Data.RoomNumber,
+                        TotalPrice = decimal.Parse(result.Data.TotalPrice),
+                        BookingSeats = result.Data.BookingSeats.Select(bs => new BookingSeatsDataResult
+                        {
+                            SeatId = Guid.Parse(bs.SeatId),
+                            SeatCode = bs.SeatCode,
+                            SeatType = bs.SeatType,
+                            Label = bs.Label,
+                            Price = decimal.Parse(bs.Price),
+                        }).ToList(),
+                        BookingFoodDrinks = result.Data.BookingFoodDrinks
+                        .Select(f => new BookingFoodDrinkDataResult
+                        {
+                            FoodDrinkId = Guid.Parse(f.FoodDrinkId),
+                            Name        = f.Name,
+                            Type        = f.Type,
+                            Size        = f.Size,
+                            Quantity    = f.Quantity,
+                            UnitPrice   = decimal.Parse(f.UnitPrice),
+                            TotalPrice  = decimal.Parse(f.TotalPrice)
+                        }).ToList()
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new CreateBookingResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
                 };
             }
         }
