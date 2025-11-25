@@ -65,5 +65,15 @@ namespace CinemaService.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<Booking?> GetBookingWithDetailsAsync(Guid bookingId)
+        {
+            return await _context.Bookings
+                .Where(b => !b.IsDeleted && b.Id == bookingId)
+                .Include(b => b.Showtime)
+                    .ThenInclude(st => st.Room)
+                        .ThenInclude(r => r.Cinema)
+                .FirstOrDefaultAsync();
+        }
     }
 }

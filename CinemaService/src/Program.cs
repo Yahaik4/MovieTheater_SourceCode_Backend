@@ -5,6 +5,7 @@ using CinemaService.Helper;
 using CinemaService.Infrastructure.Repositories;
 using CinemaService.Infrastructure.Repositories.Implementations;
 using CinemaService.Infrastructure.Repositories.Interfaces;
+using CinemaService.ServiceConnector;
 using CinemaService.Services;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -99,7 +100,10 @@ void RegisterRepository()
     services.AddScoped<UpdateFoodDrinkLogic>();
     services.AddScoped<DeleteFoodDrinkLogic>();
 
+    services.AddScoped<CheckInBookingLogic>();
+
     builder.Services.AddScoped<MovieServiceConnector>();
+    builder.Services.AddScoped<ProfileServiceConnector>();
     builder.Services.AddHttpContextAccessor();
 }
 

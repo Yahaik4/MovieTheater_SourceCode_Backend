@@ -274,5 +274,48 @@ namespace ProfileService.Services
                 StatusCode = 200
             };
         }
+
+        public override async Task<GetStaffByUserIdReply> GetStaffs(
+            GetStaffsRequest request,
+            ServerCallContext context)
+        {
+            Guid? userId = null;
+            Guid? cinemaId = null;
+
+            if (!string.IsNullOrWhiteSpace(request.UserId) &&
+                Guid.TryParse(request.UserId, out var parsedUserId))
+            {
+                userId = parsedUserId;
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.CinemaId) &&
+                Guid.TryParse(request.CinemaId, out var parsedCinemaId))
+            {
+                cinemaId = parsedCinemaId;
+            }
+
+            var staff = await _staffRepository.GetStaffAsync(userId, cinemaId);
+
+            if (staff == null)
+            {
+                return new GetStaffByUserIdReply
+                {
+                    Found = false
+                };
+            }
+
+            return new GetStaffByUserIdReply
+            {
+                Found       = true,
+                UserId      = staff.UserId.ToString(),
+                FullName    = staff.FullName ?? string.Empty,
+                PhoneNumber = staff.PhoneNumber ?? string.Empty,
+                DayOfBirth  = staff.DayOfBirth?.ToString("yyyy-MM-dd") ?? string.Empty,
+                Gender      = staff.Gender ?? string.Empty,
+                CinemaId    = staff.CinemaId.ToString(),
+                Position    = staff.Position ?? string.Empty,
+                Salary      = staff.Salary.ToString()
+            };
+        }
     }
 }

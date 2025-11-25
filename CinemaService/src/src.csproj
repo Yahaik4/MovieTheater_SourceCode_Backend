@@ -9,6 +9,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
+  <Protobuf Include="ServiceConnector\Protos\Profile.proto" GrpcServices="Client" />
 		<Protobuf Include="ServiceConnector\Protos\Movie.proto" GrpcServices="Client" />
 		<Protobuf Include="Services\Protos\Cinema.proto" GrpcServices="Server" />
 	</ItemGroup>

@@ -197,12 +197,16 @@ namespace ApiGateway.Controllers
 
         [HttpGet("staffs")]
         [Authorize(Policy = "StaffOrHigher")]
-        public async Task<GetStaffsResultDTO> GetStaffs([FromQuery] Guid? userId)
+        public async Task<GetStaffsResultDTO> GetStaffs(
+            [FromQuery] Guid? userId,
+            [FromQuery] Guid? cinemaId   // NEW
+        )
         {
             try
             {
                 var grpcResult = await _authenticationConnector.GetStaffs(
-                    userId: userId?.ToString()
+                    userId: userId?.ToString(),
+                    cinemaId: cinemaId        // NEW
                 );
 
                 return new GetStaffsResultDTO
@@ -425,6 +429,74 @@ namespace ApiGateway.Controllers
                     Result = false,
                     Message = message,
                     StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "StaffOrHigher")]
+        [HttpPost("check-in")]
+        public async Task<CheckInBookingResultDTO> CheckInBooking(CheckInBookingRequestParam param)
+        {
+            try
+            {
+                var currentUserId = _currentUserService.UserId;
+                var role = _currentUserService.Role;
+
+                if (currentUserId == null)
+                {
+                    return new CheckInBookingResultDTO
+                    {
+                        Result = false,
+                        Message = "User not found in token",
+                        StatusCode = 401,
+                        Data = null
+                    };
+                }
+
+                // Không cho customer tự check-in
+                if (role == "customer")
+                {
+                    return new CheckInBookingResultDTO
+                    {
+                        Result = false,
+                        Message = "Customer cannot check-in bookings.",
+                        StatusCode = 403,
+                        Data = null
+                    };
+                }
+
+                var grpcResult = await _cinemaServiceConnector.CheckInBooking(param.BookingId);
+
+                return new CheckInBookingResultDTO
+                {
+                    Result = grpcResult.Result,
+                    Message = grpcResult.Message,
+                    StatusCode = grpcResult.StatusCode,
+                    Data = grpcResult.Data == null
+                        ? null
+                        : new CheckInBookingDataResult
+                        {
+                            BookingId = Guid.Parse(grpcResult.Data.BookingId),
+                            Status = grpcResult.Data.Status,
+                            CinemaId = Guid.Parse(grpcResult.Data.CinemaId),
+                            CinemaName = grpcResult.Data.CinemaName,
+                            ShowtimeStartTime = DateTime.Parse(grpcResult.Data.ShowtimeStartTime),
+                            ShowtimeEndTime = DateTime.Parse(grpcResult.Data.ShowtimeEndTime),
+                            NumberOfSeats = grpcResult.Data.NumberOfSeats
+                        }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"CheckInBooking Error: {message}");
+
+                return new CheckInBookingResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                    Data = null
                 };
             }
         }

@@ -130,6 +130,7 @@ message AddUserGrpcRequestDTO {
 
 message GetUsersGrpcRequestDTO {
   string userId = 1;
+  string CinemaId = 2;
 }
 
 message UserInfoGrpcDTO {

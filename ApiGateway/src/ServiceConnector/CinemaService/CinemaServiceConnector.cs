@@ -454,6 +454,27 @@ namespace ApiGateway.ServiceConnector.CinemaService
             return await client.CreateFoodDrinkAsync(request);
         }
 
+        public async Task<CheckInBookingGrpcReplyDTO> CheckInBooking(Guid bookingId)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var staffUserId = _currentUserService.UserId;
+
+            if (string.IsNullOrWhiteSpace(staffUserId))
+            {
+                throw new Exception("UserId not found in token");
+            }
+
+            var request = new CheckInBookingGrpcRequestDTO
+            {
+                BookingId = bookingId.ToString(),
+                StaffUserId = staffUserId
+            };
+
+            return await client.CheckInBookingAsync(request);
+        }
+
         public async Task<UpdateFoodDrinkGrpcReplyDTO> UpdateFoodDrink(Guid id, UpdateFoodDrinkRequestParam param)
         {
             using var channel = GetCinemaServiceChannel();

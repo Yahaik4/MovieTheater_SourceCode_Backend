@@ -46,5 +46,20 @@ namespace ProfileService.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return staff;
         }
+
+        public async Task<Staff?> GetStaffAsync(Guid? userId, Guid? cinemaId)
+        {
+            var query = _context.Staffs
+                .Where(s => !s.IsDeleted)
+                .AsQueryable();
+
+            if (userId.HasValue)
+                query = query.Where(s => s.UserId == userId.Value);
+
+            if (cinemaId.HasValue)
+                query = query.Where(s => s.CinemaId == cinemaId.Value);
+
+            return await query.FirstOrDefaultAsync();
+        }
     }
 }

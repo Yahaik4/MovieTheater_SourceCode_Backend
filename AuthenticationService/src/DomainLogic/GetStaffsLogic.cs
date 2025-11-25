@@ -30,6 +30,12 @@ namespace AuthenticationService.DomainLogic
             {
                 var profile = await _profileServiceConnector.GetStaffByUserId(user.Id);
 
+                if (param?.CinemaId.HasValue == true)
+                {
+                    if (profile == null || profile.CinemaId != param.CinemaId.Value)
+                        continue;
+                }
+
                 resultItems.Add(new StaffWithProfileResultData
                 {
                     UserId = user.Id,

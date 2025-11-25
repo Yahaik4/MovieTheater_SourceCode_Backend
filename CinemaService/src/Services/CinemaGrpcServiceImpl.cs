@@ -40,6 +40,7 @@ namespace CinemaService.Services
         private readonly CreateFoodDrinkLogic _createFoodDrinkLogic;
         private readonly UpdateFoodDrinkLogic _updateFoodDrinkLogic;
         private readonly DeleteFoodDrinkLogic _deleteFoodDrinkLogic;
+        private readonly CheckInBookingLogic _checkInBookingLogic;
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
                                     GetAllCinemaLogic getAllCinemaLogic, 
@@ -69,7 +70,8 @@ namespace CinemaService.Services
                                     GetAllFoodDrinkLogic getAllFoodDrinkLogic,
                                     CreateFoodDrinkLogic createFoodDrinkLogic,
                                     UpdateFoodDrinkLogic updateFoodDrinkLogic,
-                                    DeleteFoodDrinkLogic deleteFoodDrinkLogic) 
+                                    DeleteFoodDrinkLogic deleteFoodDrinkLogic,
+                                    CheckInBookingLogic checkInBookingLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -102,6 +104,7 @@ namespace CinemaService.Services
             _createFoodDrinkLogic = createFoodDrinkLogic;
             _updateFoodDrinkLogic = updateFoodDrinkLogic;
             _deleteFoodDrinkLogic = deleteFoodDrinkLogic;
+            _checkInBookingLogic = checkInBookingLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -617,6 +620,17 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<DeleteFoodDrinkGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CheckInBookingGrpcReplyDTO> CheckInBooking(CheckInBookingGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _checkInBookingLogic.Execute(new CheckInBookingParam
+            {
+                BookingId = Guid.Parse(request.BookingId),
+                StaffUserId = Guid.Parse(request.StaffUserId)
+            });
+
+            return _mapper.Map<CheckInBookingGrpcReplyDTO>(result);
         }
     }
 }

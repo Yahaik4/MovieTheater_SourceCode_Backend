@@ -10,6 +10,7 @@ namespace ApiGateway.ServiceConnector
     public class ServiceConnectorConfig
     {
         public ServiceConnectorConfigOption MovieService { get; set; } = new ServiceConnectorConfigOption();
+        public ServiceConnectorConfigOption ProfileService { get; set; } = new ServiceConnectorConfigOption();
 
     }
     public class BaseServiceConnector
@@ -28,6 +29,10 @@ namespace ApiGateway.ServiceConnector
                 MovieService = new ServiceConnectorConfigOption
                 {
                     Endpoint = _configuration["ServiceConnector:MovieService:Endpoint"] ?? string.Empty
+                },
+                ProfileService = new ServiceConnectorConfigOption
+                {
+                    Endpoint = _configuration["ServiceConnector:ProfileService:Endpoint"] ?? string.Empty
                 }
             };
         }
@@ -48,8 +53,8 @@ namespace ApiGateway.ServiceConnector
             });
         }
 
-        protected GrpcChannel GetMovieServiceChannel()
-            => GetGrpcChannel(GetServiceConnectorConfig().MovieService.Endpoint);
+        protected GrpcChannel GetMovieServiceChannel() => GetGrpcChannel(GetServiceConnectorConfig().MovieService.Endpoint);
+        protected GrpcChannel GetProfileServiceChannel() => GetGrpcChannel(GetServiceConnectorConfig().ProfileService.Endpoint);
 
     }
 }

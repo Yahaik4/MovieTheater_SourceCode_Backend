@@ -167,17 +167,30 @@ namespace AuthenticationService.Services
             return _mapper.Map<RegisterGrpcReplyDTO>(result);
         }
 
-        public override async Task<GetStaffsGrpcReplyDTO> GetStaffs(GetUsersGrpcRequestDTO request, ServerCallContext context)
+        public override async Task<GetStaffsGrpcReplyDTO> GetStaffs(
+            GetUsersGrpcRequestDTO request,
+            ServerCallContext context)
         {
-            var param = new GetUsersParam();
-
-            if (!string.IsNullOrWhiteSpace(request.UserId) &&
-                Guid.TryParse(request.UserId, out var userId))
+            Guid? userId = null;
+            if (!string.IsNullOrWhiteSpace(request.UserId)
+                && Guid.TryParse(request.UserId, out var parsedUserId))
             {
-                param.UserId = userId;
+                userId = parsedUserId;
             }
 
-            var result = await _getStaffsLogic.Execute(param);
+            Guid? cinemaId = null;
+            if (!string.IsNullOrWhiteSpace(request.CinemaId)
+                && Guid.TryParse(request.CinemaId, out var parsedCinemaId))
+            {
+                cinemaId = parsedCinemaId;
+            }
+
+            var result = await _getStaffsLogic.Execute(new GetUsersParam
+            {
+                UserId = userId,
+                CinemaId = cinemaId
+            });
+
             return _mapper.Map<GetStaffsGrpcReplyDTO>(result);
         }
 

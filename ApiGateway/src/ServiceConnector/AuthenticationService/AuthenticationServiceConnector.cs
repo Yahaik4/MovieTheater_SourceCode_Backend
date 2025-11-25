@@ -152,14 +152,15 @@ namespace ApiGateway.ServiceConnector.AuthenticationService
             return await client.GetCustomersAsync(request);
         }
 
-        public async Task<GetStaffsGrpcReplyDTO> GetStaffs(string? userId)
+        public async Task<GetStaffsGrpcReplyDTO> GetStaffs(string? userId, Guid? cinemaId)
         {
             using var channel = GetAuthenticationServiceChannel();
             var client = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(channel);
 
             var request = new GetUsersGrpcRequestDTO
             {
-                UserId = userId ?? string.Empty
+                UserId = userId ?? string.Empty,
+                CinemaId = cinemaId?.ToString() ?? string.Empty   // NEW
             };
 
             return await client.GetStaffsAsync(request);

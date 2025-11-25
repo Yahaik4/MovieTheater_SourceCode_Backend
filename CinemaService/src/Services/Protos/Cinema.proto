@@ -44,6 +44,7 @@ service CinemaGrpcService {
     rpc CreateFoodDrink (CreateFoodDrinkGrpcRequestDTO) returns (CreateFoodDrinkGrpcReplyDTO);
     rpc UpdateFoodDrink (UpdateFoodDrinkGrpcRequestDTO) returns (UpdateFoodDrinkGrpcReplyDTO);
     rpc DeleteFoodDrink (DeleteFoodDrinkGrpcRequestDTO) returns (DeleteFoodDrinkGrpcReplyDTO);
+	rpc CheckInBooking (CheckInBookingGrpcRequestDTO) returns (CheckInBookingGrpcReplyDTO);
 }
 
 message GetAllCinemasGrpcRequestDTO {
@@ -704,4 +705,26 @@ message DeleteFoodDrinkGrpcReplyDTO {
     bool Result = 1;
     string Message = 2;
     int32 StatusCode = 3;
+}
+
+message CheckInBookingGrpcRequestDTO {
+  string BookingId = 1;
+  string StaffUserId = 2;
+}
+
+message CheckInBookingGrpcReplyDTO {
+  bool Result = 1;
+  string Message = 2;
+  int32 StatusCode = 3;
+  CheckInBookingGrpcReplyDataDTO Data = 4;
+}
+
+message CheckInBookingGrpcReplyDataDTO {
+  string BookingId = 1;
+  string Status = 2;
+  string CinemaId = 3;
+  string CinemaName = 4;
+  string ShowtimeStartTime = 5;
+  string ShowtimeEndTime = 6;
+  int32 NumberOfSeats = 7;
 }

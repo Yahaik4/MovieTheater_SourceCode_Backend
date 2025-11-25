@@ -48,6 +48,7 @@ message CreateProfileGrpcRequestDTO {
     string DayOfBirth  = 5;
     string Gender      = 6;
 
+    // staff only
     string CinemaId = 7;
     string Position = 8;
     string Salary   = 9;
