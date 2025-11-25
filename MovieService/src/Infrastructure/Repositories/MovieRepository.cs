@@ -30,9 +30,11 @@ namespace MovieService.Infrastructure.Repositories
         public async Task<Movie?> GetMovieById(Guid id)
         {
             return await _context.Movies
-                        .Include(m => m.MovieGenres)
-                        .Include(m => m.MoviePersons)
-                        .FirstOrDefaultAsync(x => x.Id == id);
+                .Include(m => m.MovieGenres)
+                    .ThenInclude(mg => mg.Genre)
+                .Include(m => m.MoviePersons)
+                    .ThenInclude(mp => mp.Person)
+                .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
         }
 
         public async Task<IEnumerable<Movie>> GetMovies(GetMoviesParam param)

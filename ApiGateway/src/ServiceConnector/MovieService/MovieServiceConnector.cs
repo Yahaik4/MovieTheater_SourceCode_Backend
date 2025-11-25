@@ -159,7 +159,7 @@ namespace ApiGateway.ServiceConnector.MovieService
         {
             using var channel = GetMovieServiceChannel();
             var client = new MovieGrpcService.MovieGrpcServiceClient(channel);
-
+            
             var request = new CreateMovieGrpcRequestDTO
             {
                 Name = param.Name,
@@ -173,6 +173,19 @@ namespace ApiGateway.ServiceConnector.MovieService
                 Poster = param.Poster,
                 TrailerUrl = param.TrailerUrl,
             };
+            // var request = new CreateMovieGrpcRequestDTO
+            // {
+            //     Name = param.Name,
+            //     Country = param.Country,
+            //     Status = param.Status,
+            //     Description = param.Description,
+            //     Duration = param.Duration.ToString(),
+            //     ReleaseDate = param.ReleaseDate.ToString(),
+            //     Language = param.Language,
+            //     Publisher = param.Publisher,
+            //     Poster = param.Poster,
+            //     TrailerUrl = param.TrailerUrl,
+            // };
 
             request.Genres.AddRange(param.Genres.Select(g =>
                 new MovieGenreGrpcRequestDTO { GenreId = g.GenreId.ToString() }));

@@ -197,7 +197,7 @@ namespace MovieService.DomainLogic
                     }).ToList(),
                     Persons = movie.MoviePersons.Select(mp => new MoviePersonDataResult
                     {
-                        PersonId = mp.Id,
+                        PersonId = mp.PersonId,           // ĐÚNG
                         FullName = mp.Person.FullName,
                         Role = mp.Role,
                     }).ToList()
