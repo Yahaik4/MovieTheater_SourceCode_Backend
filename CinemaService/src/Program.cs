@@ -6,9 +6,12 @@ using CinemaService.Infrastructure.Repositories;
 using CinemaService.Infrastructure.Repositories.Implementations;
 using CinemaService.Infrastructure.Repositories.Interfaces;
 using CinemaService.ServiceConnector;
+using CinemaService.Messaging;
+
 using CinemaService.Services;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using RabbitMQ.Client;
 using Shared.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,8 +40,21 @@ dataSourceBuilder.EnableDynamicJson();
 
 var dataSource = dataSourceBuilder.Build();
 
+builder.Services.AddSingleton<IConnection>(sp =>
+{
+    var factory = new ConnectionFactory
+    {
+        HostName = "localhost",
+        Port = 5673,
+        UserName = "admin",
+        Password = "123"
+    };
+    return factory.CreateConnection();
+});
+
 builder.Services.AddHostedService<ShowtimeSeatCleanupService>();
 builder.Services.AddHostedService<BookingCleanupService>();
+builder.Services.AddHostedService<PaymentStatusChangedConsumer>();
 
 RegisterRepository();
 var app = builder.Build();
@@ -102,9 +118,9 @@ void RegisterRepository()
 
     services.AddScoped<CheckInBookingLogic>();
 
-    builder.Services.AddScoped<MovieServiceConnector>();
-    builder.Services.AddScoped<ProfileServiceConnector>();
-    builder.Services.AddHttpContextAccessor();
+    services.AddScoped<ProfileServiceConnector>();
+    services.AddScoped<MovieServiceConnector>();
+    services.AddHttpContextAccessor();
 }
 
 void RegisterGrpcServicePublish()

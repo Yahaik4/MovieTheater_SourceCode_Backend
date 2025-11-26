@@ -5,7 +5,8 @@ using PaymentService.ServiceConnector.CinemaService;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
-using Stripe;
+using PaymentService.Providers;
+using PaymentService.Infrastructure.EF.Models;
 
 namespace PaymentService.DomainLogic
 {
@@ -13,11 +14,16 @@ namespace PaymentService.DomainLogic
     {
         private readonly ITransactionRepository _transactionRepository;
         private readonly CinemaServiceConnector _cinemaServiceConnector;
+        private readonly PaymentProviderFactory _paymentProviderFactory;
 
-        public CreateTransactionLogic(ITransactionRepository transactionRepository, CinemaServiceConnector cinemaServiceConnector)
+        public CreateTransactionLogic(
+            ITransactionRepository transactionRepository,
+            CinemaServiceConnector cinemaServiceConnector,
+            PaymentProviderFactory paymentProviderFactory)
         {
             _transactionRepository = transactionRepository;
             _cinemaServiceConnector = cinemaServiceConnector;
+            _paymentProviderFactory = paymentProviderFactory;
         }
 
         public async Task<CreateTransactionResultData> Execute(CreateTransactionParam param)
@@ -25,121 +31,74 @@ namespace PaymentService.DomainLogic
             if (param == null) throw new ValidationException("Parameter is null");
             if (param.UserId == Guid.Empty) throw new ValidationException("UserId cannot be empty GUID");
             if (param.BookingId == Guid.Empty) throw new ValidationException("BookingId cannot be empty GUID");
+            if (string.IsNullOrWhiteSpace(param.PaymentGateway))
+                throw new ValidationException("PaymentGateway is required");
 
-            var currency = param.Currency.Trim().ToLowerInvariant();
-
+            // Lấy thông tin booking
             var booking = await _cinemaServiceConnector.GetBooking(param.BookingId);
-
-            if(booking == null || !booking.Result)
-            {
+            if (booking == null || !booking.Result)
                 throw new ValidationException("Booking not found");
-            }
-
-            if(booking.Data.Status != "pending" || booking.Data.UserId != param.UserId.ToString())
-            {
+            if (booking.Data.Status != "pending" || booking.Data.UserId != param.UserId.ToString())
                 throw new ValidationException("Booking cannot be processed for payment");
-            }
 
+            // Tổng tiền booking
             decimal amount = decimal.Parse(booking.Data.TotalPrice);
-            long stripeAmount;
-            try
+
+            // Lấy provider theo PaymentGateway
+            var provider = _paymentProviderFactory.GetProvider(param.PaymentGateway);
+
+            BookingDataParam bookingDataParam = new BookingDataParam
             {
-                stripeAmount = ConvertToStripeAmount(amount, currency);
-            }
-            catch (Exception ex)
-            {
-                throw new ValidationException($"Unsupported currency or invalid amount: {ex.Message}");
-            }
-
-            try
-            {
-                var paymentIntentService = new PaymentIntentService();
-
-                var createOptions = new PaymentIntentCreateOptions
-                {
-                    Amount = stripeAmount,
-                    Currency = currency,
-                    Metadata = new Dictionary<string, string>
-                    {
-                        { "bookingId", param.BookingId.ToString() },
-                        { "userId", param.UserId.ToString() }
-                    },
-                    AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
-                    {
-                        Enabled = true
-                    }
-                };
-
-                var paymentIntent = await paymentIntentService.CreateAsync(createOptions);
-
-                var transaction = new PaymentService.Infrastructure.EF.Models.Transaction
-                {
-                    Id = Guid.NewGuid(),
-                    BookingId = param.BookingId,
-                    UserId = param.UserId,
-                    PaymentIntentId = paymentIntent.Id,
-                    Status = paymentIntent.Status,
-                    Amount = amount,
-                    Currency = currency,
-                    PaymentMethod = paymentIntent.PaymentMethodTypes != null && paymentIntent.PaymentMethodTypes.Count > 0
-                        ? paymentIntent.PaymentMethodTypes.First()
-                        : null
-                };
-
-                await _transactionRepository.CreateTransaction(transaction);
-
-                return new CreateTransactionResultData
-                {
-                    Result = true,
-                    Message = "PaymentIntent created",
-                    StatusCode = StatusCodeEnum.Created,
-                    Data = new CreateTransactionDataResult
-                    {
-                        TransactionId = transaction.Id,
-                        PaymentIntentId = paymentIntent.Id,
-                        ClientSecret = paymentIntent.ClientSecret,
-                        Amount = amount,
-                        Currency = currency,
-                        Status = paymentIntent.Status,
-                        CreatedAt = transaction.CreatedAt
-                    }
-                };
-            }
-            catch (StripeException sx)
-            {
-                throw new Grpc.Core.RpcException(
-                    new Grpc.Core.Status(Grpc.Core.StatusCode.FailedPrecondition, $"Stripe error: {sx.Message}")
-                );
-            }
-            catch (Exception ex)
-            {
-                throw new Grpc.Core.RpcException(
-                    new Grpc.Core.Status(Grpc.Core.StatusCode.Internal, $"Failed to create PaymentIntent: {ex.Message}")
-                );
-            }
-        }
-
-        private static long ConvertToStripeAmount(decimal amount, string currency)
-        {
-            // currencies with 0 decimal places
-            var zeroDecimalCurrencies = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-            {
-                "jpy", "krw" // add any other zero-decimal currencies if needed
+                BookingId = param.BookingId,
+                UserId = param.UserId,
+                ClientIp = param.ClientIp,
+                MovieId = Guid.Parse(booking.Data.MovieId),
+                MovieName = booking.Data.MovieName,
+                Amount = amount,
+                StartTime = booking.Data.StartTime,
+                EndTime = booking.Data.EndTime,
             };
 
-            if (zeroDecimalCurrencies.Contains(currency))
-            {
-                // amount must be an integer for zero-decimal currencies
-                if (decimal.Truncate(amount) != amount)
-                    throw new ArgumentException($"Currency {currency} does not support fractional amounts.");
-                return (long)amount;
-            }
+            // Tạo transaction qua provider
+            var transactionResult = await provider.CreatePaymentAsync(bookingDataParam);
 
-            // default: 2 decimal currencies
-            // To avoid floating rounding issues, use MidpointRounding.ToEven or a safe rounding strategy
-            var multiplied = Math.Round(amount * 100m, 0, MidpointRounding.AwayFromZero);
-            if (multiplied < 0) throw new ArgumentException("Amount must be non-negative after conversion.");
-            return (long)multiplied;
+            // Lưu vào database chung Transaction table
+            var transaction = new Transaction
+            {
+                Id = Guid.NewGuid(),
+                BookingId = param.BookingId,
+                UserId = param.UserId,
+                Amount = amount,
+                Currency = transactionResult.Currency,
+                Status = transactionResult.Status,
+                PaymentGateway = param.PaymentGateway.ToLower(),
+                TxnRef = transactionResult.TransactionId,
+                PaymentGatewayTransactionNo = transactionResult.PaymentIntentId,
+                ProviderMeta = transactionResult.ProviderMeta,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _transactionRepository.CreateTransaction(transaction);
+
+            // Trả về dữ liệu chuẩn chung
+            return new CreateTransactionResultData
+            {
+                Result = true,
+                Message = "Transaction created",
+                StatusCode = StatusCodeEnum.Created,
+                Data = new CreateTransactionDataResult
+                {
+                    TransactionId = transaction.TxnRef,
+                    PaymentIntentId = transaction.PaymentGatewayTransactionNo,
+                    Amount = transaction.Amount,
+                    Currency = transaction.Currency,
+                    Status = transaction.Status,
+                    PaymentUrl = transactionResult.PaymentUrl,
+                    Provider = transaction.PaymentGateway,
+                    ProviderMeta = transaction.ProviderMeta,
+                    CreatedAt = transaction.CreatedAt
+                }
+            };
         }
     }
 }

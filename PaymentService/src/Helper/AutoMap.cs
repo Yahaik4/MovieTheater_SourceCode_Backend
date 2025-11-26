@@ -10,6 +10,8 @@ namespace PaymentService.Helper
         {
             CreateMap<CreateTransactionResultData, CreateTransactionGrpcReplyDTO>();
             CreateMap<CreateTransactionDataResult, CreateTransactionGrpcReplyDataDTO>();
+
+            CreateMap<HandleVnpayCallbackResultData, HanldeVnpayCallbackGrpcReplyDTO>();
         }
     }
 }

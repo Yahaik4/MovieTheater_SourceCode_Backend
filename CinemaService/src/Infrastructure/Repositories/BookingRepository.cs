@@ -29,7 +29,8 @@ namespace CinemaService.Infrastructure.Repositories
 
         public async Task<Booking?> GetBookingById(Guid id)
         {
-            return await _context.Bookings.FirstOrDefaultAsync(b => b.Id == id);
+            return await _context.Bookings.Include(b => b.Showtime)
+                                          .FirstOrDefaultAsync(b => b.Id == id);
         }
 
         public async Task UpdateExpiredBookingsStatusAsync()
@@ -40,7 +41,7 @@ namespace CinemaService.Infrastructure.Repositories
             while (hasMore)
             {
                 var expiredBookings = await _context.Bookings
-                    .Where(b => b.Status == "pending" && b.ExpiredAt < DateTime.Now)
+                    .Where(b => b.Status == "pending" && b.ExpiredAt < DateTime.UtcNow)
                     .Include(b => b.ShowtimeSeats)
                     .Take(batchSize)
                     .ToListAsync();

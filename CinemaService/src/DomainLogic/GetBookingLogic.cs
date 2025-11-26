@@ -1,4 +1,5 @@
-﻿using CinemaService.DataTransferObject.Parameter;
+﻿using ApiGateway.ServiceConnector.MovieService;
+using CinemaService.DataTransferObject.Parameter;
 using CinemaService.DataTransferObject.ResultData;
 using CinemaService.Infrastructure.Repositories.Interfaces;
 using Shared.Contracts.Enums;
@@ -9,11 +10,13 @@ namespace CinemaService.DomainLogic
 {
     public class GetBookingLogic : IDomainLogic<GetBookingParam, Task<GetBookingResultData>>
     {
+        private readonly MovieServiceConnector _movieServiceConnector;
         private readonly IBookingRepository _bookingRepository;
 
-        public GetBookingLogic(IBookingRepository bookingRepository)
+        public GetBookingLogic(IBookingRepository bookingRepository, MovieServiceConnector movieServiceConnector)
         {
             _bookingRepository = bookingRepository;
+            _movieServiceConnector = movieServiceConnector;
         }
 
         public async Task<GetBookingResultData> Execute(GetBookingParam param)
@@ -25,6 +28,14 @@ namespace CinemaService.DomainLogic
                 throw new NotFoundException("Booking Not Found");
             }
 
+            var movie = await _movieServiceConnector.GetMovies(booking.Showtime.MovieId, null, null, null);
+
+            //Console.WriteLine("Movie:", movie.Data.First().Name);
+            if(movie == null || !movie.Result || movie.Data.Count() <= 0)
+            {
+                throw new NotFoundException("Movie Not Found");
+            }
+
             var showtimeSeats = await _bookingRepository.GetBookingById(param.BookingId);
 
             return new GetBookingResultData
@@ -34,7 +45,12 @@ namespace CinemaService.DomainLogic
                 StatusCode = StatusCodeEnum.Success,
                 Data = new GetBookingDataResult
                 {
+                    BookingId = booking.Id,
                     UserId = booking.UserId,
+                    MovieId = booking.Showtime.MovieId,
+                    MovieName = movie.Data.First().Name,
+                    StartTime = booking.Showtime.StartTime,
+                    EndTime = booking.Showtime.EndTime,
                     Status = booking.Status,
                     TotalPrice = booking.TotalPrice
                 }

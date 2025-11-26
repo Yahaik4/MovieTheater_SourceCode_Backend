@@ -4,7 +4,9 @@ using PaymentService.DomainLogic;
 using PaymentService.Helper;
 using PaymentService.Infrastructure.Repositories;
 using PaymentService.Infrastructure.Repositories.Interfaces;
-using PaymentService.ServiceConnector.MovieService;
+using PaymentService.Providers;
+using PaymentService.ServiceConnector;
+using PaymentService.ServiceConnector.CinemaService;
 using PaymentService.Services;
 using Shared.Utils;
 using Stripe;
@@ -39,7 +41,15 @@ void RegisterRepository()
 
     services.AddScoped<ITransactionRepository, TransactionRepository>();
 
+    services.AddScoped<StripePaymentProvider>();
+    services.AddScoped<VnPayPaymentProvider>();
+    services.AddScoped<MomoPaymentProvider>();
+
+    services.AddScoped<PaymentProviderFactory>();
+    services.AddScoped<RabbitMqPublisher>();
+
     services.AddScoped<CreateTransactionLogic>();
+    services.AddScoped<HandleVnpayCallbackLogic>();
 
     services.AddScoped<CinemaServiceConnector>();
     services.AddHttpContextAccessor();

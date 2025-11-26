@@ -101,7 +101,7 @@ namespace CinemaService.DomainLogic
                 ShowtimeId = param.ShowtimeId,
                 UserId = param.UserId,
                 Status = "pending",
-                ExpiredAt = DateTime.UtcNow + TimeSpan.FromMinutes(5),
+                ExpiredAt = DateTime.UtcNow + TimeSpan.FromMinutes(30),
                 NumberOfSeats = showtimeSeats.Count,
                 TotalPrice = seatsTotalPrice + foodTotalPrice,
                 ShowtimeSeats = showtimeSeats,

@@ -6,7 +6,7 @@ namespace PaymentService.DataTransferObject.Parameter
     {
         public Guid BookingId { get; set; }
         public Guid UserId { get; set; }
-        public string Currency { get; set; } = "usd";
-        public string PaymentMethod { get; set; }
+        public string PaymentGateway { get; set; }
+        public string ClientIp { get; set; }
     }
 }

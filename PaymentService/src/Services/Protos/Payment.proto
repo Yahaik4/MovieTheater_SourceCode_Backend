@@ -1,18 +1,21 @@
 syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
+
 option csharp_namespace = "PaymentGrpc";
 
 package Payment;
 
 service PaymentGrpcService {
 	rpc CreateTransaction(CreateTransactionGrpcRequestDTO) returns (CreateTransactionGrpcReplyDTO);
+	rpc HanldeVnpayCallback(HanldeVnpayCallbackGrpcRequestDTO) returns (HanldeVnpayCallbackGrpcReplyDTO);
 }
 
 message CreateTransactionGrpcRequestDTO {
 	string bookingId = 1;
     string userId = 2;
-    string currency = 3;
-    string paymentMethod = 4;
+    string paymentGateway = 3;
+    string clientIp = 4;
 }
 
 message CreateTransactionGrpcReplyDTO {
@@ -24,10 +27,34 @@ message CreateTransactionGrpcReplyDTO {
 
 message CreateTransactionGrpcReplyDataDTO {
 	string transactionId = 1;
-    string paymentIntentId = 2;
-    string clientSecret = 3;
-    string amount = 4;
-    string currency = 5;
-    string status = 6;
-    string createdAt = 7;
+	google.protobuf.StringValue paymentIntentId = 2;
+	google.protobuf.StringValue clientSecret = 3;
+	string amount = 4;
+	string currency = 5;
+	string status = 6;
+	google.protobuf.StringValue paymentUrl = 7;
+	string provider = 8;
+	google.protobuf.StringValue providerMeta = 9;
+	string createdAt = 10;
+}
+
+message HanldeVnpayCallbackGrpcRequestDTO {
+    string vnp_Amount = 1;
+    string vnp_BankCode = 2;
+    string vnp_BankTranNo = 3;
+    string vnp_CardType = 4;
+    string vnp_OrderInfo = 5;
+    string vnp_PayDate = 6;
+    string vnp_ResponseCode = 7;
+    string vnp_TmnCode = 8;
+    string vnp_TransactionNo = 9;
+    string vnp_TransactionStatus = 10;
+    string vnp_TxnRef = 11;
+    string vnp_SecureHash = 12;
+}
+
+message HanldeVnpayCallbackGrpcReplyDTO {
+	bool result = 1;
+	string message = 2;
+	int32 statusCode = 3;
 }

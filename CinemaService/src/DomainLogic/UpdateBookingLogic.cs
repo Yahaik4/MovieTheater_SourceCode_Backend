@@ -26,24 +26,30 @@ namespace CinemaService.DomainLogic
                 throw new NotFoundException("Booking Not found");
             }
 
+            var bookedSeatIds = booking.BookingSeats.Select(bs => bs.SeatId).ToList();
+
             var showtimeSeats = await _showtimeSeatRepository.GetShowtimeSeatsByShowtimeId(booking.ShowtimeId);
 
-            if(param.Status == "paid")
-            {
-                booking.Status = param.Status;
+            var seatsToUpdate = showtimeSeats.Where(s => bookedSeatIds.Contains(s.SeatId)).ToList();
 
-                foreach (var seat in showtimeSeats) { 
+            if (param.Status.ToLower() == "paid")
+            {
+                booking.Status = "paid";
+
+                foreach (var seat in seatsToUpdate)
+                {
                     seat.Status = "booked";
                 }
             }
 
-            if(param.Status == "cancelled" || param.Status == "failed")
+            if (param.Status == "cancelled" || param.Status == "failed")
             {
                 booking.Status = param.Status;
 
                 foreach (var seat in showtimeSeats)
                 {
                     seat.Status = "available";
+                    seat.BookingId = null;
                 }
             }
             

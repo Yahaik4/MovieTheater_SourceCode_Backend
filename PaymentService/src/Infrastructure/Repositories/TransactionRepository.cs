@@ -20,5 +20,22 @@ namespace PaymentService.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return transaction;
         }
+
+        public Task<Transaction?> GetTransactionById(Guid transactionId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Transaction?> GetTransactionTxnRef(string txnRef)
+        {
+            return await _context.Transactions.FirstOrDefaultAsync(t => t.TxnRef == txnRef);
+        }
+
+        public async Task<Transaction> UpdateTransaction(Transaction transaction)
+        {
+            _context.Transactions.Update(transaction);
+            await _context.SaveChangesAsync();
+            return transaction;
+        }
     }
 }

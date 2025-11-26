@@ -596,9 +596,14 @@ message GetBookingGrpcReplyDTO {
 }
 
 message GetBookingGrpcReplyDataDTO {
-	string userId = 1;
-	string status = 2;
-	string totalPrice = 3;
+	string bookingId = 1;     
+    string userId = 2;        
+    string movieId = 3;      
+	string movieName = 4;
+    string startTime = 5;     
+    string endTime = 6;       
+    string status = 7;        
+    string totalPrice = 8; 
 }
 
 message UpdateBookingGrpcRequestDTO {

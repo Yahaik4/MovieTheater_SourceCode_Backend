@@ -6,10 +6,14 @@ namespace PaymentService.Infrastructure.EF.Models
     {
         public Guid BookingId { get; set; }
         public Guid UserId { get; set; }
-        public string PaymentIntentId { get; set; }
-        public string Status { get; set; }
         public decimal Amount { get; set; }
-        public string Currency { get; set; } 
-        public string PaymentMethod { get; set; }
+        public string Currency { get; set; }
+        public string Status { get; set; }
+        public string PaymentGateway { get; set; } 
+        public string? PaymentMethodType { get; set; }
+        public string TxnRef { get; set; }
+        public string? PaymentGatewayTransactionNo { get; set; }
+        public string? ProviderMeta { get; set; }
     }
+
 }
