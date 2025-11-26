@@ -77,6 +77,9 @@ namespace CinemaService.Helper
             CreateMap<GetRoomTypeDataResult, GetRoomTypeGrpcReplyDataDTO>();
             CreateMap<ShowtimeDataResult, ShowtimeGrpcReplyDataDTO>();
 
+            CreateMap<GetShowtimeDetailsResultData, GetShowtimeDetailsGrpcReplyDTO>();
+            CreateMap<GetShowtimeDetailsDataResult, GetShowtimeDetailsGrpcReplyDataDTO>();
+
             CreateMap<CreateShowtimeResultData, CreateShowtimeGrpcReplyDTO>();
             CreateMap<CreateShowtimeDataResult, CreateShowtimeGrpcReplyDataDTO>();
 
@@ -111,6 +114,8 @@ namespace CinemaService.Helper
 
             CreateMap<CheckInBookingResultData, CheckInBookingGrpcReplyDTO>();
             CreateMap<CheckInBookingDataResult, CheckInBookingGrpcReplyDataDTO>();
+
+            CreateMap<GetBookingHistoryResultData, GetBookingHistoryGrpcReplyDTO>();
         }
     }
 }

@@ -31,12 +31,14 @@ service CinemaGrpcService {
 	rpc DeleteSeatType(DeleteSeatTypeGrpcRequestDTO) returns (DeleteSeatTypeGrpcReplyDTO);
 
 	rpc GetShowtimes(GetShowtimesGrpcRequestDTO) returns (GetShowtimesGrpcReplyDTO);
+	rpc GetShowtimeDetails(GetShowtimeDetailsGrpcRequestDTO) returns (GetShowtimeDetailsGrpcReplyDTO);
 	rpc CreateShowtime(CreateShowtimeGrpcRequestDTO) returns (CreateShowtimeGrpcReplyDTO);
 	rpc UpdateShowtime(UpdateShowtimeGrpcRequestDTO) returns (UpdateShowtimeGrpcReplyDTO);
 
 	rpc GetShowtimeSeats(GetShowtimeSeatsGrpcRequestDTO) returns (GetShowtimeSeatsGrpcReplyDTO);
 
 	rpc GetBooking(GetBookingGrpcRequestDTO) returns (GetBookingGrpcReplyDTO);
+	rpc GetBookingHistory(GetBookingHistoryGrpcRequestDTO) returns (GetBookingHistoryGrpcReplyDTO);
 	rpc CreateBooking(CreateBookingGrpcRequestDTO) returns (CreateBookingGrpcReplyDTO);
 	rpc UpdateBooking(UpdateBookingGrpcRequestDTO) returns (UpdateBookingGrpcReplyDTO);
 
@@ -460,6 +462,33 @@ message ShowtimeGrpcReplyDataDTO {
 	string endTime = 3;
 }
 
+message GetShowtimeDetailsGrpcRequestDTO {
+	string showtimeId = 1;
+}
+
+message GetShowtimeDetailsGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	GetShowtimeDetailsGrpcReplyDataDTO Data = 4;
+}
+
+message GetShowtimeDetailsGrpcReplyDataDTO {
+	string cinemaId = 1;
+    string cinemaName = 2;
+    string city = 3;
+    string roomId = 4;
+    int32 roomNumber = 5;
+    int32 totalColumn = 6;
+    int32 totalRow = 7;
+    string roomType = 8;
+    string startTime = 9;
+    string endTime = 10;
+    string movieId = 11;
+    string movieName = 12;
+    string poster = 13;
+}
+
 message CreateShowtimeGrpcRequestDTO {
 	string movieId = 1;
 	string roomId = 2;
@@ -727,4 +756,15 @@ message CheckInBookingGrpcReplyDataDTO {
   string ShowtimeStartTime = 5;
   string ShowtimeEndTime = 6;
   int32 NumberOfSeats = 7;
+}
+
+message GetBookingHistoryGrpcRequestDTO {
+	string userId = 1;
+}
+
+message GetBookingHistoryGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated CreateBookingGrpcReplyDataDTO Data = 4;
 }

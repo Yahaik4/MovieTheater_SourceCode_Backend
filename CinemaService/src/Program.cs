@@ -102,6 +102,7 @@ void RegisterRepository()
     services.AddScoped<DeleteSeatTypeLogic>();
 
     services.AddScoped<GetShowtimesLogic>();
+    services.AddScoped<GetShowtimeDetailsLogic>();
     services.AddScoped<CreateShowtimeLogic>();
     services.AddScoped<UpdateShowtimeLogic>();
 
@@ -117,6 +118,7 @@ void RegisterRepository()
     services.AddScoped<DeleteFoodDrinkLogic>();
 
     services.AddScoped<CheckInBookingLogic>();
+    services.AddScoped<GetBookingHistoryLogic>();
 
     services.AddScoped<ProfileServiceConnector>();
     services.AddScoped<MovieServiceConnector>();

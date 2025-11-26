@@ -338,6 +338,19 @@ namespace ApiGateway.ServiceConnector.CinemaService
             return await client.GetShowtimesAsync(request);
         }
 
+        public async Task<GetShowtimeDetailsGrpcReplyDTO> GetShowtimeDetails(Guid showtimeId)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetShowtimeDetailsGrpcRequestDTO
+            {
+                ShowtimeId = showtimeId.ToString()
+            };
+
+            return await client.GetShowtimeDetailsAsync(request);
+        }
+
         public async Task<CreateShowtimeGrpcReplyDTO> CreateShowtime(Guid movieId, Guid roomId, DateTime startTime, DateTime endTime, string status)
         {
             using var channel = GetCinemaServiceChannel();
@@ -511,6 +524,19 @@ namespace ApiGateway.ServiceConnector.CinemaService
             };
 
             return await client.DeleteFoodDrinkAsync(request);
+        }
+
+        public async Task<GetBookingHistoryGrpcReplyDTO> GetBookingHistory(string userId)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetBookingHistoryGrpcRequestDTO
+            {
+                UserId = userId
+            };
+
+            return await client.GetBookingHistoryAsync(request);
         }
     }
 }

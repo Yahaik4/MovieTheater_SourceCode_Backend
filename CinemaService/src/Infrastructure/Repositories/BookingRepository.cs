@@ -33,6 +33,17 @@ namespace CinemaService.Infrastructure.Repositories
                                           .FirstOrDefaultAsync(b => b.Id == id);
         }
 
+        public async Task<IEnumerable<Booking>> GetBookingByUserId(Guid userId)
+        {
+            return await _context.Bookings.Where(b => b.UserId == userId && (b.Status == "paid" || b.Status == "used"))
+                                          .Include(b => b.Showtime)
+                                            .ThenInclude(st => st.Room)
+                                                .ThenInclude(r => r.Cinema)
+                                          .Include(b => b.BookingItems)
+                                            .ThenInclude(i => i.FoodDrink)
+                                          .ToListAsync();
+        }
+
         public async Task UpdateExpiredBookingsStatusAsync()
         {
             const int batchSize = 500;

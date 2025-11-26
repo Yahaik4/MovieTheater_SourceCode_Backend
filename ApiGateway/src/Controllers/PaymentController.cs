@@ -54,7 +54,7 @@ namespace ApiGateway.Controllers
             return "127.0.0.1";
         }
 
-        [HttpPost("create-transaction")]
+        [HttpPost("transaction")]
         public async Task<CreateTransactionResultDTO> CreateTransaction(CreateTransactionRequestParam param)
         {
             try

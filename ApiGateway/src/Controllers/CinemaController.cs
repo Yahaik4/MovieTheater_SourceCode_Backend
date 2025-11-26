@@ -728,6 +728,50 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [HttpGet("showtime-details/{showtimeId}")]
+        public async Task<GetShowtimeDetailsResultDTO> GetShowtimeDetails(Guid showtimeId)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetShowtimeDetails(showtimeId);
+
+                return new GetShowtimeDetailsResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new GetShowtimeDetailsDataResult
+                    {
+                        CinemaId = Guid.Parse(result.Data.CinemaId),
+                        CinemaName = result.Data.CinemaName,
+                        City = result.Data.City,
+                        RoomId = Guid.Parse(result.Data.RoomId),
+                        RoomNumber = result.Data.RoomNumber,
+                        TotalColumn = result.Data.TotalColumn,
+                        TotalRow = result.Data.TotalRow,
+                        RoomType = result.Data.RoomType,
+                        StartTime = DateTime.Parse(result.Data.StartTime),
+                        EndTime = DateTime.Parse(result.Data.EndTime),
+                        MovieId = Guid.Parse(result.Data.MovieId),
+                        MovieName = result.Data.MovieName,
+                        Poster = result.Data.Poster
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new GetShowtimeDetailsResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
+
         [Authorize(Policy = "CinemaManagerOrHigher")]
         [HttpPost("showtime")]
         public async Task<CreateShowtimeResultDTO> CreateShowtime(CreateShowtimeRequestParam param)
@@ -989,7 +1033,7 @@ namespace ApiGateway.Controllers
         }
 
         [Authorize]
-        [HttpPost("create-booking")]
+        [HttpPost("booking")]
         public async Task<CreateBookingResultDTO> CreateBooking(CreateUserBookingRequestParam param)
         {
             try
@@ -1052,6 +1096,75 @@ namespace ApiGateway.Controllers
                     Result = false,
                     Message = message,
                     StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [HttpGet("booking-history")]
+        public async Task<GetBookingHistoryResultDTO> GetBookingHistory()
+        {
+            try
+            {
+                var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                     ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (userId == null)
+                {
+                    throw new Exception("Not found userId in Token");
+                }
+                
+                var result = await _cinemaServiceConnector.GetBookingHistory(userId);
+
+                return new GetBookingHistoryResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(b => new CreateBookingDataResult
+                    {
+                        BookingId = Guid.Parse(b.BookingId),
+                        CinemaName = b.CinemaName,
+                        MovieName = b.MovieName,
+                        RoomNumber = b.RoomNumber,
+                        StartTime = DateTime.Parse(b.StartTime),
+                        EndTime = DateTime.Parse(b.EndTime),
+                        NumberOfSeats = b.NumberOfSeats,
+                        TotalPrice = Decimal.Parse(b.TotalPrice),
+
+                        BookingSeats = b.BookingSeats.Select(s => new BookingSeatsDataResult
+                        {
+                            SeatId = Guid.Parse(s.SeatId),
+                            SeatCode = s.SeatCode,
+                            SeatType = s.SeatType,
+                            Label = s.Label,
+                            Price = Decimal.Parse(s.Price)
+                        }).ToList(),
+
+                        BookingFoodDrinks = b.BookingFoodDrinks?.Select(f => new BookingFoodDrinkDataResult
+                        {
+                            FoodDrinkId = Guid.Parse(f.FoodDrinkId),
+                            Name = f.Name,
+                            Type = f.Type,
+                            Size = f.Size,
+                            Quantity = f.Quantity,
+                            UnitPrice = Decimal.Parse(f.UnitPrice),
+                            TotalPrice = Decimal.Parse(f.TotalPrice)
+                        }).ToList()
+
+                    }).ToList()
+                };
+
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetAllFoodDrinks Error: {message}");
+
+                return new GetBookingHistoryResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
                 };
             }
         }

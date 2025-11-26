@@ -9,5 +9,6 @@ namespace CinemaService.Infrastructure.Repositories.Interfaces
         Task<Booking> UpdateBooking(Booking booking);
         Task UpdateExpiredBookingsStatusAsync();
         Task<Booking?> GetBookingWithDetailsAsync(Guid bookingId);
+        Task<IEnumerable<Booking>> GetBookingByUserId(Guid userId);
     }
 }

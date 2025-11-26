@@ -30,6 +30,7 @@ namespace CinemaService.Services
         private readonly GetAllSeatLogic _getAllSeatLogic;
         private readonly UpdateSeatLogic _updateSeatLogic;
         private readonly GetShowtimesLogic _getShowtimesLogic;
+        private readonly GetShowtimeDetailsLogic _getShowtimeDetailsLogic;
         private readonly CreateShowtimeLogic _createShowtimeLogic;
         private readonly UpdateShowtimeLogic _updateShowtimeLogic;
         private readonly GetShowtimeSeatsLogic _getShowtimeSeatsLogic;
@@ -41,6 +42,7 @@ namespace CinemaService.Services
         private readonly UpdateFoodDrinkLogic _updateFoodDrinkLogic;
         private readonly DeleteFoodDrinkLogic _deleteFoodDrinkLogic;
         private readonly CheckInBookingLogic _checkInBookingLogic;
+        private readonly GetBookingHistoryLogic _getBookingHistoryLogic;
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
                                     GetAllCinemaLogic getAllCinemaLogic, 
@@ -64,6 +66,7 @@ namespace CinemaService.Services
                                     CreateShowtimeLogic createShowtimeLogic,
                                     UpdateShowtimeLogic updateShowtimeLogic,
                                     GetShowtimeSeatsLogic getShowtimeSeatsLogic,
+                                    GetShowtimeDetailsLogic getShowtimeDetailsLogic,
                                     GetBookingLogic getBookingLogic,
                                     CreateBookingLogic createBookingLogic,
                                     UpdateBookingLogic updateBookingLogic,
@@ -71,7 +74,8 @@ namespace CinemaService.Services
                                     CreateFoodDrinkLogic createFoodDrinkLogic,
                                     UpdateFoodDrinkLogic updateFoodDrinkLogic,
                                     DeleteFoodDrinkLogic deleteFoodDrinkLogic,
-                                    CheckInBookingLogic checkInBookingLogic) 
+                                    CheckInBookingLogic checkInBookingLogic,
+                                    GetBookingHistoryLogic getBookingHistoryLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -93,6 +97,7 @@ namespace CinemaService.Services
             _getAllSeatLogic = getAllSeatLogic;
             _updateSeatLogic = updateSeatLogic;
             _getShowtimesLogic = getShowtimesLogic;
+            _getShowtimeDetailsLogic = getShowtimeDetailsLogic;
             _createShowtimeLogic = createShowtimeLogic;
             _updateShowtimeLogic = updateShowtimeLogic;
             _getShowtimeSeatsLogic = getShowtimeSeatsLogic;
@@ -105,6 +110,7 @@ namespace CinemaService.Services
             _updateFoodDrinkLogic = updateFoodDrinkLogic;
             _deleteFoodDrinkLogic = deleteFoodDrinkLogic;
             _checkInBookingLogic = checkInBookingLogic;
+            _getBookingHistoryLogic = getBookingHistoryLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -427,6 +433,16 @@ namespace CinemaService.Services
             return _mapper.Map<GetShowtimesGrpcReplyDTO>(result);
         }
 
+        public override async Task<GetShowtimeDetailsGrpcReplyDTO> GetShowtimeDetails(GetShowtimeDetailsGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getShowtimeDetailsLogic.Execute(new GetShowtimeDetailsParam
+            {
+                ShowtimeId = Guid.Parse(request.ShowtimeId)
+            });
+
+            return _mapper.Map<GetShowtimeDetailsGrpcReplyDTO>(result);
+        }
+
         public override async Task<CreateShowtimeGrpcReplyDTO> CreateShowtime(CreateShowtimeGrpcRequestDTO request, ServerCallContext context)
         {
             Console.WriteLine(JsonSerializer.Serialize(request));
@@ -631,6 +647,16 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<CheckInBookingGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetBookingHistoryGrpcReplyDTO> GetBookingHistory(GetBookingHistoryGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getBookingHistoryLogic.Execute(new GetBookingHistoryParam
+            {
+                UserId = Guid.Parse(request.UserId)
+            });
+
+            return _mapper.Map<GetBookingHistoryGrpcReplyDTO>(result);
         }
     }
 }
