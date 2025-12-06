@@ -5,6 +5,7 @@ using CinemaService.DomainLogic;
 using Grpc.Core;
 using System.Globalization;
 using System.Text.Json;
+using CinemaService.DataTransferObject.ResultData;
 
 namespace CinemaService.Services
 {
@@ -43,6 +44,7 @@ namespace CinemaService.Services
         private readonly DeleteFoodDrinkLogic _deleteFoodDrinkLogic;
         private readonly CheckInBookingLogic _checkInBookingLogic;
         private readonly GetBookingHistoryLogic _getBookingHistoryLogic;
+        private readonly GetAllShowtimesLogic _getAllShowtimesLogic;   
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
                                     GetAllCinemaLogic getAllCinemaLogic, 
@@ -75,7 +77,8 @@ namespace CinemaService.Services
                                     UpdateFoodDrinkLogic updateFoodDrinkLogic,
                                     DeleteFoodDrinkLogic deleteFoodDrinkLogic,
                                     CheckInBookingLogic checkInBookingLogic,
-                                    GetBookingHistoryLogic getBookingHistoryLogic) 
+                                    GetBookingHistoryLogic getBookingHistoryLogic,
+                                    GetAllShowtimesLogic getAllShowtimesLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -111,6 +114,7 @@ namespace CinemaService.Services
             _deleteFoodDrinkLogic = deleteFoodDrinkLogic;
             _checkInBookingLogic = checkInBookingLogic;
             _getBookingHistoryLogic = getBookingHistoryLogic;
+            _getAllShowtimesLogic = getAllShowtimesLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -657,6 +661,84 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<GetBookingHistoryGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetAllShowtimesGrpcReplyDTO> GetAllShowtimes(
+            GetAllShowtimesGrpcRequestDTO request,
+            ServerCallContext context)
+        {
+            Guid? cinemaId = null;
+            if (!string.IsNullOrWhiteSpace(request.CinemaId)
+                && Guid.TryParse(request.CinemaId, out var parsedCinema))
+            {
+                cinemaId = parsedCinema;
+            }
+
+            Guid? movieId = null;
+            if (!string.IsNullOrWhiteSpace(request.MovieId)
+                && Guid.TryParse(request.MovieId, out var parsedMovie))
+            {
+                movieId = parsedMovie;
+            }
+
+            DateOnly? date = null;
+            if (!string.IsNullOrWhiteSpace(request.Date)
+                && DateOnly.TryParse(request.Date, out var parsedDate))
+            {
+                date = parsedDate;
+            }
+
+            var result = await _getAllShowtimesLogic.Execute(new GetAllShowtimesParam
+            {
+                CinemaId = cinemaId,
+                MovieId = movieId,
+                Date = date,
+                Country = request.Country
+            });
+
+            var reply = new GetAllShowtimesGrpcReplyDTO
+            {
+                Result = result.Result,
+                Message = result.Message,
+                StatusCode = (int)result.StatusCode
+            };
+
+            if (result.Data != null)
+            {
+                reply.Data.AddRange(
+                    result.Data.Select(c => new GetAllShowtimesCinemaGrpcReplyDataDTO
+                    {
+                        CinemaId = c.CinemaId.ToString(),
+                        CinemaName = c.CinemaName,
+                        Address = c.Address,
+                        RoomTypes =
+                        {
+                            (c.RoomTypes ?? new List<GetAllShowtimesRoomTypeData>())
+                                .Select(rt => new GetAllShowtimesRoomTypeGrpcReplyDataDTO
+                                {
+                                    RoomTypeId = rt.RoomTypeId.ToString(),
+                                    RoomTypeName = rt.RoomTypeName,
+                                    Showtimes =
+                                    {
+                                        (rt.Showtimes ?? new List<GetAllShowtimesShowtimeData>())
+                                            .Select(st => new GetAllShowtimesShowtimeGrpcReplyDataDTO
+                                            {
+                                                ShowtimeId = st.ShowtimeId.ToString(),
+                                                StartTime = st.StartTime,
+                                                EndTime = st.EndTime,
+                                                MovieId = st.MovieId.ToString(),
+                                                MovieName = st.MovieName ?? string.Empty
+                                            })
+                                            // nếu muốn sort theo StartTime:
+                                            .OrderBy(x => x.StartTime)
+                                    }
+                                })
+                        }
+                    })
+                );
+            }
+
+            return reply;
         }
     }
 }

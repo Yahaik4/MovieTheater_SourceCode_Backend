@@ -32,10 +32,10 @@ namespace CinemaService.DomainLogic
             var cinema = room.Cinema ?? throw new ValidationException("Cinema not found");
             var bookingCinemaId = cinema.Id;
 
-            if (booking.Status == "CheckedIn")
+            if (booking.Status == "used")
                 throw new ConflictException("Booking already checked in");
 
-            if (booking.Status != "Paid")
+            if (booking.Status != "paid")
                 throw new ValidationException("Only paid bookings can be checked in");
 
             // var now = DateTime.UtcNow;
@@ -46,7 +46,7 @@ namespace CinemaService.DomainLogic
             if (!staff.Found)
                 throw new UnauthorizedException("You cannot check in booking of this cinema");
 
-            booking.Status = "CheckedIn";
+            booking.Status = "used";
             await _bookingRepository.UpdateBooking(booking);
 
             return new CheckInBookingResultData

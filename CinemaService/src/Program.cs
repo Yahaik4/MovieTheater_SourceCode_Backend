@@ -45,9 +45,9 @@ builder.Services.AddSingleton<IConnection>(sp =>
     var factory = new ConnectionFactory
     {
         HostName = "localhost",
-        Port = 5673,
-        UserName = "admin",
-        Password = "123"
+        Port = 5672,
+        UserName = "guest",
+        Password = "guest"
     };
     return factory.CreateConnection();
 });
@@ -119,6 +119,7 @@ void RegisterRepository()
 
     services.AddScoped<CheckInBookingLogic>();
     services.AddScoped<GetBookingHistoryLogic>();
+    services.AddScoped<GetAllShowtimesLogic>();
 
     services.AddScoped<ProfileServiceConnector>();
     services.AddScoped<MovieServiceConnector>();

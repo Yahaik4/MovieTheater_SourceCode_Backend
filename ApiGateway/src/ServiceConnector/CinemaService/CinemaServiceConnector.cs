@@ -538,5 +538,40 @@ namespace ApiGateway.ServiceConnector.CinemaService
 
             return await client.GetBookingHistoryAsync(request);
         }
+
+        public async Task<GetAllShowtimesGrpcReplyDTO> GetAllShowtimes(
+            Guid? cinemaId,
+            Guid? movieId,
+            DateOnly? date,
+            string? country)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetAllShowtimesGrpcRequestDTO();
+
+            if (cinemaId.HasValue)
+            {
+                request.CinemaId = cinemaId.Value.ToString();
+            }
+
+            if (movieId.HasValue)
+            {
+                request.MovieId = movieId.Value.ToString();
+            }
+
+            if (date.HasValue)
+            {
+                // format nhất quán, bên service parse theo DateOnly.Parse
+                request.Date = date.Value.ToString("yyyy-MM-dd");
+            }
+
+            if (!string.IsNullOrWhiteSpace(country))
+            {
+                request.Country = country;
+            }
+
+            return await client.GetAllShowtimesAsync(request);
+        }
     }
 }

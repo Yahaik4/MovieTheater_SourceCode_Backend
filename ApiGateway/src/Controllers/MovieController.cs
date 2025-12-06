@@ -12,7 +12,6 @@ using System.Text.Json.Serialization;
 
 namespace ApiGateway.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api")]
     public class MovieController : ControllerBase
