@@ -4,20 +4,29 @@ using ProfileService.DataTransferObject.Parameter;
 using ProfileService.DomainLogic;
 using ProfileService.Infrastructure.Repositories.Interfaces;
 using Shared.Contracts.Exceptions;
+using AutoMapper;
 
 namespace ProfileService.Services
 {
     public class ProfileGrpcServiceImpl : ProfileGrpcService.ProfileGrpcServiceBase
     {
+        private readonly GetProfileLogic _getProfileLogic;
         private readonly CreateProfileLogic _createProfileLogic;
+        private readonly IMapper _mapper;
         private readonly IStaffRepository _staffRepository;
         private readonly ICustomerRepository _customerRepository;
 
-        public ProfileGrpcServiceImpl(CreateProfileLogic createProfileLogic, IStaffRepository staffRepository, ICustomerRepository customerRepository)
+        public ProfileGrpcServiceImpl(CreateProfileLogic createProfileLogic, 
+                                      IStaffRepository staffRepository, 
+                                      ICustomerRepository customerRepository, 
+                                      GetProfileLogic getProfileLogic, 
+                                      IMapper mapper)
         {
             _createProfileLogic = createProfileLogic;
             _staffRepository = staffRepository;
             _customerRepository = customerRepository;
+            _getProfileLogic = getProfileLogic;
+            _mapper = mapper;
         }
 
         public override async Task<CreateProfileGrpcReplyDTO> CreateProfile(CreateProfileGrpcRequestDTO request, ServerCallContext context)
@@ -316,6 +325,16 @@ namespace ProfileService.Services
                 Position    = staff.Position ?? string.Empty,
                 Salary      = staff.Salary.ToString()
             };
+        }
+
+        public override async Task<GetProfileGrpcReplyDTO> GetProfile(GetProfileGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getProfileLogic.Execute(new GetProfileParam
+            {
+                UserId = Guid.Parse(request.UserId),
+            });
+
+            return _mapper.Map<GetProfileGrpcReplyDTO>(result);
         }
     }
 }

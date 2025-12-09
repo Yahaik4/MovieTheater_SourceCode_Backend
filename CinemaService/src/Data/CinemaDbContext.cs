@@ -17,6 +17,8 @@ namespace CinemaService.Data
         public DbSet<Showtime> Showtimes { get; set; }
         public DbSet<ShowtimeSeat> ShowtimeSeats { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        //public DbSet<TimeBasedPricing> TimeBasedPricings { get; set; }
+        //public DbSet<SpecialDayPricing> SpecialDayPricings { get; set; }
 
         // NEW
         public DbSet<FoodDrink> FoodDrinks { get; set; }
@@ -64,6 +66,16 @@ namespace CinemaService.Data
                     .WithOne(sts => sts.Showtime)
                     .HasForeignKey(sts => sts.ShowTimeId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                //entity.HasOne(st => st.TimeBasedPricing)
+                //    .WithMany(p => p.Showtimes)
+                //    .HasForeignKey(st => st.TimeBasedPricingId)
+                //    .OnDelete(DeleteBehavior.Restrict);
+
+                //entity.HasOne(st => st.SpecialDayPricing)
+                //    .WithMany(p => p.Showtimes)
+                //    .HasForeignKey(st => st.SpecialDayPricingId)
+                //    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // SHOWTIME SEAT

@@ -18,6 +18,7 @@ service MovieGrpcService {
 	rpc DeletePerson(DeletePersonGrpcRequestDTO) returns (DeletePersonGrpcReplyDTO);
 
 	rpc GetMovies(GetMoviesGrpcRequestDTO) returns (GetMoviesGrpcReplyDTO);
+	rpc GetMoviesByIds(GetMoviesByIdsGrpcRequestDTO) returns (GetMoviesGrpcReplyDTO);
 	rpc CreateMovie(CreateMovieGrpcRequestDTO) returns (CreateMovieGrpcReplyDTO);
 	rpc UpdateMovie(UpdateMovieGrpcRequestDTO) returns (UpdateMovieGrpcReplyDTO);
 	rpc DeleteMovie(DeleteMovieGrpcRequestDTO) returns (DeleteMovieGrpcReplyDTO);
@@ -175,6 +176,10 @@ message GetMoviesGrpcRequestDTO {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue country = 3;
 	google.protobuf.StringValue status = 4;
+}
+
+message GetMoviesByIdsGrpcRequestDTO {
+	repeated string id = 1;
 }
 
 message GetMoviesGrpcReplyDTO {

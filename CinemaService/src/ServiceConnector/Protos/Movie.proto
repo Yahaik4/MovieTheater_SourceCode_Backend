@@ -8,6 +8,7 @@ package Movie;
 
 service MovieGrpcService {
 	rpc GetMovies(GetMoviesGrpcRequestDTO) returns (GetMoviesGrpcReplyDTO);
+	rpc GetMoviesByIds(GetMoviesByIdsGrpcRequestDTO) returns (GetMoviesGrpcReplyDTO);
 }
 
 message GetMoviesGrpcRequestDTO {
@@ -15,6 +16,10 @@ message GetMoviesGrpcRequestDTO {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue country = 3;
 	google.protobuf.StringValue status = 4;
+}
+
+message GetMoviesByIdsGrpcRequestDTO {
+	repeated string id = 1;
 }
 
 message GetMoviesGrpcReplyDTO {

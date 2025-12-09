@@ -69,7 +69,7 @@ namespace ApiGateway.Controllers
                 return new CreateTransactionResultDTO
                 {
                     Result = result.Result,
-                    Message = "Create Transaction successfully",
+                    Message = result.Message,
                     StatusCode = result.StatusCode,
                     Data = new CreateTransactionDataResult
                     {
@@ -103,12 +103,6 @@ namespace ApiGateway.Controllers
         [HttpGet("callback/vnpay")]
         public async Task<IActionResult> VnPayCallback([FromQuery] HandleVnpayCallbackParam param)
         {
-            var rawQuery = Request.QueryString.Value;
-            Console.WriteLine("=== VNPAY CALLBACK RECEIVED ===");
-            Console.WriteLine(rawQuery);
-
-            Console.WriteLine(JsonSerializer.Serialize(param));
-
             var result = await _paymentServiceConnector.HanldeVnpayCallback(param);
 
             return Ok(result);

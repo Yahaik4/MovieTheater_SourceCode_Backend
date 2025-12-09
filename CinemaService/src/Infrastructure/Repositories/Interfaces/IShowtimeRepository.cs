@@ -9,6 +9,6 @@ namespace CinemaService.Infrastructure.Repositories.Interfaces
         Task<Showtime> CreateShowtime(Showtime showtime);
         Task<Showtime> UpdateShowtime(Showtime showtime);
         Task CompleteEndedShowtimesAsync();
-        Task<List<Showtime>> GetAllShowtimesAsync(Guid? cinemaId, Guid? movieId, DateOnly? date);
+        Task<IEnumerable<Showtime>> GetShowtimesByCinemaAndDate(Guid cinemaId, DateTime startDate, DateTime endDate);
     }
 }

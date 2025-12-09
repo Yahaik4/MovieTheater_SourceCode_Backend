@@ -4,8 +4,10 @@ using ApiGateway.ServiceConnector.CinemaService;
 using ApiGateway.ServiceConnector.MovieService;
 using ApiGateway.ServiceConnector.OTPService;
 using ApiGateway.ServiceConnector.PaymentService;
+using ApiGateway.ServiceConnector.ProfileService;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
@@ -16,6 +18,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
+        options.MapInboundClaims = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -139,6 +142,7 @@ builder.Services.AddScoped<CinemaServiceConnector>();
 builder.Services.AddScoped<MovieServiceConnector>();
 builder.Services.AddScoped<OTPServiceConnector>();
 builder.Services.AddScoped<PaymentServiceConnector>();
+builder.Services.AddScoped<ProfileServiceConnector>();
 
 var app = builder.Build();
 

@@ -1,16 +1,18 @@
 using ApiGateway.DataTransferObject.Parameter;
 using ApiGateway.DataTransferObject.ResultData;
+using ApiGateway.Helper;
 using ApiGateway.ServiceConnector.AuthenticationService;
+using ApiGateway.ServiceConnector.CinemaService;
 using ApiGateway.ServiceConnector.OTPService;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Contracts.Constants;
-using Shared.Utils;
-using Microsoft.AspNetCore.Authorization;
 using Shared.Contracts.Enums;
-using ApiGateway.Helper;
-using ApiGateway.ServiceConnector.CinemaService;
+using Shared.Utils;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ApiGateway.Controllers
 {
@@ -439,19 +441,29 @@ namespace ApiGateway.Controllers
         {
             try
             {
-                var currentUserId = _currentUserService.UserId;
-                var role = _currentUserService.Role;
+                var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                     ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                if (currentUserId == null)
+                var role = User.FindFirstValue(ClaimTypes.Role);
+
+                if (userId == null)
                 {
-                    return new CheckInBookingResultDTO
-                    {
-                        Result = false,
-                        Message = "User not found in token",
-                        StatusCode = 401,
-                        Data = null
-                    };
+                    throw new Exception("Not found userId in Token");
                 }
+
+                Console.WriteLine("User: " + userId);
+                Console.WriteLine("Role: " + role);
+
+                //if (currentUserId == null)
+                //{
+                //    return new CheckInBookingResultDTO
+                //    {
+                //        Result = false,
+                //        Message = "User not found in token",
+                //        StatusCode = 401,
+                //        Data = null
+                //    };
+                //}
 
                 // Không cho customer tự check-in
                 if (role == "customer")

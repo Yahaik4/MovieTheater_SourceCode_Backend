@@ -6,28 +6,26 @@ using Shared.Contracts.Interfaces;
 
 namespace CinemaService.DomainLogic
 {
-    public class GetShowtimesLogic : IDomainLogic<GetShowtimesParam, Task<GetShowtimesResultData>>
+    public class GetShowtimesByMovieLogic : IDomainLogic<GetShowtimesByMovieParam, Task<GetShowtimesByMovieResultData>>
     {
-        private readonly IShowtimeSeatRepository _showtimeRepository;
         private readonly ICinemaRepository _cinemaRepository;
 
-        public GetShowtimesLogic(IShowtimeSeatRepository showtimeRepository, ICinemaRepository cinemaRepository)
+        public GetShowtimesByMovieLogic(ICinemaRepository cinemaRepository)
         {
-            _showtimeRepository = showtimeRepository;
             _cinemaRepository = cinemaRepository;
         }
 
-        public async Task<GetShowtimesResultData> Execute(GetShowtimesParam param)
+        public async Task<GetShowtimesByMovieResultData> Execute(GetShowtimesByMovieParam param)
         {
             var cinemas = await _cinemaRepository.GetCinemasWithShowtimes(param.MovieId, param.Date, param.Country);
 
-            return new GetShowtimesResultData
+            return new GetShowtimesByMovieResultData
             {
                 Result = true,
                 Message = "Get Showtimes Successfully",
                 StatusCode = StatusCodeEnum.Success,
                 Data = cinemas.Where(c => c.Rooms.Any(r => r.Showtimes.Any()))
-                              .Select(c => new GetShowtimesDataResult
+                              .Select(c => new GetShowtimesByMovieDataResult
                               {
                                     CinemaId = c.Id,
                                     CinemaName = c.Name,

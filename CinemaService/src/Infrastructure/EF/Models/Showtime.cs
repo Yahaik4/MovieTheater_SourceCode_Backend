@@ -6,10 +6,14 @@ namespace CinemaService.Infrastructure.EF.Models
     {
         public Guid MovieId { get; set; }
         public Guid RoomId { get; set; }
+        //public Guid TimeBasedPricingId { get; set; }
+        //public Guid? SpecialDayPricingId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string Status { get; set; }  // Scheduled // Open // Cancelled // Completed
         public Room Room { get; set; }
+        //public TimeBasedPricing TimeBasedPricing { get; set; }
+        //public SpecialDayPricing SpecialDayPricing { get; set; }
         public ICollection<ShowtimeSeat> ShowtimeSeats { get; set; }
         public ICollection<Booking> Bookings { get; set; }
 

@@ -10,6 +10,9 @@ namespace ProfileService.Helper
         {
             // CreateMapping
             CreateMap<CreateProfileResultData, CreateProfileGrpcReplyDTO>();
+
+            CreateMap<GetProfileResultData, GetProfileGrpcReplyDTO>();
+            CreateMap<GetProfileDataResult, GetProfileGrpcReplyDataDTO>();
         }
     }
 }

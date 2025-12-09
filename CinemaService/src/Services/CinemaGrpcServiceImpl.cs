@@ -30,7 +30,8 @@ namespace CinemaService.Services
         private readonly DeleteRoomLogic _deleteRoomLogic;
         private readonly GetAllSeatLogic _getAllSeatLogic;
         private readonly UpdateSeatLogic _updateSeatLogic;
-        private readonly GetShowtimesLogic _getShowtimesLogic;
+        private readonly GetShowtimesByMovieLogic _getShowtimesByMovieLogic;
+        private readonly GetShowtimesByCinemaLogic _getShowtimesByCinemaLogic;
         private readonly GetShowtimeDetailsLogic _getShowtimeDetailsLogic;
         private readonly CreateShowtimeLogic _createShowtimeLogic;
         private readonly UpdateShowtimeLogic _updateShowtimeLogic;
@@ -44,7 +45,6 @@ namespace CinemaService.Services
         private readonly DeleteFoodDrinkLogic _deleteFoodDrinkLogic;
         private readonly CheckInBookingLogic _checkInBookingLogic;
         private readonly GetBookingHistoryLogic _getBookingHistoryLogic;
-        private readonly GetAllShowtimesLogic _getAllShowtimesLogic;   
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
                                     GetAllCinemaLogic getAllCinemaLogic, 
@@ -64,7 +64,8 @@ namespace CinemaService.Services
                                     DeleteRoomLogic deleteRoomLogic,
                                     GetAllSeatLogic getAllSeatLogic,
                                     UpdateSeatLogic updateSeatLogic,
-                                    GetShowtimesLogic getShowtimesLogic,
+                                    GetShowtimesByMovieLogic getShowtimesByMovieLogic,
+                                    GetShowtimesByCinemaLogic getShowtimesByCinemaLogic,
                                     CreateShowtimeLogic createShowtimeLogic,
                                     UpdateShowtimeLogic updateShowtimeLogic,
                                     GetShowtimeSeatsLogic getShowtimeSeatsLogic,
@@ -77,8 +78,7 @@ namespace CinemaService.Services
                                     UpdateFoodDrinkLogic updateFoodDrinkLogic,
                                     DeleteFoodDrinkLogic deleteFoodDrinkLogic,
                                     CheckInBookingLogic checkInBookingLogic,
-                                    GetBookingHistoryLogic getBookingHistoryLogic,
-                                    GetAllShowtimesLogic getAllShowtimesLogic) 
+                                    GetBookingHistoryLogic getBookingHistoryLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -99,7 +99,8 @@ namespace CinemaService.Services
             _deleteRoomLogic = deleteRoomLogic;
             _getAllSeatLogic = getAllSeatLogic;
             _updateSeatLogic = updateSeatLogic;
-            _getShowtimesLogic = getShowtimesLogic;
+            _getShowtimesByMovieLogic = getShowtimesByMovieLogic;
+            _getShowtimesByCinemaLogic = getShowtimesByCinemaLogic;
             _getShowtimeDetailsLogic = getShowtimeDetailsLogic;
             _createShowtimeLogic = createShowtimeLogic;
             _updateShowtimeLogic = updateShowtimeLogic;
@@ -114,7 +115,6 @@ namespace CinemaService.Services
             _deleteFoodDrinkLogic = deleteFoodDrinkLogic;
             _checkInBookingLogic = checkInBookingLogic;
             _getBookingHistoryLogic = getBookingHistoryLogic;
-            _getAllShowtimesLogic = getAllShowtimesLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -426,7 +426,7 @@ namespace CinemaService.Services
 
             Console.WriteLine(JsonSerializer.Serialize(request));
 
-            var result = await _getShowtimesLogic.Execute(new GetShowtimesParam
+            var result = await _getShowtimesByMovieLogic.Execute(new GetShowtimesByMovieParam
             {
                 Id = id,
                 MovieId = Guid.Parse(request.MovieId),
@@ -435,6 +435,17 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<GetShowtimesGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetShowtimesByCinemaGrpcReplyDTO> GetShowtimesByCinema(GetShowtimesByCinemaGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getShowtimesByCinemaLogic.Execute(new GetShowtimesByCinemaParam
+            {
+                CinemaId = Guid.Parse(request.CinemaId),
+                Date = DateOnly.Parse(request.Date)
+            });
+
+            return _mapper.Map<GetShowtimesByCinemaGrpcReplyDTO>(result);
         }
 
         public override async Task<GetShowtimeDetailsGrpcReplyDTO> GetShowtimeDetails(GetShowtimeDetailsGrpcRequestDTO request, ServerCallContext context)
@@ -661,84 +672,6 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<GetBookingHistoryGrpcReplyDTO>(result);
-        }
-
-        public override async Task<GetAllShowtimesGrpcReplyDTO> GetAllShowtimes(
-            GetAllShowtimesGrpcRequestDTO request,
-            ServerCallContext context)
-        {
-            Guid? cinemaId = null;
-            if (!string.IsNullOrWhiteSpace(request.CinemaId)
-                && Guid.TryParse(request.CinemaId, out var parsedCinema))
-            {
-                cinemaId = parsedCinema;
-            }
-
-            Guid? movieId = null;
-            if (!string.IsNullOrWhiteSpace(request.MovieId)
-                && Guid.TryParse(request.MovieId, out var parsedMovie))
-            {
-                movieId = parsedMovie;
-            }
-
-            DateOnly? date = null;
-            if (!string.IsNullOrWhiteSpace(request.Date)
-                && DateOnly.TryParse(request.Date, out var parsedDate))
-            {
-                date = parsedDate;
-            }
-
-            var result = await _getAllShowtimesLogic.Execute(new GetAllShowtimesParam
-            {
-                CinemaId = cinemaId,
-                MovieId = movieId,
-                Date = date,
-                Country = request.Country
-            });
-
-            var reply = new GetAllShowtimesGrpcReplyDTO
-            {
-                Result = result.Result,
-                Message = result.Message,
-                StatusCode = (int)result.StatusCode
-            };
-
-            if (result.Data != null)
-            {
-                reply.Data.AddRange(
-                    result.Data.Select(c => new GetAllShowtimesCinemaGrpcReplyDataDTO
-                    {
-                        CinemaId = c.CinemaId.ToString(),
-                        CinemaName = c.CinemaName,
-                        Address = c.Address,
-                        RoomTypes =
-                        {
-                            (c.RoomTypes ?? new List<GetAllShowtimesRoomTypeData>())
-                                .Select(rt => new GetAllShowtimesRoomTypeGrpcReplyDataDTO
-                                {
-                                    RoomTypeId = rt.RoomTypeId.ToString(),
-                                    RoomTypeName = rt.RoomTypeName,
-                                    Showtimes =
-                                    {
-                                        (rt.Showtimes ?? new List<GetAllShowtimesShowtimeData>())
-                                            .Select(st => new GetAllShowtimesShowtimeGrpcReplyDataDTO
-                                            {
-                                                ShowtimeId = st.ShowtimeId.ToString(),
-                                                StartTime = st.StartTime,
-                                                EndTime = st.EndTime,
-                                                MovieId = st.MovieId.ToString(),
-                                                MovieName = st.MovieName ?? string.Empty
-                                            })
-                                            // nếu muốn sort theo StartTime:
-                                            .OrderBy(x => x.StartTime)
-                                    }
-                                })
-                        }
-                    })
-                );
-            }
-
-            return reply;
         }
     }
 }

@@ -72,10 +72,13 @@ namespace CinemaService.Helper
             CreateMap<UpdateSeatsResultData, UpdateSeatsGrpcReplyDTO>();
             CreateMap<UpdateSeatsDataResult, UpdateSeatsGrpcReplyDataDTO>();
 
-            CreateMap<GetShowtimesResultData, GetShowtimesGrpcReplyDTO>();
-            CreateMap<GetShowtimesDataResult, GetShowtimesGrpcReplyDataDTO>();
+            CreateMap<GetShowtimesByMovieResultData, GetShowtimesGrpcReplyDTO>();
+            CreateMap<GetShowtimesByMovieDataResult, GetShowtimesGrpcReplyDataDTO>();
             CreateMap<GetRoomTypeDataResult, GetRoomTypeGrpcReplyDataDTO>();
             CreateMap<ShowtimeDataResult, ShowtimeGrpcReplyDataDTO>();
+
+            CreateMap<GetShowtimesByCinemaResultData, GetShowtimesByCinemaGrpcReplyDTO>();
+            CreateMap<GetShowtimesByCinemaDataResult, GetShowtimesByCinemaGrpcReplyDataDTO>();
 
             CreateMap<GetShowtimeDetailsResultData, GetShowtimeDetailsGrpcReplyDTO>();
             CreateMap<GetShowtimeDetailsDataResult, GetShowtimeDetailsGrpcReplyDataDTO>();
@@ -116,10 +119,6 @@ namespace CinemaService.Helper
             CreateMap<CheckInBookingDataResult, CheckInBookingGrpcReplyDataDTO>();
 
             CreateMap<GetBookingHistoryResultData, GetBookingHistoryGrpcReplyDTO>();
-            CreateMap<GetAllShowtimesResultData, GetAllShowtimesGrpcReplyDTO>();
-            CreateMap<GetAllShowtimesCinemaData, GetAllShowtimesCinemaGrpcReplyDataDTO>();
-            CreateMap<GetAllShowtimesRoomTypeData, GetAllShowtimesRoomTypeGrpcReplyDataDTO>();
-            CreateMap<GetAllShowtimesShowtimeData, GetAllShowtimesShowtimeGrpcReplyDataDTO>();
         }
     }
 }

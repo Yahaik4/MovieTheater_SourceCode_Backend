@@ -28,6 +28,7 @@ namespace PaymentService.DomainLogic
 
         public async Task<CreateTransactionResultData> Execute(CreateTransactionParam param)
         {
+            Console.WriteLine($"[DEBUG] Param: UserId={param.UserId}, BookingId={param.BookingId}, PaymentGateway={param.PaymentGateway}, ClientIp={param.ClientIp}");
             if (param == null) throw new ValidationException("Parameter is null");
             if (param.UserId == Guid.Empty) throw new ValidationException("UserId cannot be empty GUID");
             if (param.BookingId == Guid.Empty) throw new ValidationException("BookingId cannot be empty GUID");
@@ -38,7 +39,7 @@ namespace PaymentService.DomainLogic
             var booking = await _cinemaServiceConnector.GetBooking(param.BookingId);
             if (booking == null || !booking.Result)
                 throw new ValidationException("Booking not found");
-            if (booking.Data.Status != "pending" || booking.Data.UserId != param.UserId.ToString())
+            if (booking.Data.Status != "pending")
                 throw new ValidationException("Booking cannot be processed for payment");
 
             // Tổng tiền booking

@@ -38,6 +38,19 @@ namespace CinemaService.Infrastructure.Repositories
             return showtime;
         }
 
+        public async Task<IEnumerable<Showtime>> GetShowtimesByCinemaAndDate(Guid cinemaId, DateTime startDate,DateTime endDate)
+        {
+            return await _context.Showtimes.Include(st => st.Room)
+                                            .ThenInclude(r => r.RoomType)
+                                            .Where(st => st.Room.CinemaId == cinemaId
+                                                      && st.Status == "open"
+                                                      && st.StartTime >= startDate
+                                                      && st.StartTime <= endDate
+                                                      && !st.Room.IsDeleted)
+                                            .ToListAsync();
+        }
+
+
         public async Task CompleteEndedShowtimesAsync()
         {
             const int batchSize = 1000;
@@ -74,47 +87,6 @@ namespace CinemaService.Infrastructure.Repositories
                 _context.ShowtimeSeats.RemoveRange(seatsToDelete);
                 await _context.SaveChangesAsync();
             }
-        }
-
-        public async Task<List<Showtime>> GetAllShowtimesAsync(Guid? cinemaId, Guid? movieId, DateOnly? date)
-        {
-            var query = _context.Showtimes
-                .Include(st => st.Room)
-                    .ThenInclude(r => r.Cinema)
-                .Include(st => st.Room)
-                    .ThenInclude(r => r.RoomType)
-                .Where(st => !st.IsDeleted &&
-                            !st.Room.IsDeleted &&
-                            !st.Room.Cinema.IsDeleted)
-                .AsQueryable();
-
-            if (cinemaId.HasValue)
-            {
-                query = query.Where(st => st.Room.CinemaId == cinemaId.Value);
-            }
-
-            if (movieId.HasValue)
-            {
-                query = query.Where(st => st.MovieId == movieId.Value);
-            }
-
-            if (date.HasValue)
-            {
-                var startLocal = date.Value.ToDateTime(TimeOnly.MinValue);
-                var endLocal   = date.Value.ToDateTime(TimeOnly.MaxValue);
-
-                var startUtc = DateTime.SpecifyKind(startLocal, DateTimeKind.Utc);
-                var endUtc   = DateTime.SpecifyKind(endLocal, DateTimeKind.Utc);
-
-                query = query.Where(st => st.StartTime >= startUtc && st.StartTime <= endUtc);
-            }
-
-            // nếu bạn muốn chỉ lấy status "open" thì thêm:
-            query = query.Where(st => st.Status == "open");
-
-            return await query
-                .OrderBy(st => st.StartTime)
-                .ToListAsync();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace CinemaService.DataTransferObject.Parameter
 {
-    public class GetShowtimesParam : IParam
+    public class GetShowtimesByMovieParam : IParam
     {
         public Guid? Id { get; set; }
         public Guid MovieId { get; set; }

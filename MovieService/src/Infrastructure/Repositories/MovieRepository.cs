@@ -37,6 +37,16 @@ namespace MovieService.Infrastructure.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
         }
 
+        public async Task<IEnumerable<Movie>> GetMoviesByIds(IEnumerable<Guid> movieIds)
+        {
+            return await _context.Movies.Include(m => m.MovieGenres)
+                                            .ThenInclude(mg => mg.Genre)
+                                        .Include(m => m.MoviePersons)
+                                            .ThenInclude(mp => mp.Person)
+                .Where(m => movieIds.Contains(m.Id) && !m.IsDeleted)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Movie>> GetMovies(GetMoviesParam param)
         {
             var query = _context.Movies

@@ -3,6 +3,7 @@ using Grpc.Core;
 using PaymentGrpc;
 using PaymentService.DataTransferObject.Parameter;
 using PaymentService.DomainLogic;
+using Shared.Contracts.Exceptions;
 
 namespace PaymentService.Services
 {
@@ -21,10 +22,22 @@ namespace PaymentService.Services
 
         public override async Task<CreateTransactionGrpcReplyDTO> CreateTransaction(CreateTransactionGrpcRequestDTO request, ServerCallContext context)
         {
+            if (string.IsNullOrWhiteSpace(request.BookingId) ||
+    !Guid.TryParse(request.BookingId, out var bookingId))
+            {
+                throw new ValidationException("Invalid or missing BookingId");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.UserId) ||
+                !Guid.TryParse(request.UserId, out var userId))
+            {
+                throw new ValidationException("Invalid or missing UserId");
+            }
+
             var result = await _createTransactionLogic.Execute(new CreateTransactionParam
             {
-                UserId = Guid.Parse(request.UserId),
-                BookingId = Guid.Parse(request.BookingId),
+                UserId = userId,
+                BookingId = bookingId,
                 PaymentGateway = request.PaymentGateway,
                 ClientIp = request.ClientIp,
             });

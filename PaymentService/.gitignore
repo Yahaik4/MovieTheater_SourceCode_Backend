@@ -1,0 +1,8 @@
+.vs/
+*.user
+*.suo
+*.vscode/
+bin/
+obj/
+
+appsettings.Development.json

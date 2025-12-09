@@ -40,8 +40,10 @@ void RegisterRepository()
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
     services.AddScoped<ICustomerRepository, CustomerRepository>();
-    services.AddScoped<CreateProfileLogic>();
     services.AddScoped<IStaffRepository, StaffRepository>();
+
+    services.AddScoped<CreateProfileLogic>();
+    services.AddScoped<GetProfileLogic>();
 }
 
 void RegisterGrpcServicePublish()

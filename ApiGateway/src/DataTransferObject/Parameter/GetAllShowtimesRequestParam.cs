@@ -1,13 +1,10 @@
-﻿namespace ApiGateway.DataTransferObject.Parameter
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+namespace ApiGateway.DataTransferObject.Parameter
 {
-    public class GetAllShowtimesRequestParam
+    public class GetShowtimesByCinemaRequestParam
     {
-        public DateOnly? Date { get; set; }
-
-        public Guid? CinemaId { get; set; }
-
-        public Guid? MovieId { get; set; }
-
-        public string? Country { get; set; }
+        [BindRequired]
+        public DateOnly Date { get; set; }
     }
 }

@@ -1,4 +1,7 @@
-﻿using MovieGrpc;
+﻿using Grpc.Core;
+using MovieGrpc;
+using System.Diagnostics.Metrics;
+using System.Xml.Linq;
 
 namespace ApiGateway.ServiceConnector.MovieService
 {
@@ -24,6 +27,18 @@ namespace ApiGateway.ServiceConnector.MovieService
             };
 
             return await client.GetMoviesAsync(request);
+        }
+
+        public async Task<GetMoviesGrpcReplyDTO> GetMovieByIds(List<Guid> ids)
+        {
+            using var channel = GetMovieServiceChannel();
+            var client = new MovieGrpcService.MovieGrpcServiceClient(channel);
+
+            var request = new GetMoviesByIdsGrpcRequestDTO();
+
+            request.Id.AddRange(ids.Select(x => x.ToString()));
+
+            return await client.GetMoviesByIdsAsync(request);
         }
     }
 }

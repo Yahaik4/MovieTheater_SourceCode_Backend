@@ -45,9 +45,9 @@ builder.Services.AddSingleton<IConnection>(sp =>
     var factory = new ConnectionFactory
     {
         HostName = "localhost",
-        Port = 5672,
-        UserName = "guest",
-        Password = "guest"
+        Port = 5673,
+        UserName = "admin",
+        Password = "123"
     };
     return factory.CreateConnection();
 });
@@ -101,7 +101,8 @@ void RegisterRepository()
     services.AddScoped<UpdateSeatTypeLogic>();
     services.AddScoped<DeleteSeatTypeLogic>();
 
-    services.AddScoped<GetShowtimesLogic>();
+    services.AddScoped<GetShowtimesByMovieLogic>();
+    services.AddScoped<GetShowtimesByCinemaLogic>();
     services.AddScoped<GetShowtimeDetailsLogic>();
     services.AddScoped<CreateShowtimeLogic>();
     services.AddScoped<UpdateShowtimeLogic>();
@@ -119,7 +120,6 @@ void RegisterRepository()
 
     services.AddScoped<CheckInBookingLogic>();
     services.AddScoped<GetBookingHistoryLogic>();
-    services.AddScoped<GetAllShowtimesLogic>();
 
     services.AddScoped<ProfileServiceConnector>();
     services.AddScoped<MovieServiceConnector>();

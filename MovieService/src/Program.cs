@@ -51,6 +51,7 @@ void RegisterRepository()
     services.AddScoped<DeletePersonLogic>();
 
     services.AddScoped<GetMoviesLogic>();
+    services.AddScoped<GetMoviesByIdsLogic>();
     services.AddScoped<CreateMovieLogic>();
     services.AddScoped<UpdateMovieLogic>();
     services.AddScoped<DeleteMovieLogic>();

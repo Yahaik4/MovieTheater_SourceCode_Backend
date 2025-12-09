@@ -6,6 +6,7 @@ namespace MovieService.Infrastructure.Repositories.Interfaces
     public interface IMovieRepository
     {
         Task<IEnumerable<Movie>> GetMovies(GetMoviesParam param);
+        Task<IEnumerable<Movie>> GetMoviesByIds(IEnumerable<Guid> movieIds);
         Task<Movie?> GetMovieById(Guid id);
         Task<Movie> CreateMovie(Movie movie);
         Task<Movie> UpdateMovie(Movie movie);

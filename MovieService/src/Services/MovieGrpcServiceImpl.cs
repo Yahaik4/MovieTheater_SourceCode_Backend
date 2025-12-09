@@ -19,6 +19,7 @@ namespace MovieService.Services
         private readonly UpdatePersonLogic _updatePersonLogic;
         private readonly DeletePersonLogic _deletePersonLogic;
         private readonly GetMoviesLogic _getMoviesLogic;
+        private readonly GetMoviesByIdsLogic _getMoviesByIdsLogic;
         private readonly CreateMovieLogic _createMovieLogic;
         private readonly UpdateMovieLogic _updateMovieLogic;
         private readonly DeleteMovieLogic _deleteMovieLogic;
@@ -33,6 +34,7 @@ namespace MovieService.Services
                                     UpdatePersonLogic updatePersonLogic,
                                     DeletePersonLogic deletePersonLogic,
                                     GetMoviesLogic getMoviesLogic,
+                                    GetMoviesByIdsLogic getMoviesByIdsLogic,
                                     CreateMovieLogic createMovieLogic,
                                     UpdateMovieLogic updateMovieLogic,
                                     DeleteMovieLogic deleteMovieLogic)
@@ -49,6 +51,7 @@ namespace MovieService.Services
             _deletePersonLogic = deletePersonLogic;
 
             _getMoviesLogic = getMoviesLogic;
+            _getMoviesByIdsLogic = getMoviesByIdsLogic;
             _createMovieLogic = createMovieLogic;
             _updateMovieLogic = updateMovieLogic;
             _deleteMovieLogic = deleteMovieLogic;
@@ -192,6 +195,16 @@ namespace MovieService.Services
                 Name = request.Name,
                 Country = request.Country,
                 Status = request.Status,
+            });
+
+            return _mapper.Map<GetMoviesGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetMoviesGrpcReplyDTO> GetMoviesByIds(GetMoviesByIdsGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getMoviesByIdsLogic.Execute(new GetMoviesByIdsParam
+            {
+                MovieIds = request.Id.Select(Guid.Parse).ToList()
             });
 
             return _mapper.Map<GetMoviesGrpcReplyDTO>(result);

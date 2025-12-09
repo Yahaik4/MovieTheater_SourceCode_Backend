@@ -2,12 +2,12 @@
 
 namespace CinemaService.DataTransferObject.ResultData
 {
-    public class GetShowtimesResultData : BaseResultData
+    public class GetShowtimesByMovieResultData : BaseResultData
     {
-        public List<GetShowtimesDataResult> Data { get; set; }
+        public List<GetShowtimesByMovieDataResult> Data { get; set; }
     }
 
-    public class GetShowtimesDataResult
+    public class GetShowtimesByMovieDataResult
     {
         public Guid CinemaId { get; set; }
         public string CinemaName { get; set; }

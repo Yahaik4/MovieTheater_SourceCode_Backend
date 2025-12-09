@@ -35,6 +35,7 @@
 		<Protobuf Include="ServiceConnector\Protos\Movie.proto" GrpcServices="Client" />
 		<Protobuf Include="ServiceConnector\Protos\OTP.proto" GrpcServices="Client" />
 		<Protobuf Include="ServiceConnector\Protos\Payment.proto" GrpcServices="Client" />
+		<Protobuf Include="ServiceConnector\Protos\Profile.proto" GrpcServices="Client" />
 	</ItemGroup>
 
 </Project>

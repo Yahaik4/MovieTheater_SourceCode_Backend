@@ -1,0 +1,31 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "ProfileGrpc";
+
+package Profile;
+
+service ProfileGrpcService {
+    rpc GetProfile(GetProfileGrpcRequestDTO) returns (GetProfileGrpcReplyDTO);
+}
+
+message GetProfileGrpcRequestDTO {
+    string userId = 1;    
+}
+
+message GetProfileGrpcReplyDTO {
+    bool result = 1;
+	string message = 2;
+	int32 statusCode = 3;
+	GetProfileGrpcReplyDataDTO data = 4;
+}
+
+message GetProfileGrpcReplyDataDTO {
+    string fullName = 1;
+    google.protobuf.StringValue phoneNumber = 2;
+    google.protobuf.StringValue dayOfBirth = 3;
+    google.protobuf.StringValue address = 4;
+    google.protobuf.StringValue gender = 5;
+    int32 points = 6;
+}

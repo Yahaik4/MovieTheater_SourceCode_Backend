@@ -5,6 +5,7 @@ using ApiGateway.ServiceConnector.CinemaService;
 using ApiGateway.ServiceConnector.MovieService;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Utils;
@@ -675,76 +676,50 @@ namespace ApiGateway.Controllers
             }
         }
 
-        [HttpGet("showtimes")]
-        public async Task<GetAllShowtimesResultDTO> GetAllShowtimes([FromQuery] GetAllShowtimesRequestParam param)
+        [HttpGet("showtimes/by-cinema/{cinemaId}")]
+        public async Task<GetShowtimesByCinemaResultDTO> GetShowtimesByCinema(Guid cinemaId, [FromQuery] GetShowtimesByCinemaRequestParam param)
         {
             try
             {
-                // 1. Gọi CinemaService lấy toàn bộ showtimes theo filter
-                var showtimeReply = await _cinemaServiceConnector.GetAllShowtimes(
-                    param.CinemaId,
-                    param.MovieId,
-                    param.Date,
-                    param.Country
-                );
-
-                // 2. Lấy tất cả movieId duy nhất từ data
-                var movieIds = showtimeReply.Data
-                    .SelectMany(c => c.RoomTypes)
-                    .SelectMany(rt => rt.Showtimes)
-                    .Select(st => st.MovieId)
-                    .Where(id => !string.IsNullOrWhiteSpace(id))
-                    .Select(Guid.Parse)
-                    .Distinct()
-                    .ToList();
-
-                // 3. Gọi MovieService để lấy tên phim cho từng movieId
-                var movieNameDict = new Dictionary<Guid, string>();
-
-                foreach (var movieId in movieIds)
+                if (!ModelState.IsValid)
                 {
-                    var movieReply = await _movieServiceConnector.GetMovies(movieId, null, null, null);
-
-                    // Giả sử GetMovies trả về list trong movieReply.Data
-                    var movie = movieReply.Data.FirstOrDefault();
-                    if (movie != null && Guid.TryParse(movie.Id, out var parsedId))
+                    return new GetShowtimesByCinemaResultDTO
                     {
-                        movieNameDict[parsedId] = movie.Name;
-                    }
+                        Result = false,
+                        Message = "Date is required",
+                        StatusCode = 400,
+                        Data = new List<GetShowtimesByCinemaDataResult>()
+                    };
                 }
 
-                // 4. Map sang DTO trả ra FE, gắn MovieName vào từng showtime
-                return new GetAllShowtimesResultDTO
+                var showtimeReply = await _cinemaServiceConnector.GetShowtimesByCinema(cinemaId, param.Date);
+
+                return new GetShowtimesByCinemaResultDTO
                 {
                     Result = showtimeReply.Result,
                     Message = showtimeReply.Message,
                     StatusCode = showtimeReply.StatusCode,
-                    Data = showtimeReply.Data.Select(c => new GetAllShowtimesCinemaResult
+                    Data = showtimeReply.Data.Select(c => new GetShowtimesByCinemaDataResult
                     {
-                        CinemaId = Guid.Parse(c.CinemaId),
-                        CinemaName = c.CinemaName,
-                        Address = c.Address,
-                        RoomTypes = c.RoomTypes.Select(rt => new GetAllShowtimesRoomTypeResult
-                        {
-                            RoomTypeId = Guid.Parse(rt.RoomTypeId),
-                            RoomTypeName = rt.RoomTypeName,
-                            Showtimes = rt.Showtimes.Select(st =>
-                            {
-                                var movieId = Guid.Parse(st.MovieId);
-                                movieNameDict.TryGetValue(movieId, out var movieName);
-
-                                return new GetAllShowtimesShowtimeResult
+                        MovieId = Guid.Parse(c.MovieId),
+                        MovieName = c.MovieName,
+                        Poster = $"{Request.Scheme}://{Request.Host}/api/movies/{Guid.Parse(c.MovieId)}/poster",
+                        RoomTypes = c.RoomTypes
+                                .Select(rt => new GetRoomTypeDataResult
                                 {
-                                    ShowtimeId = Guid.Parse(st.ShowtimeId),
-                                    StartTime = st.StartTime,
-                                    EndTime = st.EndTime,
-                                    MovieId = movieId,
-                                    MovieName = movieName // có thể null nếu không tìm thấy
-                                };
-                            })
-                            .OrderBy(x => x.StartTime)
-                            .ToList()
-                        }).ToList()
+                                    RoomTypeId = Guid.Parse(rt.RoomTypeId),
+                                    RoomTypeName = rt.RoomTypeName,
+                                    Showtimes = rt.Showtimes
+                                        .Select(st => new ShowtimeDataResult
+                                        {
+                                            ShowtimeId = Guid.Parse(st.ShowtimeId),
+                                            StartTime = st.StartTime,
+                                            EndTime = st.EndTime
+                                        })
+                                        .OrderBy(st => st.StartTime)
+                                        .ToList()
+                                })
+                                .ToList()
                     }).ToList()
                 };
             }
@@ -753,23 +728,22 @@ namespace ApiGateway.Controllers
                 var (statusCode, message) = RpcExceptionParser.Parse(ex);
                 Log.Error($"GetAllShowtimes Error: {message}");
 
-                return new GetAllShowtimesResultDTO
+                return new GetShowtimesByCinemaResultDTO
                 {
                     Result = false,
                     Message = message,
                     StatusCode = (int)statusCode,
-                    Data = new List<GetAllShowtimesCinemaResult>()
+                    Data = new List<GetShowtimesByCinemaDataResult>()
                 };
             }
         }
 
-
-        [HttpGet("showtimes/{movieId}")]
+        [HttpGet("showtimes/by-movie/{movieId}")]
         public async Task<GetShowtimesResultDTO> GetShowtimes(Guid movieId, [FromQuery] GetShowtimesRequestParam param)
         {
             try
             {
-                var result = await _cinemaServiceConnector.GetShowtimes(null, movieId, param.Date, param.Country);
+                var result = await _cinemaServiceConnector.GetShowtimes(null, movieId, param.Date, param.City);
 
                 return  new GetShowtimesResultDTO
                 {
@@ -843,7 +817,7 @@ namespace ApiGateway.Controllers
                         EndTime = DateTime.Parse(result.Data.EndTime),
                         MovieId = Guid.Parse(result.Data.MovieId),
                         MovieName = result.Data.MovieName,
-                        Poster = result.Data.Poster
+                        Poster = $"{Request.Scheme}://{Request.Host}/api/movies/{Guid.Parse(result.Data.MovieId)}/poster"
                     }
                 };
             }

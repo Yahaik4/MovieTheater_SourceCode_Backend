@@ -24,9 +24,9 @@ namespace CinemaService.Messaging
             var factory = new ConnectionFactory()
             {
                 HostName = "localhost",
-                Port = 5672,
-                UserName = "guest",
-                Password = "guest"
+                Port = 5673,
+                UserName = "admin",
+                Password = "123"
             };
 
             _connection = factory.CreateConnection();

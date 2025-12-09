@@ -1,6 +1,8 @@
-﻿namespace ApiGateway.DataTransferObject.ResultData
+using Shared.Contracts.ResultData;
+
+namespace CinemaService.DataTransferObject.ResultData
 {
-    public class GetShowtimesByCinemaResultDTO : BaseResultDTO
+    public class GetShowtimesByCinemaResultData : BaseResultData
     {
         public List<GetShowtimesByCinemaDataResult> Data { get; set; }
     }

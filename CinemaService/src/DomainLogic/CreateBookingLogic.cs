@@ -1,7 +1,6 @@
 ﻿using ApiGateway.ServiceConnector.MovieService;
 using CinemaService.DataTransferObject.Parameter;
 using CinemaService.DataTransferObject.ResultData;
-using CinemaService.Helper;
 using CinemaService.Infrastructure.EF.Models;
 using CinemaService.Infrastructure.Repositories.Interfaces;
 using Shared.Contracts.Enums;

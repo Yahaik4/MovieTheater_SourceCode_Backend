@@ -71,42 +71,5 @@ namespace CinemaService.Infrastructure.Repositories
                 .Where(c => (country == null || c.City == country) && !c.IsDeleted)
                 .ToListAsync();
         }
-
-        public async Task<List<Showtime>> GetAllShowtimesAsync(Guid? cinemaId, Guid? movieId, DateOnly? date)
-        {
-            var query = _context.Showtimes
-                .Include(st => st.Room)
-                    .ThenInclude(r => r.Cinema)
-                .Include(st => st.Room)
-                    .ThenInclude(r => r.RoomType)
-                .Where(st => !st.IsDeleted &&
-                            !st.Room.IsDeleted &&
-                            !st.Room.Cinema.IsDeleted)
-                .AsQueryable();
-
-            if (cinemaId.HasValue)
-            {
-                query = query.Where(st => st.Room.CinemaId == cinemaId.Value);
-            }
-
-            if (movieId.HasValue)
-            {
-                query = query.Where(st => st.MovieId == movieId.Value);
-            }
-
-            if (date.HasValue)
-            {
-                var start = date.Value.ToDateTime(TimeOnly.MinValue);
-                var end = date.Value.ToDateTime(TimeOnly.MaxValue);
-                query = query.Where(st => st.StartTime >= start && st.StartTime <= end);
-            }
-
-            // nếu bạn muốn chỉ lấy status "open" thì thêm:
-            query = query.Where(st => st.Status == "open");
-
-            return await query
-                .OrderBy(st => st.StartTime)
-                .ToListAsync();
-        }
     }
 }
