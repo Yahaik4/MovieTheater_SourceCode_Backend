@@ -338,7 +338,7 @@ namespace ApiGateway.Controllers
                         Status = m.Status,
                         Duration = TimeSpan.Parse(m.Duration),
                         Language = m.Language,
-                        Poster = $"{Request.Scheme}://{Request.Host}/movies/{m.Id}/poster",
+                        Poster = $"{Request.Scheme}://{Request.Host}/api/movies/{m.Id}/poster",
                         Publisher = m.Publisher,
                         ReleaseDate = DateOnly.Parse(m.ReleaseDate),
                         TrailerUrl = m.TrailerUrl,
