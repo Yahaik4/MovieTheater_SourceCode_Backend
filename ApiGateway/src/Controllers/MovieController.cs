@@ -9,6 +9,7 @@ using Serilog;
 using Shared.Utils;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace ApiGateway.Controllers
 {
@@ -298,6 +299,24 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [HttpGet("movies/{id}/poster")]
+        public async Task<IActionResult> GetPoster(Guid id)
+        {
+            var result = await _movieServiceConnector.GetMovies(id, null, null, null);
+
+            if (result == null || result.Data == null || !result.Data.Any())
+                return NotFound();
+
+            var movie = result.Data.FirstOrDefault();
+
+            if (movie == null || string.IsNullOrEmpty(movie.Poster))
+                return NotFound();
+
+            var bytes = Convert.FromBase64String(movie.Poster);
+
+            return File(bytes, "image/jpeg");
+        }
+
         [HttpGet("movies")]
         public async Task<GetMoviesResultDTO> GetMovies([FromQuery] GetMoviesRequestParam query)
         {
@@ -319,7 +338,7 @@ namespace ApiGateway.Controllers
                         Status = m.Status,
                         Duration = TimeSpan.Parse(m.Duration),
                         Language = m.Language,
-                        Poster = m.Poster,
+                        Poster = $"{Request.Scheme}://{Request.Host}/movies/{m.Id}/poster",
                         Publisher = m.Publisher,
                         ReleaseDate = DateOnly.Parse(m.ReleaseDate),
                         TrailerUrl = m.TrailerUrl,
