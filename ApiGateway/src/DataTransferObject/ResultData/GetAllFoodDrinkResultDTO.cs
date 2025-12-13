@@ -12,5 +12,7 @@ namespace ApiGateway.DataTransferObject.ResultData
         public string Type { get; set; } = null!;
         public string Size { get; set; } = null!;
         public decimal Price { get; set; }
+        public string? Image { get; set; }
+        public string? Description { get; set; }
     }
 }

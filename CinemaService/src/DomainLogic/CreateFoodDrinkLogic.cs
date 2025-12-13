@@ -25,6 +25,8 @@ namespace CinemaService.DomainLogic
             if (param.Price <= 0)
                 throw new ValidationException("Price must be greater than 0");
 
+            var normalizedImage = NormalizeBase64OrNull(param.Image);
+
             var entity = new FoodDrink
             {
                 Id = Guid.NewGuid(),
@@ -32,6 +34,8 @@ namespace CinemaService.DomainLogic
                 Type = param.Type,
                 Size = param.Size,
                 Price = param.Price,
+                Image = normalizedImage,
+                Description = string.IsNullOrWhiteSpace(param.Description) ? null : param.Description.Trim(),
                 CreatedBy = param.CreatedBy ?? "System"
             };
 
@@ -49,9 +53,33 @@ namespace CinemaService.DomainLogic
                     Type = created.Type,
                     Size = created.Size,
                     Price = created.Price,
+                    Image = created.Image,
+                    Description = created.Description,
                     CreatedBy = created.CreatedBy
                 }
             };
+        }
+
+        private static string? NormalizeBase64OrNull(string? image)
+        {
+            if (string.IsNullOrWhiteSpace(image))
+                return null;
+
+            var s = image.Trim();
+
+            var commaIndex = s.IndexOf(',');
+            if (s.StartsWith("data:", StringComparison.OrdinalIgnoreCase) && commaIndex >= 0)
+                s = s[(commaIndex + 1)..].Trim();
+
+            try
+            {
+                var bytes = Convert.FromBase64String(s);
+                return Convert.ToBase64String(bytes);
+            }
+            catch (FormatException)
+            {
+                throw new ValidationException("Image must be a valid base64 string");
+            }
         }
     }
 }

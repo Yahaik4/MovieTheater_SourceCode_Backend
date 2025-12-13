@@ -702,6 +702,8 @@ message GetAllFoodDrinksGrpcReplyDataDTO {
     string Type = 3;
     string Size = 4;
     string Price = 5;
+	string Image = 6;
+    string Description = 7;
 }
 
 message CreateFoodDrinkGrpcRequestDTO {
@@ -709,7 +711,9 @@ message CreateFoodDrinkGrpcRequestDTO {
     string Type = 2;
     string Size = 3;
     string Price = 4;
-    string CreatedBy = 5;
+	string Image = 5;
+    string Description = 6;
+    string CreatedBy = 7;
 }
 
 message CreateFoodDrinkGrpcReplyDTO {
@@ -725,7 +729,9 @@ message CreateFoodDrinkGrpcReplyDataDTO {
     string Type = 3;
     string Size = 4;
     string Price = 5;
-    string CreatedBy = 6;
+	string Image = 6;
+    string Description = 7;
+    string CreatedBy = 8;
 }
 
 message UpdateFoodDrinkGrpcRequestDTO {
@@ -734,6 +740,8 @@ message UpdateFoodDrinkGrpcRequestDTO {
     string Type = 3;
     string Size = 4;
     string Price = 5;
+	string Image = 6;
+    string Description = 7;
 }
 
 message UpdateFoodDrinkGrpcReplyDTO {
@@ -749,6 +757,8 @@ message UpdateFoodDrinkGrpcReplyDataDTO {
     string Type = 3;
     string Size = 4;
     string Price = 5;
+	string Image = 6;
+    string Description = 7;
 }
 
 message DeleteFoodDrinkGrpcRequestDTO {

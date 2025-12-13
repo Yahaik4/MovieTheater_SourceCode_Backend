@@ -464,18 +464,20 @@ namespace ApiGateway.ServiceConnector.CinemaService
             return await client.GetAllFoodDrinksAsync(request);
         }
 
-        public async Task<CreateFoodDrinkGrpcReplyDTO> CreateFoodDrink(string name, string type, string size, decimal price)
+        public async Task<CreateFoodDrinkGrpcReplyDTO> CreateFoodDrink(CreateFoodDrinkRequestParam param)
         {
             using var channel = GetCinemaServiceChannel();
             var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
 
             var request = new CreateFoodDrinkGrpcRequestDTO
             {
-                Name = name,
-                Type = type,
-                Size = size,
-                Price = price.ToString(),
-                CreatedBy = _currentUserService.UserId ?? _currentUserService.Email ?? "System"
+                Name = param.Name,
+                Type = param.Type,
+                Size = param.Size,
+                Price = param.Price.ToString(),
+                Image = param.Image ?? "",
+                Description = param.Description ?? "",
+                CreatedBy = _currentUserService.UserId ?? _currentUserService.Email ?? "System",
             };
 
             return await client.CreateFoodDrinkAsync(request);
@@ -502,27 +504,23 @@ namespace ApiGateway.ServiceConnector.CinemaService
             return await client.CheckInBookingAsync(request);
         }
 
-        public async Task<UpdateFoodDrinkGrpcReplyDTO> UpdateFoodDrink(Guid id, UpdateFoodDrinkRequestParam param)
+        public async Task<UpdateFoodDrinkGrpcReplyDTO> UpdateFoodDrink(
+            Guid id,
+            UpdateFoodDrinkRequestParam param)
         {
             using var channel = GetCinemaServiceChannel();
             var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
 
             var request = new UpdateFoodDrinkGrpcRequestDTO
             {
-                Id = id.ToString()
+                Id = id.ToString(),
+                Name = param.Name ?? "",
+                Type = param.Type ?? "",
+                Size = param.Size ?? "",
+                Price = param.Price.HasValue ? param.Price.Value.ToString() : "",
+                Image = param.Image ?? "",          // empty => clear
+                Description = param.Description ?? ""
             };
-
-            if (!string.IsNullOrWhiteSpace(param.Name))
-                request.Name = param.Name;
-
-            if (!string.IsNullOrWhiteSpace(param.Type))
-                request.Type = param.Type;
-
-            if (!string.IsNullOrWhiteSpace(param.Size))
-                request.Size = param.Size;
-
-            if (param.Price.HasValue)
-                request.Price = param.Price.Value.ToString();
 
             return await client.UpdateFoodDrinkAsync(request);
         }

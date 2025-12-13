@@ -48,7 +48,6 @@ service CinemaGrpcService {
     rpc UpdateFoodDrink (UpdateFoodDrinkGrpcRequestDTO) returns (UpdateFoodDrinkGrpcReplyDTO);
     rpc DeleteFoodDrink (DeleteFoodDrinkGrpcRequestDTO) returns (DeleteFoodDrinkGrpcReplyDTO);
 	rpc CheckInBooking (CheckInBookingGrpcRequestDTO) returns (CheckInBookingGrpcReplyDTO);
-	rpc GetAllShowtimes(GetAllShowtimesGrpcRequestDTO) returns (GetAllShowtimesGrpcReplyDTO);
 }
 
 message GetAllCinemasGrpcRequestDTO {
@@ -703,6 +702,8 @@ message GetAllFoodDrinksGrpcReplyDataDTO {
     string Type = 3;
     string Size = 4;
     string Price = 5;
+	string Image = 6;
+    string Description = 7;
 }
 
 message CreateFoodDrinkGrpcRequestDTO {
@@ -710,7 +711,9 @@ message CreateFoodDrinkGrpcRequestDTO {
     string Type = 2;
     string Size = 3;
     string Price = 4;
-    string CreatedBy = 5;
+	string Image = 5;
+    string Description = 6;
+    string CreatedBy = 7;
 }
 
 message CreateFoodDrinkGrpcReplyDTO {
@@ -726,7 +729,9 @@ message CreateFoodDrinkGrpcReplyDataDTO {
     string Type = 3;
     string Size = 4;
     string Price = 5;
-    string CreatedBy = 6;
+	string Image = 6;
+    string Description = 7;
+    string CreatedBy = 8;
 }
 
 message UpdateFoodDrinkGrpcRequestDTO {
@@ -735,6 +740,8 @@ message UpdateFoodDrinkGrpcRequestDTO {
     string Type = 3;
     string Size = 4;
     string Price = 5;
+	string Image = 6;
+    string Description = 7;
 }
 
 message UpdateFoodDrinkGrpcReplyDTO {
@@ -750,6 +757,8 @@ message UpdateFoodDrinkGrpcReplyDataDTO {
     string Type = 3;
     string Size = 4;
     string Price = 5;
+	string Image = 6;
+    string Description = 7;
 }
 
 message DeleteFoodDrinkGrpcRequestDTO {
@@ -795,37 +804,3 @@ message GetBookingHistoryGrpcReplyDTO {
 	repeated CreateBookingGrpcReplyDataDTO Data = 4;
 }
 
-message GetAllShowtimesGrpcRequestDTO {
-  string cinemaId = 1;
-  string movieId  = 2; 
-  string date     = 3;
-  string country  = 4;
-}
-
-message GetAllShowtimesGrpcReplyDTO {
-  bool result = 1;
-  string message = 2;
-  int32 statusCode = 3;
-  repeated GetAllShowtimesCinemaGrpcReplyDataDTO data = 4;
-}
-
-message GetAllShowtimesCinemaGrpcReplyDataDTO {
-  string cinemaId = 1;
-  string cinemaName = 2;
-  string address = 3;
-  repeated GetAllShowtimesRoomTypeGrpcReplyDataDTO roomTypes = 4;
-}
-
-message GetAllShowtimesRoomTypeGrpcReplyDataDTO {
-  string roomTypeId = 1;
-  string roomTypeName = 2;
-  repeated GetAllShowtimesShowtimeGrpcReplyDataDTO showtimes = 3;
-}
-
-message GetAllShowtimesShowtimeGrpcReplyDataDTO {
-  string showtimeId = 1;
-  string startTime = 2;
-  string endTime   = 3;
-  string movieId   = 4;
-  string movieName = 5;
-}

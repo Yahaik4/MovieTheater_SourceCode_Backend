@@ -8,7 +8,9 @@ namespace CinemaService.Infrastructure.EF.Models
         public string Type { get; set; } = null!;
         public string Size { get; set; } = null!;
         public decimal Price { get; set; }
+         public string? Image { get; set; }
 
+        public string? Description { get; set; }
         public ICollection<BookingItem> BookingItems { get; set; }
             = new List<BookingItem>();
     }

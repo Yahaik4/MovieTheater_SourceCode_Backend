@@ -17,20 +17,22 @@ namespace CinemaService.DomainLogic
 
         public async Task<GetAllFoodDrinkResultData> Execute(GetAllFoodDrinkParam param)
         {
-            var items = await _foodDrinkRepository.GetAllAsync(param.Id, param.Name, param.Type, param.Size);
+            var list = await _foodDrinkRepository.GetAllAsync(param.Id, param.Name, param.Type, param.Size);
 
             return new GetAllFoodDrinkResultData
             {
                 Result = true,
-                Message = "Get food & drinks successfully",
+                Message = "Get all food & drink successfully",
                 StatusCode = StatusCodeEnum.Success,
-                Data = items.Select(x => new GetAllFoodDrinkDataResult
+                Data = list.Select(x => new GetAllFoodDrinkDataResult
                 {
                     Id = x.Id,
                     Name = x.Name,
                     Type = x.Type,
                     Size = x.Size,
-                    Price = x.Price
+                    Price = x.Price,
+                    Image = x.Image,
+                    Description = x.Description
                 }).ToList()
             };
         }

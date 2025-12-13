@@ -6,6 +6,9 @@ namespace CinemaService.DataTransferObject.Parameter
         public string Type { get; set; } = null!;
         public string Size { get; set; } = null!;
         public decimal Price { get; set; }
+        public string? Image { get; set; }
+
+        public string? Description { get; set; }
         public string? CreatedBy { get; set; }
     }
 }

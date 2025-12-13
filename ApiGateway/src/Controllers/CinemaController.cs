@@ -972,7 +972,9 @@ namespace ApiGateway.Controllers
                         Name = fd.Name,
                         Type = fd.Type,
                         Size = fd.Size,
-                        Price = decimal.Parse(fd.Price)
+                        Price = decimal.Parse(fd.Price),
+                        Image = string.IsNullOrWhiteSpace(fd.Image) ? null : fd.Image,
+                        Description = string.IsNullOrWhiteSpace(fd.Description) ? null : fd.Description,
                     }).ToList()
                 };
             }
@@ -985,19 +987,37 @@ namespace ApiGateway.Controllers
                 {
                     Result = false,
                     Message = message,
-                    StatusCode = (int)statusCode
+                    StatusCode = (int)statusCode,
+                    Data = new List<GetAllFoodDrinkDataResult>()
                 };
             }
         }
 
         [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPost("food-drink")]
-        public async Task<CreateFoodDrinkResultDTO> CreateFoodDrink(CreateFoodDrinkRequestParam param)
+        [Consumes("multipart/form-data")]
+        public async Task<CreateFoodDrinkResultDTO> CreateFoodDrink([FromForm] CreateFoodDrinkFormRequestParam param)
         {
             try
             {
-                var result = await _cinemaServiceConnector.CreateFoodDrink(
-                    param.Name, param.Type, param.Size, param.Price);
+                string? imageBase64 = null;
+
+                if (param.ImageFile != null && param.ImageFile.Length > 0)
+                {
+                    using var ms = new MemoryStream();
+                    await param.ImageFile.CopyToAsync(ms);
+                    imageBase64 = Convert.ToBase64String(ms.ToArray());
+                }
+
+                var result = await _cinemaServiceConnector.CreateFoodDrink(new CreateFoodDrinkRequestParam
+                {
+                    Name = param.Name,
+                    Type = param.Type,
+                    Size = param.Size,
+                    Price = param.Price,
+                    Image = imageBase64,
+                    Description = param.Description
+                });
 
                 return new CreateFoodDrinkResultDTO
                 {
@@ -1011,7 +1031,9 @@ namespace ApiGateway.Controllers
                         Type = result.Data.Type,
                         Size = result.Data.Size,
                         Price = decimal.Parse(result.Data.Price),
-                        CreatedBy = result.Data.CreatedBy
+                        Image = string.IsNullOrWhiteSpace(result.Data.Image) ? null : result.Data.Image,
+                        Description = string.IsNullOrWhiteSpace(result.Data.Description) ? null : result.Data.Description,
+                        CreatedBy = string.IsNullOrWhiteSpace(result.Data.CreatedBy) ? null : result.Data.CreatedBy
                     }
                 };
             }
@@ -1024,18 +1046,41 @@ namespace ApiGateway.Controllers
                 {
                     Result = false,
                     Message = message,
-                    StatusCode = (int)statusCode
+                    StatusCode = (int)statusCode,
+                    Data = new CreateFoodDrinkDataResult()
                 };
             }
         }
 
         [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPut("food-drink/{id}")]
-        public async Task<UpdateFoodDrinkResultDTO> UpdateFoodDrink(Guid id, [FromBody] UpdateFoodDrinkRequestParam param)
+        [Consumes("multipart/form-data")]
+        public async Task<UpdateFoodDrinkResultDTO> UpdateFoodDrink(
+            Guid id,
+            [FromForm] UpdateFoodDrinkFormRequestParam param)
         {
             try
             {
-                var result = await _cinemaServiceConnector.UpdateFoodDrink(id, param);
+                string? imageBase64 = null;
+
+                if (param.ImageFile != null && param.ImageFile.Length > 0)
+                {
+                    using var ms = new MemoryStream();
+                    await param.ImageFile.CopyToAsync(ms);
+                    imageBase64 = Convert.ToBase64String(ms.ToArray());
+                }
+
+                var result = await _cinemaServiceConnector.UpdateFoodDrink(
+                    id,
+                    new UpdateFoodDrinkRequestParam
+                    {
+                        Name = param.Name,
+                        Type = param.Type,
+                        Size = param.Size,
+                        Price = param.Price,
+                        Image = imageBase64, // null => không update ảnh
+                        Description = param.Description
+                    });
 
                 return new UpdateFoodDrinkResultDTO
                 {
@@ -1048,7 +1093,11 @@ namespace ApiGateway.Controllers
                         Name = result.Data.Name,
                         Type = result.Data.Type,
                         Size = result.Data.Size,
-                        Price = decimal.Parse(result.Data.Price)
+                        Price = decimal.Parse(result.Data.Price),
+                        Image = string.IsNullOrWhiteSpace(result.Data.Image) ? null : result.Data.Image,
+                        Description = string.IsNullOrWhiteSpace(result.Data.Description)
+                            ? null
+                            : result.Data.Description
                     }
                 };
             }
@@ -1061,7 +1110,8 @@ namespace ApiGateway.Controllers
                 {
                     Result = false,
                     Message = message,
-                    StatusCode = (int)statusCode
+                    StatusCode = (int)statusCode,
+                    Data = new UpdateFoodDrinkDataResult()
                 };
             }
         }

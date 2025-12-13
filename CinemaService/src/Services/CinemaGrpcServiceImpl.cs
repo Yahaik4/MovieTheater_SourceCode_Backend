@@ -600,9 +600,7 @@ namespace CinemaService.Services
         {
             Guid? id = null;
             if (!string.IsNullOrWhiteSpace(request.Id) && Guid.TryParse(request.Id, out var parsedId))
-            {
                 id = parsedId;
-            }
 
             var result = await _getAllFoodDrinkLogic.Execute(new GetAllFoodDrinkParam
             {
@@ -612,7 +610,28 @@ namespace CinemaService.Services
                 Size = request.Size,
             });
 
-            return _mapper.Map<GetAllFoodDrinksGrpcReplyDTO>(result);
+            var reply = new GetAllFoodDrinksGrpcReplyDTO
+            {
+                Result = result.Result,
+                Message = result.Message,
+                StatusCode = (int)result.StatusCode,
+            };
+
+            if (result.Data != null && result.Data.Count > 0)
+            {
+                reply.Data.AddRange(result.Data.Select(x => new GetAllFoodDrinksGrpcReplyDataDTO
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Name,
+                    Type = x.Type,
+                    Size = x.Size,
+                    Price = x.Price.ToString(),
+                    Image = x.Image ?? "",
+                    Description = x.Description ?? ""
+                }));
+            }
+
+            return reply;
         }
 
         public override async Task<CreateFoodDrinkGrpcReplyDTO> CreateFoodDrink(CreateFoodDrinkGrpcRequestDTO request, ServerCallContext context)
@@ -623,10 +642,28 @@ namespace CinemaService.Services
                 Type = request.Type,
                 Size = request.Size,
                 Price = decimal.Parse(request.Price),
+                Image = string.IsNullOrWhiteSpace(request.Image) ? null : request.Image,
+                Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description,
                 CreatedBy = request.CreatedBy
             });
 
-            return _mapper.Map<CreateFoodDrinkGrpcReplyDTO>(result);
+            return new CreateFoodDrinkGrpcReplyDTO
+            {
+                Result = result.Result,
+                Message = result.Message,
+                StatusCode = (int)result.StatusCode,
+                Data = new CreateFoodDrinkGrpcReplyDataDTO
+                {
+                    Id = result.Data.Id.ToString(),
+                    Name = result.Data.Name,
+                    Type = result.Data.Type,
+                    Size = result.Data.Size,
+                    Price = result.Data.Price.ToString(),
+                    Image = result.Data.Image ?? "",
+                    Description = result.Data.Description ?? "",
+                    CreatedBy = result.Data.CreatedBy ?? ""
+                }
+            };
         }
 
         public override async Task<UpdateFoodDrinkGrpcReplyDTO> UpdateFoodDrink(UpdateFoodDrinkGrpcRequestDTO request, ServerCallContext context)
@@ -634,13 +671,30 @@ namespace CinemaService.Services
             var result = await _updateFoodDrinkLogic.Execute(new UpdateFoodDrinkParam
             {
                 Id = Guid.Parse(request.Id),
-                Name = request.Name,
-                Type = request.Type,
-                Size = request.Size,
-                Price = string.IsNullOrWhiteSpace(request.Price) ? null : decimal.Parse(request.Price)
+                Name = string.IsNullOrWhiteSpace(request.Name) ? null : request.Name,
+                Type = string.IsNullOrWhiteSpace(request.Type) ? null : request.Type,
+                Size = string.IsNullOrWhiteSpace(request.Size) ? null : request.Size,
+                Price = string.IsNullOrWhiteSpace(request.Price) ? null : decimal.Parse(request.Price),
+                Image = request.Image,
+                Description = request.Description
             });
 
-            return _mapper.Map<UpdateFoodDrinkGrpcReplyDTO>(result);
+            return new UpdateFoodDrinkGrpcReplyDTO
+            {
+                Result = result.Result,
+                Message = result.Message,
+                StatusCode = (int)result.StatusCode,
+                Data = new UpdateFoodDrinkGrpcReplyDataDTO
+                {
+                    Id = result.Data.Id.ToString(),
+                    Name = result.Data.Name,
+                    Type = result.Data.Type,
+                    Size = result.Data.Size,
+                    Price = result.Data.Price.ToString(),
+                    Image = result.Data.Image ?? "",
+                    Description = result.Data.Description ?? ""
+                }
+            };
         }
 
         public override async Task<DeleteFoodDrinkGrpcReplyDTO> DeleteFoodDrink(DeleteFoodDrinkGrpcRequestDTO request, ServerCallContext context)
