@@ -17,9 +17,10 @@ namespace CinemaService.Data
         public DbSet<Showtime> Showtimes { get; set; }
         public DbSet<ShowtimeSeat> ShowtimeSeats { get; set; }
         public DbSet<Booking> Bookings { get; set; }
-        //public DbSet<TimeBasedPricing> TimeBasedPricings { get; set; }
-        //public DbSet<SpecialDayPricing> SpecialDayPricings { get; set; }
-
+        public DbSet<CustomerType> CustomerTypes { get; set; }
+        public DbSet<Holiday> Holidays { get; set; }
+        public DbSet<PriceRule> PriceRules { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
         // NEW
         public DbSet<FoodDrink> FoodDrinks { get; set; }
         public DbSet<BookingItem> BookingItems { get; set; }
@@ -66,16 +67,6 @@ namespace CinemaService.Data
                     .WithOne(sts => sts.Showtime)
                     .HasForeignKey(sts => sts.ShowTimeId)
                     .OnDelete(DeleteBehavior.Cascade);
-
-                //entity.HasOne(st => st.TimeBasedPricing)
-                //    .WithMany(p => p.Showtimes)
-                //    .HasForeignKey(st => st.TimeBasedPricingId)
-                //    .OnDelete(DeleteBehavior.Restrict);
-
-                //entity.HasOne(st => st.SpecialDayPricing)
-                //    .WithMany(p => p.Showtimes)
-                //    .HasForeignKey(st => st.SpecialDayPricingId)
-                //    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // SHOWTIME SEAT
@@ -165,6 +156,32 @@ namespace CinemaService.Data
 
                 entity.Property(b => b.BookingSeats)
                       .HasColumnType("jsonb");
+            });
+
+            modelBuilder.Entity<PriceRule>(entity =>
+            {
+                entity.HasOne(pr => pr.CustomerType)
+                      .WithMany(ct => ct.PriceRules)
+                      .HasForeignKey(pr => pr.CustomerTypeId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Promotion>(entity =>
+            {
+                entity.HasIndex(p => p.Code)
+                      .IsUnique();
+
+                entity.Property(p => p.Code)
+                      .HasMaxLength(50)
+                      .IsRequired();
+
+                entity.Property(p => p.StartDate)
+                      .HasColumnType("timestamp without time zone")
+                      .IsRequired();
+
+                entity.Property(p => p.EndDate)
+                      .HasColumnType("timestamp without time zone")
+                      .IsRequired();
             });
         }
     }

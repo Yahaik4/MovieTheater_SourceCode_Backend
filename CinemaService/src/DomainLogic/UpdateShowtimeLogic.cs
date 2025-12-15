@@ -105,7 +105,7 @@ namespace CinemaService.DomainLogic
                     if (seats.Any())
                     {
                         var seatIds = seats.Where(s => s.isActive).Select(s => s.Id).ToList();
-                        await _showtimeSeatRepository.CreateShowtimeSeats(showtime.Id, seatIds, currentRoom.RoomType.BasePrice);
+                        await _showtimeSeatRepository.CreateShowtimeSeats(showtime.Id, seatIds, currentRoom.RoomType.ExtraPrice);
                     }
                 }
 

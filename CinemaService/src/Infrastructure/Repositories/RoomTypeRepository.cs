@@ -35,7 +35,7 @@ namespace CinemaService.Infrastructure.Repositories
             return roomType;
         }
 
-        public async Task<IEnumerable<RoomType>> GetAllRoomType(Guid? id, string? type, decimal? basePrice)
+        public async Task<IEnumerable<RoomType>> GetAllRoomType(Guid? id, string? type, decimal? extraPrice)
         {
             var query = _context.RoomTypes.AsQueryable();
 
@@ -45,8 +45,8 @@ namespace CinemaService.Infrastructure.Repositories
             if (!string.IsNullOrWhiteSpace(type))
                 query = query.Where(rt => rt.Type.ToLower().Contains(type.ToLower()));
 
-            if (basePrice.HasValue)
-                query = query.Where(rt => rt.BasePrice == basePrice);
+            if (extraPrice.HasValue)
+                query = query.Where(rt => rt.ExtraPrice == extraPrice);
 
             query = query.Where(x => x.IsDeleted == false);
 

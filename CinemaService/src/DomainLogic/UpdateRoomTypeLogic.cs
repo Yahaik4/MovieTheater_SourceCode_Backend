@@ -25,7 +25,7 @@ namespace CinemaService.DomainLogic
             }
 
             roomType.Type = param.Type;
-            roomType.BasePrice = param.BasePrice;
+            roomType.ExtraPrice = param.ExtraPrice;
             roomType.UpdatedAt = DateTime.UtcNow;
 
             await _roomTypeRepository.UpdateRoomType(roomType);
@@ -38,7 +38,7 @@ namespace CinemaService.DomainLogic
                 Data = new UpdateRoomTypeDataResult
                 {
                     Type = roomType.Type,
-                    BasePrice = roomType.BasePrice,
+                    BasePrice = roomType.ExtraPrice,
                 }
             };
         }

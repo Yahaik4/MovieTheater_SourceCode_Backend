@@ -1,6 +1,9 @@
 ﻿using ApiGateway.DataTransferObject.Parameter;
 using ApiGateway.Helper;
+using AuthenticationGrpc;
 using CinemaGrpc;
+using Grpc.Core;
+using System.Xml.Linq;
 
 namespace ApiGateway.ServiceConnector.CinemaService
 {
@@ -549,6 +552,192 @@ namespace ApiGateway.ServiceConnector.CinemaService
             };
 
             return await client.GetBookingHistoryAsync(request);
+        }
+
+        public async Task<GetCustomerTypesGrpcReplyDTO> GetCustomerTypes(Guid? id, string? name, string? roleCondition)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetCustomerTypesGrpcRequestDTO();
+
+            if (id.HasValue)
+                request.Id = id.Value.ToString();
+
+            if (!string.IsNullOrWhiteSpace(name))
+                request.Name = name;
+
+            if (!string.IsNullOrWhiteSpace(roleCondition))
+            {
+                request.RoleCondition = roleCondition;
+            }
+
+            return await client.GetCustomerTypesAsync(request);
+        }
+
+        public async Task<CreateCustomerTypeGrpcReplyDTO> CreateCustomerType(string name, string roleCondition)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new CreateCustomerTypeGrpcRequestDTO
+            {
+                Name = name,
+                RoleCondition = roleCondition
+            };
+
+            return await client.CreateCustomerTypeAsync(request);
+        }
+
+        public async Task<UpdateCustomerTypeGrpcReplyDTO> UpdateCustomerType(Guid id, string? name, string? roleCondition)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new UpdateCustomerTypeGrpcRequestDTO
+            {
+                Id = id.ToString(),
+                Name = name,
+                RoleCondition = roleCondition
+            };
+
+            return await client.UpdateCustomerTypeAsync(request);
+        }
+
+        public async Task<GetHolidaysGrpcReplyDTO> GetHolidays(string? name, DateOnly? startDate, DateOnly? endDate)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetHolidaysGrpcRequestDTO();
+
+            if (!string.IsNullOrWhiteSpace(name))
+                request.Name = name;
+
+            if (startDate.HasValue)
+                request.StartDate = startDate.Value.ToString("yyyy-MM-dd");
+
+            if (endDate.HasValue)
+                request.EndDate = endDate.Value.ToString("yyyy-MM-dd");
+
+            return await client.GetHolidaysAsync(request);
+        }
+
+        public async Task<CreateHolidayGrpcReplyDTO> CreateHoliday(string name, int day, int month, decimal extraPrice)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new CreateHolidayGrpcRequestDTO
+            {
+                Name = name,
+                Day = day,
+                Month = month,
+                ExtraPrice = extraPrice.ToString()
+            };
+
+            return await client.CreateHolidayAsync(request);
+        }
+
+        public async Task<UpdateHolidayGrpcReplyDTO> UpdateHoliday(Guid id, string? name, int? day, int? month, decimal? extraPrice)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new UpdateHolidayGrpcRequestDTO
+            {
+                Id = id.ToString(),
+                Name = name,
+                Day = day.ToString(),
+                Month = month.ToString(),
+                ExtraPrice = extraPrice.ToString()
+            };
+
+            return await client.UpdateHolidayAsync(request);
+        }
+
+        public async Task<GetPromotionsGrpcReplyDTO> GetPromotions(Guid? id, string? code, DateTime? startDate, DateTime? endDate, string? discountType, bool? isActive)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetPromotionsGrpcRequestDTO
+            {
+                Id = id.ToString(),
+                Code = code,
+                StartDate = startDate.ToString(),
+                EndDate = endDate.ToString(),
+                DiscountType = discountType,
+                IsActive = isActive,
+            };
+
+            return await client.GetPromotionsAsync(request);
+        }
+
+        public async Task<CreatePromotionGrpcReplyDTO> CreatePromotion(string code, 
+                                                                       string description, 
+                                                                       DateTime startDate, 
+                                                                       DateTime endDate, 
+                                                                       string discountType, 
+                                                                       decimal discountValue,
+                                                                       int? limitPerUser,
+                                                                       int? limitTotalUse,
+                                                                       decimal? minOrderValue,
+                                                                       bool isActive)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new CreatePromotionGrpcRequestDTO
+            {
+                Code = code,
+                Description = description,
+                StartDate = startDate.ToString(),
+                EndDate = endDate.ToString(),
+                DiscountValue = discountValue.ToString(),
+                LimitPerUser = limitPerUser,
+                LimitTotalUse = limitTotalUse,
+                MinOrderValue = minOrderValue.ToString(),
+                DiscountType = discountType,
+                IsActive = isActive,
+            };
+
+            return await client.CreatePromotionAsync(request);
+        }
+
+        public async Task<UpdatePromotionGrpcReplyDTO> UpdatePromotion(Guid id,
+                                                                       string? code,
+                                                                       string? description,
+                                                                       DateTime? startDate,
+                                                                       DateTime? endDate,
+                                                                       string? discountType,
+                                                                       decimal? discountValue,
+                                                                       int? limitPerUser,
+                                                                       int? limitTotalUse,
+                                                                       decimal? minOrderValue,
+                                                                       int? usedCount,
+                                                                       bool? isActive)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new UpdatePromotionGrpcRequestDTO
+            {
+                Id = id.ToString(),
+                Code = code,
+                Description = description,
+                StartDate = startDate.ToString(),
+                EndDate = endDate.ToString(),
+                DiscountValue = discountValue.ToString(),
+                LimitPerUser = limitPerUser,
+                LimitTotalUse = limitTotalUse,
+                MinOrderValue = minOrderValue.ToString(),
+                DiscountType = discountType,
+                UsedCount = usedCount,
+                IsActive = isActive,
+            };
+
+            return await client.UpdatePromotionAsync(request);
         }
     }
 }

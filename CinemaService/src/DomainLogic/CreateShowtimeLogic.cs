@@ -6,6 +6,7 @@ using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
 using CinemaService.Infrastructure.EF.Models;
 using ApiGateway.ServiceConnector.MovieService;
+using Npgsql.Internal;
 
 namespace CinemaService.DomainLogic
 {
@@ -16,18 +17,27 @@ namespace CinemaService.DomainLogic
         private readonly IShowtimeSeatRepository _showtimeSeatRepository;
         private readonly MovieServiceConnector _movieServiceConnector;
         private readonly ISeatRepository _seatRepository;
+        private readonly IHolidayRepository _holidayRepository;
+        private readonly IPriceRuleRepository _priceRuleRepository;
+        private readonly ICustomerTypeRepository _customerTypeRepository;
 
         public CreateShowtimeLogic(IShowtimeRepository showtimeRepository, 
                                    IRoomRepository roomRepository, 
                                    IShowtimeSeatRepository showtimeSeatRepository,
                                    MovieServiceConnector movieServiceConnector,
-                                   ISeatRepository seatRepository)
+                                   ISeatRepository seatRepository,
+                                   IHolidayRepository holidayRepository,
+                                   ICustomerTypeRepository customerTypeRepository,
+                                   IPriceRuleRepository priceRuleRepository)
         {
             _showtimeRepository = showtimeRepository;
             _roomRepository = roomRepository;
             _showtimeSeatRepository = showtimeSeatRepository;
             _movieServiceConnector = movieServiceConnector; 
             _seatRepository = seatRepository;
+            _holidayRepository = holidayRepository;
+            _customerTypeRepository = customerTypeRepository;
+            _priceRuleRepository = priceRuleRepository;
         }
 
         public async Task<CreateShowtimeResultData> Execute(CreateShowtimeParam param)
@@ -59,6 +69,28 @@ namespace CinemaService.DomainLogic
             if (isOverlap)
                 throw new ConflictException("Showtime conflicts with an existing showtime or buffer time in this room.");
 
+            var customerType = await _customerTypeRepository.GetCustomerTypeByName("Adult");
+            var dayOfWeek = (int)param.StartTime.DayOfWeek;
+            int day = param.StartTime.Day;
+            int month = param.StartTime.Month;
+            var start = DateTime.SpecifyKind(param.StartTime, DateTimeKind.Unspecified).ToLocalTime();
+            var startTimeOnly = TimeOnly.FromDateTime(start);
+
+            var priceRule = await _priceRuleRepository.GetApplicablePriceRuleAsync(customerType.Id, dayOfWeek, startTimeOnly);
+
+            if(priceRule == null)
+            {
+                throw new NotFoundException("Price Rule not found");
+            }
+
+            var price = priceRule.BasePrice + room.RoomType.ExtraPrice;
+
+            var holiday = await _holidayRepository.GetHolidayByDate(day, month);
+
+            if (holiday != null)
+            {
+                price = price + holiday.ExtraPrice;
+            }
 
             var newShowtime = await _showtimeRepository.CreateShowtime(new Showtime
             {
@@ -77,7 +109,7 @@ namespace CinemaService.DomainLogic
                 if (seats.Any())
                 {
                     var seatIds = seats.Where(s => s.isActive).Select(s => s.Id).ToList();
-                    await _showtimeSeatRepository.CreateShowtimeSeats(showtimeId, seatIds, room.RoomType.BasePrice);
+                    await _showtimeSeatRepository.CreateShowtimeSeats(showtimeId, seatIds, price);
                 }
             }
 

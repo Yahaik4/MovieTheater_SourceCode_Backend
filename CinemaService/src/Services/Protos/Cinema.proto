@@ -48,6 +48,18 @@ service CinemaGrpcService {
     rpc UpdateFoodDrink (UpdateFoodDrinkGrpcRequestDTO) returns (UpdateFoodDrinkGrpcReplyDTO);
     rpc DeleteFoodDrink (DeleteFoodDrinkGrpcRequestDTO) returns (DeleteFoodDrinkGrpcReplyDTO);
 	rpc CheckInBooking (CheckInBookingGrpcRequestDTO) returns (CheckInBookingGrpcReplyDTO);
+
+	rpc GetCustomerTypes (GetCustomerTypesGrpcRequestDTO) returns (GetCustomerTypesGrpcReplyDTO);
+	rpc CreateCustomerType (CreateCustomerTypeGrpcRequestDTO) returns (CreateCustomerTypeGrpcReplyDTO);
+	rpc UpdateCustomerType (UpdateCustomerTypeGrpcRequestDTO) returns (UpdateCustomerTypeGrpcReplyDTO);
+
+	rpc GetHolidays (GetHolidaysGrpcRequestDTO) returns (GetHolidaysGrpcReplyDTO);
+	rpc CreateHoliday (CreateHolidayGrpcRequestDTO) returns (CreateHolidayGrpcReplyDTO);
+	rpc UpdateHoliday (UpdateHolidayGrpcRequestDTO) returns (UpdateHolidayGrpcReplyDTO);
+
+	rpc GetPromotions (GetPromotionsGrpcRequestDTO) returns (GetPromotionsGrpcReplyDTO);
+	rpc CreatePromotion (CreatePromotionGrpcRequestDTO) returns (CreatePromotionGrpcReplyDTO);
+	rpc UpdatePromotion (UpdatePromotionGrpcRequestDTO) returns (UpdatePromotionGrpcReplyDTO);
 }
 
 message GetAllCinemasGrpcRequestDTO {
@@ -804,3 +816,227 @@ message GetBookingHistoryGrpcReplyDTO {
 	repeated CreateBookingGrpcReplyDataDTO Data = 4;
 }
 
+message GetCustomerTypesGrpcRequestDTO {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue roleCondition = 3;
+}
+
+message GetCustomerTypesGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetCustomerTypesGrpcReplyDataDTO Data = 4;
+}
+
+message GetCustomerTypesGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+	string roleCondition = 3;
+}
+
+message CreateCustomerTypeGrpcRequestDTO {
+	string name = 1;
+	string roleCondition = 2;
+}
+
+message CreateCustomerTypeGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreateCustomerTypeGrpcReplyDataDTO Data = 4;
+}
+
+message CreateCustomerTypeGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+	string roleCondition = 3;
+}
+
+message UpdateCustomerTypeGrpcRequestDTO {
+	string id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue roleCondition = 3;
+}
+
+message UpdateCustomerTypeGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateCustomerTypeGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateCustomerTypeGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+	string roleCondition = 3;
+}
+
+message GetHolidaysGrpcRequestDTO {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue startDate = 2;
+	google.protobuf.StringValue endDate = 3;
+}
+
+message GetHolidaysGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetHolidaysGrpcReplyDataDTO Data = 4;
+}
+
+message GetHolidaysGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+	int32 day = 3;
+    int32 Month = 4;
+    string ExtraPrice = 5;
+}
+
+message CreateHolidayGrpcRequestDTO {
+	string name = 1;
+	int32 day = 2;
+	int32 month = 3;
+	string extraPrice = 4;
+}
+
+message CreateHolidayGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreateHolidayGrpcReplyDataDTO Data = 4;
+}
+
+message CreateHolidayGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+	int32 day = 3;
+	int32 month = 4;
+	string extraPrice = 5;
+}
+
+message UpdateHolidayGrpcRequestDTO {
+	string id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue day = 3;
+	google.protobuf.StringValue month = 4;
+	google.protobuf.StringValue extraPrice = 5;
+}
+
+message UpdateHolidayGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdateHolidayGrpcReplyDataDTO Data = 4;
+}
+
+message UpdateHolidayGrpcReplyDataDTO {
+	string id = 1;
+	string name = 2;
+	int32 day = 3;
+	int32 month = 4;
+	string extraPrice = 5;
+}
+
+message GetPromotionsGrpcRequestDTO {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue code = 2;
+	google.protobuf.StringValue startDate = 3;
+	google.protobuf.StringValue endDate = 4;
+	google.protobuf.StringValue discountType = 5;
+	google.protobuf.BoolValue isActive = 6;
+}
+
+message GetPromotionsGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetPromotionsGrpcReplyDataDTO Data = 4;
+}
+
+message GetPromotionsGrpcReplyDataDTO {
+	string id = 1;
+	string code = 2;
+	string description = 3;
+	string discountType = 4;
+	string discountValue = 5;
+	google.protobuf.StringValue minOrderValue = 6;
+	string startDate = 7;
+	string endDate = 8;
+	google.protobuf.Int32Value limitPerUser = 9;
+	google.protobuf.Int32Value limitTotalUse = 10;
+	int32 usedCount = 11;
+	bool isActive = 12;
+}
+
+message CreatePromotionGrpcRequestDTO {
+	string code = 1;
+	string description = 2;
+	string discountType = 3;
+	string discountValue = 4;
+	google.protobuf.StringValue minOrderValue = 5;
+	string startDate = 6;
+	string endDate = 7;
+	google.protobuf.Int32Value limitPerUser = 8;
+	google.protobuf.Int32Value limitTotalUse = 9;
+	bool isActive = 10;
+}
+
+message CreatePromotionGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	CreatePromotionGrpcReplyDataDTO Data = 4;
+}
+
+message CreatePromotionGrpcReplyDataDTO {
+	string id = 1;
+	string code = 2;
+	string description = 3;
+	string discountType = 4;
+	string discountValue = 5;
+	google.protobuf.StringValue minOrderValue = 6;
+	string startDate = 7;
+	string endDate = 8;
+	google.protobuf.Int32Value limitPerUser = 9;
+	google.protobuf.Int32Value limitTotalUse = 10;
+	int32 usedCount = 11;
+	bool isActive = 12;
+}
+
+message UpdatePromotionGrpcRequestDTO {
+	string id = 1;
+	google.protobuf.StringValue code = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue discountType = 4;
+	google.protobuf.StringValue discountValue = 5;
+	google.protobuf.StringValue minOrderValue = 6;
+	google.protobuf.StringValue startDate = 7;
+	google.protobuf.StringValue endDate = 8;
+	google.protobuf.Int32Value limitPerUser = 9;
+	google.protobuf.Int32Value limitTotalUse = 10;
+	google.protobuf.Int32Value usedCount = 11;
+	google.protobuf.BoolValue isActive = 12;
+}
+
+message UpdatePromotionGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	UpdatePromotionGrpcReplyDataDTO Data = 4;
+}
+
+message UpdatePromotionGrpcReplyDataDTO {
+	string id = 1;
+	string code = 2;
+	string description = 3;
+	string discountType = 4;
+	string discountValue = 5;
+	google.protobuf.StringValue minOrderValue = 6;
+	string startDate = 7;
+	string endDate = 8;
+	google.protobuf.Int32Value limitPerUser = 9;
+	google.protobuf.Int32Value limitTotalUse = 10;
+	int32 usedCount = 11;
+	bool isActive = 12;
+}

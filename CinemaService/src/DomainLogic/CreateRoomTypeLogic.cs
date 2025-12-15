@@ -29,7 +29,7 @@ namespace CinemaService.DomainLogic
             {
                 Id = Guid.NewGuid(),
                 Type = param.Type,
-                BasePrice = param.BasePrice,
+                ExtraPrice = param.ExtraPrice,
                 CreatedBy = param.CreatedBy,
             };
 
@@ -44,7 +44,7 @@ namespace CinemaService.DomainLogic
                 {
                     Id = roomType.Id,
                     Type = roomType.Type,
-                    BasePrice = roomType.BasePrice,
+                    BasePrice = roomType.ExtraPrice,
                     CreatedBy = roomType.CreatedBy,
                 }
             };

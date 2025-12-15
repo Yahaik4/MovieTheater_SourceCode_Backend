@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using CinemaGrpc;
 using CinemaService.DataTransferObject.Parameter;
+using CinemaService.DataTransferObject.ResultData;
 using CinemaService.DomainLogic;
 using Grpc.Core;
+using System;
 using System.Globalization;
 using System.Text.Json;
-using CinemaService.DataTransferObject.ResultData;
 
 namespace CinemaService.Services
 {
@@ -45,6 +46,16 @@ namespace CinemaService.Services
         private readonly DeleteFoodDrinkLogic _deleteFoodDrinkLogic;
         private readonly CheckInBookingLogic _checkInBookingLogic;
         private readonly GetBookingHistoryLogic _getBookingHistoryLogic;
+        private readonly GetCustomerTypesLogic _getCustomerTypesLogic;
+        private readonly CreateCustomerTypeLogic _createCustomerTypeLogic;
+        private readonly UpdateCustomerTypeLogic _updateCustomerTypeLogic;
+        private readonly GetHolidaysLogic _getHolidaysLogic;
+        private readonly CreateHolidayLogic _createHolidayLogic;
+        private readonly UpdateHolidayLogic _updateHolidayLogic;
+        private readonly GetPromotionsLogic _getPromotionsLogic;
+        private readonly CreatePromotionLogic _createPromotionLogic;
+        private readonly UpdatePromotionLogic _updatePromotionLogic;
+
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
                                     GetAllCinemaLogic getAllCinemaLogic, 
@@ -78,7 +89,16 @@ namespace CinemaService.Services
                                     UpdateFoodDrinkLogic updateFoodDrinkLogic,
                                     DeleteFoodDrinkLogic deleteFoodDrinkLogic,
                                     CheckInBookingLogic checkInBookingLogic,
-                                    GetBookingHistoryLogic getBookingHistoryLogic) 
+                                    GetBookingHistoryLogic getBookingHistoryLogic,
+                                    GetCustomerTypesLogic getCustomerTypesLogic,
+                                    CreateCustomerTypeLogic createCustomerTypeLogic,
+                                    UpdateCustomerTypeLogic updateCustomerTypeLogic,
+                                    GetHolidaysLogic getHolidaysLogic,
+                                    CreateHolidayLogic createHolidayLogic,
+                                    UpdateHolidayLogic updateHolidayLogic,
+                                    GetPromotionsLogic getPromotionsLogic,
+                                    CreatePromotionLogic createPromotionLogic,
+                                    UpdatePromotionLogic updatePromotionLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -115,6 +135,15 @@ namespace CinemaService.Services
             _deleteFoodDrinkLogic = deleteFoodDrinkLogic;
             _checkInBookingLogic = checkInBookingLogic;
             _getBookingHistoryLogic = getBookingHistoryLogic;
+            _getCustomerTypesLogic = getCustomerTypesLogic;
+            _createCustomerTypeLogic = createCustomerTypeLogic;
+            _updateCustomerTypeLogic = updateCustomerTypeLogic;
+            _getHolidaysLogic = getHolidaysLogic;
+            _createHolidayLogic = createHolidayLogic;
+            _updateHolidayLogic = updateHolidayLogic;
+            _getPromotionsLogic = getPromotionsLogic;
+            _createPromotionLogic = createPromotionLogic;
+            _updatePromotionLogic = updatePromotionLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -213,7 +242,7 @@ namespace CinemaService.Services
             {
                 Id = roomTypeId,
                 Type = request.Type,
-                BasePrice = basePrice,
+                ExtraPrice = basePrice,
             });
 
             return _mapper.Map<GetAllRoomTypesGrpcReplyDTO>(result);
@@ -224,7 +253,7 @@ namespace CinemaService.Services
             var result = await _createRoomTypeLogic.Execute(new CreateRoomTypeParam
             {
                 Type = request.Type,
-                BasePrice = decimal.Parse(request.BasePrice),
+                ExtraPrice = decimal.Parse(request.BasePrice),
                 CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? "System" : request.CreatedBy
             });
 
@@ -237,7 +266,7 @@ namespace CinemaService.Services
             {
                 Id = Guid.Parse(request.Id),
                 Type = request.Type,
-                BasePrice = decimal.Parse(request.BasePrice),
+                ExtraPrice = decimal.Parse(request.BasePrice),
             });
 
             return _mapper.Map<UpdateRoomTypeGrpcReplyDTO>(result);
@@ -423,8 +452,6 @@ namespace CinemaService.Services
             {
                 id = parsedId;
             }
-
-            Console.WriteLine(JsonSerializer.Serialize(request));
 
             var result = await _getShowtimesByMovieLogic.Execute(new GetShowtimesByMovieParam
             {
@@ -726,6 +753,142 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<GetBookingHistoryGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetCustomerTypesGrpcReplyDTO> GetCustomerTypes(GetCustomerTypesGrpcRequestDTO request, ServerCallContext context)
+        {
+            Guid? customerTypeId = null;
+            if (!string.IsNullOrWhiteSpace(request.Id)
+                && Guid.TryParse(request.Id, out var parsedId))
+            {
+                customerTypeId = parsedId;
+            }
+
+            var result = await _getCustomerTypesLogic.Execute(new GetCustomerTypesParam
+            {
+                Id = customerTypeId,
+                Name = request.Name,
+                RoleCondition = request.RoleCondition,
+            });
+
+            return _mapper.Map<GetCustomerTypesGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CreateCustomerTypeGrpcReplyDTO> CreateCustomerType(CreateCustomerTypeGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _createCustomerTypeLogic.Execute(new CreateCustomerTypeParam
+            {
+                Name = request.Name,
+                RoleCondition = request.RoleCondition,
+            });
+
+            return _mapper.Map<CreateCustomerTypeGrpcReplyDTO>(result);
+        }
+
+        public override async Task<UpdateCustomerTypeGrpcReplyDTO> UpdateCustomerType(UpdateCustomerTypeGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _updateCustomerTypeLogic.Execute(new UpdateCustomerTypeParam
+            {
+                Id = Guid.Parse(request.Id),
+                Name = request.Name,
+                RoleCondition = request.RoleCondition,
+            });
+
+            return _mapper.Map<UpdateCustomerTypeGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetHolidaysGrpcReplyDTO> GetHolidays(GetHolidaysGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getHolidaysLogic.Execute(new GetHolidaysParam
+            {
+                Name = request.Name,
+                StartDate = string.IsNullOrEmpty(request.StartDate) ? null : DateOnly.Parse(request.StartDate),
+                EndDate = string.IsNullOrEmpty(request.EndDate) ? null : DateOnly.Parse(request.EndDate)
+            });
+
+            return _mapper.Map<GetHolidaysGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CreateHolidayGrpcReplyDTO> CreateHoliday(CreateHolidayGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _createHolidayLogic.Execute(new CreateHolidayParam
+            {
+                Name = request.Name,
+                Day = request.Day,
+                Month = request.Month,
+                ExtraPrice = decimal.Parse(request.ExtraPrice),
+            });
+
+            return _mapper.Map<CreateHolidayGrpcReplyDTO>(result);
+        }
+
+        public override async Task<UpdateHolidayGrpcReplyDTO> UpdateHoliday(UpdateHolidayGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _updateHolidayLogic.Execute(new UpdateHolidayParam
+            {
+                Id = Guid.Parse(request.Id),
+                Name = request.Name,
+                Day = string.IsNullOrEmpty(request.Day) ? null : int.Parse(request.Day),
+                Month = string.IsNullOrEmpty(request.Month) ? null : int.Parse(request.Month),
+                ExtraPrice = decimal.Parse(request.ExtraPrice)
+            });
+
+            return _mapper.Map<UpdateHolidayGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetPromotionsGrpcReplyDTO> GetPromotions(GetPromotionsGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getPromotionsLogic.Execute(new GetPromotionsParam
+            {
+                Id = string.IsNullOrEmpty(request.Id) ? null : Guid.Parse(request.Id),
+                Code = request.Code,
+                StartDate = string.IsNullOrEmpty(request.StartDate) ? null : DateTime.Parse(request.StartDate),
+                EndDate = string.IsNullOrEmpty(request.EndDate) ? null : DateTime.Parse(request.EndDate),
+                DiscountType = request.DiscountType,
+                IsActive = request.IsActive,
+            });
+
+            return _mapper.Map<GetPromotionsGrpcReplyDTO>(result);
+        }
+
+        public override async Task<CreatePromotionGrpcReplyDTO> CreatePromotion(CreatePromotionGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _createPromotionLogic.Execute(new CreatePromotionParam
+            {
+                Code = request.Code,
+                StartDate = DateTime.Parse(request.StartDate),
+                EndDate = DateTime.Parse(request.EndDate),
+                DiscountType = request.DiscountType,
+                Description = request.Description,
+                DiscountValue = decimal.Parse(request.DiscountValue),
+                LimitPerUser = request.LimitPerUser,
+                LimitTotalUse = request.LimitTotalUse,
+                MinOrderValue = string.IsNullOrEmpty(request.MinOrderValue) ? null : decimal.Parse(request.MinOrderValue),
+                IsActive = request.IsActive,
+            });
+
+            return _mapper.Map<CreatePromotionGrpcReplyDTO>(result);
+        }
+
+        public override async Task<UpdatePromotionGrpcReplyDTO> UpdatePromotion(UpdatePromotionGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _updatePromotionLogic.Execute(new UpdatePromotionParam
+            {
+                Id = Guid.Parse(request.Id),
+                Code = request.Code,
+                StartDate = string.IsNullOrEmpty(request.StartDate) ? null : DateTime.Parse(request.StartDate),
+                EndDate = string.IsNullOrEmpty(request.EndDate) ? null : DateTime.Parse(request.EndDate),
+                DiscountType = request.DiscountType,
+                Description = request.Description,
+                DiscountValue = string.IsNullOrEmpty(request.DiscountValue) ? null : decimal.Parse(request.DiscountValue),
+                LimitPerUser = request.LimitPerUser,
+                LimitTotalUse = request.LimitTotalUse,
+                MinOrderValue = string.IsNullOrEmpty(request.MinOrderValue) ? null : decimal.Parse(request.MinOrderValue),
+                UsedCount = request.UsedCount,
+                IsActive = request.IsActive
+            });
+
+            return _mapper.Map<UpdatePromotionGrpcReplyDTO>(result);
         }
     }
 }

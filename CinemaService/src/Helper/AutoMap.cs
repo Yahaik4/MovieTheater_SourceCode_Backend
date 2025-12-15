@@ -119,6 +119,33 @@ namespace CinemaService.Helper
             CreateMap<CheckInBookingDataResult, CheckInBookingGrpcReplyDataDTO>();
 
             CreateMap<GetBookingHistoryResultData, GetBookingHistoryGrpcReplyDTO>();
+
+            CreateMap<GetCustomerTypesResultData, GetCustomerTypesGrpcReplyDTO>();
+            CreateMap<GetCustomerTypesDataResult, GetCustomerTypesGrpcReplyDataDTO>();
+
+            CreateMap<CreateCustomerTypeResultData, CreateCustomerTypeGrpcReplyDTO>();
+            CreateMap<CreateCustomerTypeDataResult, CreateCustomerTypeGrpcReplyDataDTO>();
+
+            CreateMap<UpdateCustomerTypeResultData, UpdateCustomerTypeGrpcReplyDTO>();
+            CreateMap<UpdateCustomerTypeDataResult, UpdateCustomerTypeGrpcReplyDataDTO>();
+
+            CreateMap<GetHolidaysResultData, GetHolidaysGrpcReplyDTO>();
+            CreateMap<GetHolidaysDataResult, GetHolidaysGrpcReplyDataDTO>();
+
+            CreateMap<CreateHolidayResultData, CreateHolidayGrpcReplyDTO>();
+            CreateMap<CreateHolidayDataResult, CreateHolidayGrpcReplyDataDTO>();
+
+            CreateMap<UpdateHolidayResultData, UpdateHolidayGrpcReplyDTO>();
+            CreateMap<UpdateHolidayDataResult, UpdateHolidayGrpcReplyDataDTO>();
+
+            CreateMap<GetPromotionsResultData, GetPromotionsGrpcReplyDTO>();
+            CreateMap<GetPromotionsDataResult, GetPromotionsGrpcReplyDataDTO>();
+
+            CreateMap<CreatePromotionResultData, CreatePromotionGrpcReplyDTO>();
+            CreateMap<CreatePromotionDataResult, CreatePromotionGrpcReplyDataDTO>();
+
+            CreateMap<UpdatePromotionResultData, UpdatePromotionGrpcReplyDTO>();
+            CreateMap<UpdatePromotionDataResult, UpdatePromotionGrpcReplyDataDTO>();
         }
     }
 }

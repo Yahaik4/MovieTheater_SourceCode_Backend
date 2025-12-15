@@ -24,12 +24,7 @@ namespace ApiGateway.Controllers
         public async Task<GetProfileResultDTO> GetProfile()
         {
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-                     //?? User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             var email = User.FindFirstValue(JwtRegisteredClaimNames.Email);
-
-            Console.WriteLine("UserId: " + userId);
-            Console.WriteLine("Email: " + email);
 
             try
             {

@@ -17,7 +17,7 @@ namespace CinemaService.DomainLogic
 
         public async Task<GetAllRoomTypeResultData> Execute(GetAllRoomTypeParam param)
         {
-            var roomTypes = await _roomTypeRepository.GetAllRoomType(param.Id, param.Type, param.BasePrice);
+            var roomTypes = await _roomTypeRepository.GetAllRoomType(param.Id, param.Type, param.ExtraPrice);
 
             return new GetAllRoomTypeResultData
             {
@@ -28,7 +28,7 @@ namespace CinemaService.DomainLogic
                 {
                     Id = c.Id,
                     Type = c.Type,
-                    BasePrice = c.BasePrice,
+                    BasePrice = c.ExtraPrice,
                 }).ToList(),
             };
         }

@@ -76,6 +76,10 @@ void RegisterRepository()
     services.AddScoped<IShowtimeSeatRepository, ShowtimeSeatRepository>();
     services.AddScoped<IBookingRepository, BookingRepository>();
     services.AddScoped<IFoodDrinkRepository, FoodDrinkRepository>();
+    services.AddScoped<ICustomerTypeRepository, CustomerTypeRepository>();
+    services.AddScoped<IHolidayRepository, HolidayRepository>();
+    services.AddScoped<IPriceRuleRepository, PriceRuleRepository>();
+    services.AddScoped<IPromotionRepository, PromotionRepository>();
 
     // logic DJ
     services.AddScoped<GetAllCinemaLogic>();
@@ -120,6 +124,18 @@ void RegisterRepository()
 
     services.AddScoped<CheckInBookingLogic>();
     services.AddScoped<GetBookingHistoryLogic>();
+
+    services.AddScoped<GetCustomerTypesLogic>();
+    services.AddScoped<CreateCustomerTypeLogic>();
+    services.AddScoped<UpdateCustomerTypeLogic>();
+
+    services.AddScoped<GetHolidaysLogic>();
+    services.AddScoped<CreateHolidayLogic>();
+    services.AddScoped<UpdateHolidayLogic>();
+
+    services.AddScoped<GetPromotionsLogic>();
+    services.AddScoped<CreatePromotionLogic>();
+    services.AddScoped<UpdatePromotionLogic>();
 
     services.AddScoped<ProfileServiceConnector>();
     services.AddScoped<MovieServiceConnector>();

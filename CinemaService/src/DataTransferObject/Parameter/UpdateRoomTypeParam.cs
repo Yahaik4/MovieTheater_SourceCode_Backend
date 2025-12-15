@@ -6,6 +6,6 @@ namespace CinemaService.DataTransferObject.Parameter
     { 
         public Guid Id { get; set; }
         public string Type { get; set; } // 2D, 3D, IMAX
-        public decimal BasePrice { get; set; }
+        public decimal ExtraPrice { get; set; }
     }
 }

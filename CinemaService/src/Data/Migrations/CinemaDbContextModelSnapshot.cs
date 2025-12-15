@@ -179,6 +179,40 @@ namespace src.Data.Migrations
                     b.ToTable("Cinemas");
                 });
 
+            modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.CustomerType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleCondition")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CustomerTypes");
+                });
+
             modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.FoodDrink", b =>
                 {
                     b.Property<Guid>("Id")
@@ -227,6 +261,154 @@ namespace src.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FoodDrink", (string)null);
+                });
+
+            modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.Holiday", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Day")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("ExtraPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Holidays");
+                });
+
+            modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.PriceRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("BasePrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CustomerTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("integer");
+
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<TimeOnly>("StartTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerTypeId");
+
+                    b.ToTable("PriceRules");
+                });
+
+            modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.Promotion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DiscountType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("DiscountValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("LimitPerUser")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("LimitTotalUse")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("MinOrderValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UsedCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Promotions");
                 });
 
             modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.Room", b =>
@@ -284,14 +466,14 @@ namespace src.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("BasePrice")
-                        .HasColumnType("numeric");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
+
+                    b.Property<decimal>("ExtraPrice")
+                        .HasColumnType("numeric");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -523,6 +705,17 @@ namespace src.Data.Migrations
                     b.Navigation("FoodDrink");
                 });
 
+            modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.PriceRule", b =>
+                {
+                    b.HasOne("CinemaService.Infrastructure.EF.Models.CustomerType", "CustomerType")
+                        .WithMany("PriceRules")
+                        .HasForeignKey("CustomerTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CustomerType");
+                });
+
             modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.Room", b =>
                 {
                     b.HasOne("CinemaService.Infrastructure.EF.Models.Cinema", "Cinema")
@@ -608,6 +801,11 @@ namespace src.Data.Migrations
             modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.Cinema", b =>
                 {
                     b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.CustomerType", b =>
+                {
+                    b.Navigation("PriceRules");
                 });
 
             modelBuilder.Entity("CinemaService.Infrastructure.EF.Models.FoodDrink", b =>

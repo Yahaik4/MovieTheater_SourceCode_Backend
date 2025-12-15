@@ -512,5 +512,353 @@ namespace ApiGateway.Controllers
                 };
             }
         }
+
+        [Authorize(Policy = "StaffOrHigher")]
+        [HttpGet("holidays")]
+        public async Task<GetHolidaysResultDTO> GetHolidays([FromQuery] GetHolidaysRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetHolidays(param.Name, param.StartDate, param.EndDate);
+
+                return new GetHolidaysResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(ct => new GetHolidaysDataResult
+                    {
+                        Id = Guid.Parse(ct.Id),
+                        Name = ct.Name,
+                        Day = ct.Day,
+                        Month = ct.Month,
+                        ExtraPrice = decimal.Parse(ct.ExtraPrice),
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new GetHolidaysResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpPost("holidays")]
+        public async Task<CreateHolidayResultDTO> CreateHoliday(CreateHolidayRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.CreateHoliday(param.Name, param.Day, param.Month, param.ExtraPrice);
+
+                return new CreateHolidayResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreateHolidayDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Name = result.Data.Name,
+                        Day = result.Data.Day,
+                        Month = result.Data.Month,
+                        ExtraPrice = decimal.Parse(result.Data.ExtraPrice),
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new CreateHolidayResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpPut("holidays/{id}")]
+        public async Task<UpdateHolidayResultDTO> UpdateHoliday(Guid id, [FromBody] UpdateHolidayRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.UpdateHoliday(id, param.Name, param.Day, param.Month, param.ExtraPrice);
+
+                return new UpdateHolidayResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new UpdateHolidayDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Name = result.Data.Name,
+                        Day = result.Data.Day,
+                        Month = result.Data.Month,
+                        ExtraPrice = decimal.Parse(result.Data.ExtraPrice),
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new UpdateHolidayResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "StaffOrHigher")]
+        [HttpGet("customer-types")]
+        public async Task<GetCustomerTypesResultDTO> GetCustomerTypes([FromQuery] GetCustomerTypesRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetCustomerTypes(param.Id, param.Name, param.RoleCondition);
+
+                return new GetCustomerTypesResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(ct => new GetCustomerTypesDataResult
+                    {
+                        Id = Guid.Parse(ct.Id),
+                        Name = ct.Name,
+                        RoleCondition = ct.RoleCondition,
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new GetCustomerTypesResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpPost("customer-types")]
+        public async Task<CreateCustomerTypeResultDTO> CreateCustomerTypes(CreateCustomerTypeRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.CreateCustomerType(param.Name, param.RoleCondition);
+
+                return new CreateCustomerTypeResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreateCustomerTypeDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Name = result.Data.Name,
+                        RoleCondition = result.Data.RoleCondition,
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new CreateCustomerTypeResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpPut("customer-types/{id}")]
+        public async Task<UpdateCustomerTypeResultDTO> UpdateCustomerType(Guid id, [FromBody] UpdateCustomerTypeRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.UpdateCustomerType(id, param.Name, param.RoleCondition);
+
+                return new UpdateCustomerTypeResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new UpdateCustomerTypeDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Name = result.Data.Name,
+                        RoleCondition = result.Data.RoleCondition,
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new UpdateCustomerTypeResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpGet("promotions")]
+        public async Task<GetPromotionsResultDTO> GetPromotions([FromQuery] GetPromotionsRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetPromotions(param.Id, param.Code , param.StartDate, param.EndDate, param.DiscountType, param.IsActive);
+
+                return new GetPromotionsResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(p => new GetPromotionsDataResult
+                    {
+                        Id = Guid.Parse(p.Id),
+                        Code = p.Code,
+                        Description = p.Description,
+                        DiscountType = p.DiscountType,
+                        DiscountValue = decimal.Parse(p.DiscountValue),
+                        StartDate = p.StartDate,
+                        EndDate = p.EndDate,
+                        LimitPerUser = p.LimitPerUser,
+                        LimitTotalUse = p.LimitTotalUse,
+                        MinOrderValue = p.MinOrderValue != null ? decimal.Parse(p.MinOrderValue) : null,
+                        UsedCount = p.UsedCount,
+                        IsActive = p.IsActive
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new GetPromotionsResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpPost("promotions")]
+        public async Task<CreatePromotionResultDTO> CreatePromotion(CreatePromotionRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.CreatePromotion(param.Code, param.Description, param.StartDate, param.EndDate, param.DiscountType, param.DiscountValue, param.LimitPerUser, param.LimitTotalUse, param.MinOrderValue, param.IsActive);
+
+                return new CreatePromotionResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new CreatePromotionDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Code = result.Data.Code,
+                        Description = result.Data.Description,
+                        DiscountType = result.Data.DiscountType,
+                        DiscountValue = decimal.Parse(result.Data.DiscountValue),
+                        StartDate = result.Data.StartDate,
+                        EndDate = result.Data.EndDate,
+                        LimitPerUser = result.Data.LimitPerUser,
+                        LimitTotalUse = result.Data.LimitTotalUse,
+                        MinOrderValue = result.Data.MinOrderValue != null ? decimal.Parse(result.Data.MinOrderValue) : null,
+                        UsedCount = result.Data.UsedCount,
+                        IsActive = result.Data.IsActive
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new CreatePromotionResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpPut("promotions/{id}")]
+        public async Task<UpdatePromotionResultDTO> UpdatePromotion(Guid id, [FromBody] UpdatePromotionRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.UpdatePromotion(id, param.Code, param.Description, param.StartDate, param.EndDate, param.DiscountType, param.DiscountValue, param.LimitPerUser, param.LimitTotalUse, param.MinOrderValue,param.UsedCount, param.IsActive);
+
+                return new UpdatePromotionResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new UpdatePromotionDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Code = result.Data.Code,
+                        Description = result.Data.Description,
+                        DiscountType = result.Data.DiscountType,
+                        DiscountValue = decimal.Parse(result.Data.DiscountValue),
+                        StartDate = result.Data.StartDate,
+                        EndDate = result.Data.EndDate,
+                        LimitPerUser = result.Data.LimitPerUser,
+                        LimitTotalUse = result.Data.LimitTotalUse,
+                        MinOrderValue = result.Data.MinOrderValue != null ? decimal.Parse(result.Data.MinOrderValue) : null,
+                        UsedCount = result.Data.UsedCount,
+                        IsActive = result.Data.IsActive
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new UpdatePromotionResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
     }
 }
