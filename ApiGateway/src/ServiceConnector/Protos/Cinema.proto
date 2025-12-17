@@ -816,8 +816,6 @@ message GetBookingHistoryGrpcReplyDTO {
 	repeated CreateBookingGrpcReplyDataDTO Data = 4;
 }
 
-<<<<<<< Updated upstream
-=======
 message GetCustomerTypesGrpcRequestDTO {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue name = 2;
@@ -1042,4 +1040,3 @@ message UpdatePromotionGrpcReplyDataDTO {
 	int32 usedCount = 11;
 	bool isActive = 12;
 }
->>>>>>> Stashed changes
