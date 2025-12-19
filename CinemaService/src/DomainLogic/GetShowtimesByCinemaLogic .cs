@@ -48,7 +48,7 @@ namespace CinemaService.DomainLogic
 
             var final = movieIds.Select(movieId =>
             {
-                // N?u reply.Data không null thì m?i tìm
+                // N?u reply.Data khï¿½ng null thï¿½ m?i tï¿½m
                 var movie = reply.Data?
                     .FirstOrDefault(m =>
                         !string.IsNullOrWhiteSpace(m.Id) &&
@@ -57,7 +57,7 @@ namespace CinemaService.DomainLogic
                     );
 
                 var showtimesOfMovie = showtimes
-                    .Where(s => s != null && s.MovieId == movieId) // s không null
+                    .Where(s => s != null && s.MovieId == movieId) // s khï¿½ng null
                     .ToList();
 
                 return new GetShowtimesByCinemaDataResult
@@ -65,9 +65,10 @@ namespace CinemaService.DomainLogic
                     MovieId = movieId,
                     MovieName = movie?.Name,
                     Poster = movie?.Poster,
+                    MovieDescription = movie?.Description,
 
                     RoomTypes = showtimesOfMovie
-                        .Where(st => st.Room != null && st.Room.RoomType != null) // thêm guard null
+                        .Where(st => st.Room != null && st.Room.RoomType != null)
                         .GroupBy(st => st.Room.RoomTypeId)
                         .Select(g => new GetRoomTypeDataResult
                         {

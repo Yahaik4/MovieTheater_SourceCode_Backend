@@ -490,8 +490,9 @@ message GetShowtimesByCinemaGrpcReplyDTO {
 message GetShowtimesByCinemaGrpcReplyDataDTO {
 	string movieId = 1;
 	string movieName = 2;
-	string poster = 3;
-	repeated GetRoomTypeGrpcReplyDataDTO roomTypes = 4;
+	string movieDescription = 3;
+	string poster = 4;
+	repeated GetRoomTypeGrpcReplyDataDTO roomTypes = 5;
 }
 
 message GetShowtimeDetailsGrpcRequestDTO {

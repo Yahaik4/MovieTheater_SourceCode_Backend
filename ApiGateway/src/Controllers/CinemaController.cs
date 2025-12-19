@@ -703,6 +703,7 @@ namespace ApiGateway.Controllers
                     {
                         MovieId = Guid.Parse(c.MovieId),
                         MovieName = c.MovieName,
+                        MovieDescription = c.MovieDescription,
                         Poster = $"{Request.Scheme}://{Request.Host}/api/movies/{Guid.Parse(c.MovieId)}/poster",
                         RoomTypes = c.RoomTypes
                                 .Select(rt => new GetRoomTypeDataResult
@@ -953,6 +954,46 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [HttpGet("food-drinks/{id}/image")]
+        public async Task<IActionResult> GetFoodDrinkImage(Guid id)
+        {
+            var result = await _cinemaServiceConnector.GetAllFoodDrinks(id, null, null, null);
+
+            if (result == null || result.Data == null || !result.Data.Any())
+                return NotFound();
+
+            var foodDrink = result.Data.FirstOrDefault();
+
+            if (foodDrink == null || string.IsNullOrEmpty(foodDrink.Image))
+                return NotFound();
+
+            var bytes = Convert.FromBase64String(foodDrink.Image);
+
+            return File(bytes, "image/jpeg");
+        }
+
+        private static string GuessImageContentType(byte[] bytes)
+        {
+            // JPEG
+            if (bytes.Length >= 3 && bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF)
+                return "image/jpeg";
+            // PNG
+            if (bytes.Length >= 8 &&
+                bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47)
+                return "image/png";
+            // GIF
+            if (bytes.Length >= 6 &&
+                bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46)
+                return "image/gif";
+            // WEBP: "RIFF....WEBP"
+            if (bytes.Length >= 12 &&
+                bytes[0] == 0x52 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[3] == 0x46 &&
+                bytes[8] == 0x57 && bytes[9] == 0x45 && bytes[10] == 0x42 && bytes[11] == 0x50)
+                return "image/webp";
+
+            return "application/octet-stream";
+        }
+
         [HttpGet("food-drinks")]
         public async Task<GetAllFoodDrinkResultDTO> GetAllFoodDrinks([FromQuery] GetAllFoodDrinkRequestParam query)
         {
@@ -973,7 +1014,9 @@ namespace ApiGateway.Controllers
                         Type = fd.Type,
                         Size = fd.Size,
                         Price = decimal.Parse(fd.Price),
-                        Image = string.IsNullOrWhiteSpace(fd.Image) ? null : fd.Image,
+                        Image = string.IsNullOrWhiteSpace(fd.Image)
+                        ? null
+                        : $"{Request.Scheme}://{Request.Host}/api/food-drinks/{Guid.Parse(fd.Id)}/image",
                         Description = string.IsNullOrWhiteSpace(fd.Description) ? null : fd.Description,
                     }).ToList()
                 };
