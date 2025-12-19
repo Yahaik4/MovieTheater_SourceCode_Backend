@@ -50,7 +50,7 @@ namespace CinemaService.Messaging
             consumer.Received += async (model, eventArgs) =>
             {
                 using var scope = _scopeFactory.CreateScope();
-                var updateBookingLogic = scope.ServiceProvider.GetRequiredService<UpdateBookingLogic>();
+                var updateBookingLogic = scope.ServiceProvider.GetRequiredService<UpdateBookingStatusLogic>();
 
                 try
                 {
@@ -65,7 +65,7 @@ namespace CinemaService.Messaging
                         return;
                     }
 
-                    var updateParam = new UpdateBookingParam
+                    var updateParam = new UpdateBookingStatusParam
                     {
                         BookingId = message.BookingId,
                         Status = message.Status.ToLower()

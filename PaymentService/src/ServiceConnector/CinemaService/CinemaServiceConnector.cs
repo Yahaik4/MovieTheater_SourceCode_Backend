@@ -22,19 +22,5 @@ namespace PaymentService.ServiceConnector.CinemaService
 
             return await client.GetBookingAsync(request);
         }
-
-        public async Task<UpdateBookingGrpcReplyDTO> UpdateBooking(Guid bookingId, string status)
-        {
-            using var channel = GetMovieServiceChannel();
-            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
-
-            var request = new UpdateBookingGrpcRequestDTO
-            {
-                BookingId = bookingId.ToString(),
-                Status = status
-            };
-
-            return await client.UpdateBookingAsync(request);
-        }
     }
 }

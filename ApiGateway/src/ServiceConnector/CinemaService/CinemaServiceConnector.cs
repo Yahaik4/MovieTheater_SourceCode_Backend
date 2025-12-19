@@ -419,6 +419,7 @@ namespace ApiGateway.ServiceConnector.CinemaService
         public async Task<CreateBookingGrpcReplyDTO> CreateBooking(
             string userId, 
             Guid showtimeId, 
+            Guid? promotionId,
             List<Guid> showtimeSeatIds,
             List<CreateBookingFoodDrinkRequestItem>? foodDrinkItems)
         {
@@ -428,7 +429,8 @@ namespace ApiGateway.ServiceConnector.CinemaService
             var request = new CreateBookingGrpcRequestDTO
             {
                 UserId = userId,
-                ShowtimeId = showtimeId.ToString()
+                ShowtimeId = showtimeId.ToString(),
+                PromotionId = promotionId.ToString(),
             };
 
             request.ShowtimeSeatIds.AddRange(showtimeSeatIds.Select(x => x.ToString()));
@@ -445,6 +447,21 @@ namespace ApiGateway.ServiceConnector.CinemaService
 
             return await client.CreateBookingAsync(request);
         }
+
+        public async Task<UpdateBookingStatusGrpcReplyDTO> UpdateBookingStatus(Guid id, string status)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new UpdateBookingStatusGrpcRequestDTO
+            {
+                BookingId = id.ToString(),
+                Status = status.ToString(),
+            };
+
+            return await client.UpdateBookingStatusAsync(request);
+        }
+
         public async Task<GetAllFoodDrinksGrpcReplyDTO> GetAllFoodDrinks(Guid? id, string? name, string? type, string? size)
         {
             using var channel = GetCinemaServiceChannel();

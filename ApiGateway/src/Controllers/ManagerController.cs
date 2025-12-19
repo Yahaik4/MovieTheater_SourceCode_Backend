@@ -382,7 +382,7 @@ namespace ApiGateway.Controllers
                         StatusCode = 401
                     };
                 }
-                var result = await _cinemaServiceConnector.CreateBooking(param.UserId.ToString(), param.ShowtimeId, param.ShowtimeSeatIds, param.FoodDrinkItems);
+                var result = await _cinemaServiceConnector.CreateBooking(param.UserId.ToString(), param.ShowtimeId, param.PromotionId,  param.ShowtimeSeatIds, param.FoodDrinkItems);
 
                 return new CreateBookingResultDTO
                 {

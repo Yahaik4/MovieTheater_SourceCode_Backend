@@ -7,7 +7,7 @@ namespace CinemaService.Infrastructure.EF.Models
         public Guid UserId { get; set; }
         public Guid ShowtimeId { get; set; }
         public Showtime Showtime { get; set; }
-        public Guid PromotionId { get; set; }
+        public Guid? PromotionId { get; set; }
         public int NumberOfSeats { get; set; }
         public DateTime ExpiredAt { get; set; }
         public string Status { get; set; } // Pending | Paid | Cancelled | Expired | Failed
@@ -16,6 +16,7 @@ namespace CinemaService.Infrastructure.EF.Models
         public ICollection<ShowtimeSeat> ShowtimeSeats { get; set; }
         public List<BookingSeat> BookingSeats { get; set; }
         public ICollection<BookingItem> BookingItems { get; set; }
+        public Promotion? Promotion { get; set; }
     }
 
     public class BookingSeat

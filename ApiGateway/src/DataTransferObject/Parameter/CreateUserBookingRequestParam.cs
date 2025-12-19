@@ -3,6 +3,7 @@
     public class CreateUserBookingRequestParam
     {
         public Guid ShowtimeId { get; set; }
+        public Guid? PromotionId { get; set; }
         public List<Guid> ShowtimeSeatIds { get; set; }
         public List<CreateBookingFoodDrinkRequestItem>? FoodDrinkItems { get; set; }
     }

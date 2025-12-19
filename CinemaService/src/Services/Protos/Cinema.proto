@@ -41,7 +41,7 @@ service CinemaGrpcService {
 	rpc GetBooking(GetBookingGrpcRequestDTO) returns (GetBookingGrpcReplyDTO);
 	rpc GetBookingHistory(GetBookingHistoryGrpcRequestDTO) returns (GetBookingHistoryGrpcReplyDTO);
 	rpc CreateBooking(CreateBookingGrpcRequestDTO) returns (CreateBookingGrpcReplyDTO);
-	rpc UpdateBooking(UpdateBookingGrpcRequestDTO) returns (UpdateBookingGrpcReplyDTO);
+	rpc UpdateBookingStatus(UpdateBookingStatusGrpcRequestDTO) returns (UpdateBookingStatusGrpcReplyDTO);
 
 	rpc GetAllFoodDrinks (GetAllFoodDrinksGrpcRequestDTO) returns (GetAllFoodDrinksGrpcReplyDTO);
     rpc CreateFoodDrink (CreateFoodDrinkGrpcRequestDTO) returns (CreateFoodDrinkGrpcReplyDTO);
@@ -599,7 +599,8 @@ message CreateBookingGrpcRequestDTO {
 	string userId = 1;
 	string showtimeId = 2;
 	repeated string showtimeSeatIds = 3;
-	repeated CreateBookingFoodDrinkItemGrpcDTO FoodDrinkItems = 4;
+	google.protobuf.StringValue promotionId = 4;
+	repeated CreateBookingFoodDrinkItemGrpcDTO FoodDrinkItems = 5;
 }
 
 message CreateBookingFoodDrinkItemGrpcDTO {
@@ -616,15 +617,16 @@ message CreateBookingGrpcReplyDTO {
 
 message CreateBookingGrpcReplyDataDTO {
 	string bookingId = 1;
-    string cinemaName = 2;
-    string movieName = 3;
-    int32 roomNumber = 4;
-    string startTime = 5;
-    string endTime = 6;
-    int32 numberOfSeats = 7;
-    string totalPrice = 8;
-	repeated CreateBookingSeatsGrpcReplyDataDTO bookingSeats = 9;
-	repeated CreateBookingFoodDrinkGrpcReplyDataDTO BookingFoodDrinks = 10;
+	google.protobuf.StringValue promotionId = 2;
+    string cinemaName = 3;
+    string movieName = 4;
+    int32 roomNumber = 5;
+    string startTime = 6;
+    string endTime = 7;
+    int32 numberOfSeats = 8;
+    string totalPrice = 9;
+	repeated CreateBookingSeatsGrpcReplyDataDTO bookingSeats = 10;
+	repeated CreateBookingFoodDrinkGrpcReplyDataDTO BookingFoodDrinks = 11;
 }
 
 message CreateBookingSeatsGrpcReplyDataDTO {
@@ -667,30 +669,30 @@ message GetBookingGrpcReplyDataDTO {
     string totalPrice = 8; 
 }
 
-message UpdateBookingGrpcRequestDTO {
+message UpdateBookingStatusGrpcRequestDTO {
 	string bookingId = 1;
 	string status = 2;
 }
 
-message UpdateBookingGrpcReplyDTO {
+message UpdateBookingStatusGrpcReplyDTO {
 	bool Result = 1;
 	string Message = 2;
 	int32 StatusCode = 3;
-	UpdateBookingGrpcReplyDataDTO Data = 4;
+	UpdateBookingStatusGrpcReplyDataDTO Data = 4;
 }
 
-message UpdateBookingGrpcReplyDataDTO {
+message UpdateBookingStatusGrpcReplyDataDTO {
 	string bookingId = 1;
 	string status = 2;
-	repeated UpdateBookingSeatsGrpcReplyDataDTO bookingSeats = 3;
+	repeated UpdateBookingSeatsStatus BookingSeats = 3;
 }
 
-message UpdateBookingSeatsGrpcReplyDataDTO {
+message UpdateBookingSeatsStatus {
 	string seatId = 1;
 	string seatCode = 2;
-    string seatType = 3;
-    string label = 4;
-    string price = 5;
+	string seatType = 3;
+	string label = 4;
+	string price = 5;
 	string status = 6;
 }
 

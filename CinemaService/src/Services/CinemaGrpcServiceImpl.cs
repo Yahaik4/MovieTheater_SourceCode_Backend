@@ -39,7 +39,7 @@ namespace CinemaService.Services
         private readonly GetShowtimeSeatsLogic _getShowtimeSeatsLogic;
         private readonly GetBookingLogic _getBookingLogic;
         private readonly CreateBookingLogic _createBookingLogic;
-        private readonly UpdateBookingLogic _updateBookingLogic;
+        private readonly UpdateBookingStatusLogic _updateBookingLogic;
         private readonly GetAllFoodDrinkLogic _getAllFoodDrinkLogic;
         private readonly CreateFoodDrinkLogic _createFoodDrinkLogic;
         private readonly UpdateFoodDrinkLogic _updateFoodDrinkLogic;
@@ -83,7 +83,7 @@ namespace CinemaService.Services
                                     GetShowtimeDetailsLogic getShowtimeDetailsLogic,
                                     GetBookingLogic getBookingLogic,
                                     CreateBookingLogic createBookingLogic,
-                                    UpdateBookingLogic updateBookingLogic,
+                                    UpdateBookingStatusLogic updateBookingLogic,
                                     GetAllFoodDrinkLogic getAllFoodDrinkLogic,
                                     CreateFoodDrinkLogic createFoodDrinkLogic,
                                     UpdateFoodDrinkLogic updateFoodDrinkLogic,
@@ -612,15 +612,15 @@ namespace CinemaService.Services
             return _mapper.Map<CreateBookingGrpcReplyDTO>(result);
         }
 
-        public override async Task<UpdateBookingGrpcReplyDTO> UpdateBooking(UpdateBookingGrpcRequestDTO request, ServerCallContext context)
+        public override async Task<UpdateBookingStatusGrpcReplyDTO> UpdateBookingStatus(UpdateBookingStatusGrpcRequestDTO request, ServerCallContext context)
         {
-            var result = await _updateBookingLogic.Execute(new UpdateBookingParam
+            var result = await _updateBookingLogic.Execute(new UpdateBookingStatusParam
             {
                 BookingId = Guid.Parse(request.BookingId),
                 Status = request.Status
             });
 
-            return _mapper.Map<UpdateBookingGrpcReplyDTO>(result);
+            return _mapper.Map<UpdateBookingStatusGrpcReplyDTO>(result);
         }
 
         public override async Task<GetAllFoodDrinksGrpcReplyDTO> GetAllFoodDrinks(GetAllFoodDrinksGrpcRequestDTO request, ServerCallContext context)

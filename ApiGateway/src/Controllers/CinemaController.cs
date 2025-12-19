@@ -1154,13 +1154,11 @@ namespace ApiGateway.Controllers
                 var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
                      ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                //foreach (var claim in User.Claims) { Console.WriteLine($"{claim.Type}: {claim.Value}"); }
-
                 if (userId == null) {
                     throw new Exception("Not found userId in Token");
                 }
                 
-                var result = await _cinemaServiceConnector.CreateBooking(userId, param.ShowtimeId, param.ShowtimeSeatIds, param.FoodDrinkItems);
+                var result = await _cinemaServiceConnector.CreateBooking(userId, param.ShowtimeId, param.PromotionId, param.ShowtimeSeatIds,  param.FoodDrinkItems);
 
                 return new CreateBookingResultDTO
                 {
@@ -1170,6 +1168,7 @@ namespace ApiGateway.Controllers
                     Data = new CreateBookingDataResult
                     {
                         BookingId = Guid.Parse(result.Data.BookingId),
+                        PromotionId = string.IsNullOrWhiteSpace(result.Data.PromotionId) ? null : Guid.Parse(result.Data.PromotionId),
                         CinemaName = result.Data.CinemaName,
                         NumberOfSeats = result.Data.NumberOfSeats,
                         MovieName = result.Data.MovieName,
@@ -1205,6 +1204,49 @@ namespace ApiGateway.Controllers
                 Log.Error($"GetShowtimes Error: {message}");
 
                 return new CreateBookingResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize]
+        [HttpPut("booking-status/{bookingId}")]
+        public async Task<UpdateBookingStatusResultDTO> CreateBooking(Guid bookingId, [FromBody] UpdateBookingStatusRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.UpdateBookingStatus(bookingId, param.Status);
+
+                return new UpdateBookingStatusResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new UpdateBookingStatusDataResult
+                    {
+                        BookingId = Guid.Parse(result.Data.BookingId),
+                        Status = result.Data.Status,
+                        BookingSeats = result.Data.BookingSeats.Select(bt => new UpdateBookingSeatsDataResult
+                        {
+                            SeatId = Guid.Parse(bt.SeatId),
+                            SeatCode = bt.SeatCode,
+                            SeatType = bt.SeatType,
+                            Label = bt.Label,
+                            Price = decimal.Parse(bt.Price),
+                            Status = bt.Status
+                        }).ToList()
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new UpdateBookingStatusResultDTO
                 {
                     Result = false,
                     Message = message,

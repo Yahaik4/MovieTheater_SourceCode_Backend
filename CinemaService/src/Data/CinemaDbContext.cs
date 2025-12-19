@@ -156,6 +156,11 @@ namespace CinemaService.Data
 
                 entity.Property(b => b.BookingSeats)
                       .HasColumnType("jsonb");
+
+                entity.HasOne(b => b.Promotion)
+                      .WithMany()
+                      .HasForeignKey(b => b.PromotionId)
+                      .IsRequired(false);
             });
 
             modelBuilder.Entity<PriceRule>(entity =>

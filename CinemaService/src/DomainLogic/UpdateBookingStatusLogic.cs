@@ -7,18 +7,20 @@ using Shared.Contracts.Interfaces;
 
 namespace CinemaService.DomainLogic
 {
-    public class UpdateBookingLogic : IDomainLogic<UpdateBookingParam, Task<UpdateBookingResultData>>
+    public class UpdateBookingStatusLogic : IDomainLogic<UpdateBookingStatusParam, Task<UpdateBookingStatusResultData>>
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IShowtimeSeatRepository _showtimeSeatRepository;
+        private readonly IBookingItemRepository _bookingItemRepository;
 
-        public UpdateBookingLogic(IBookingRepository bookingRepository, IShowtimeSeatRepository showtimeSeatRepository)
+        public UpdateBookingStatusLogic(IBookingRepository bookingRepository, IShowtimeSeatRepository showtimeSeatRepository, IBookingItemRepository bookingItemRepository)
         {
             _bookingRepository = bookingRepository;
             _showtimeSeatRepository = showtimeSeatRepository;
+            _bookingItemRepository = bookingItemRepository;
         }
 
-        public async Task<UpdateBookingResultData> Execute(UpdateBookingParam param)
+        public async Task<UpdateBookingStatusResultData> Execute(UpdateBookingStatusParam param)
         {
             var booking = await _bookingRepository.GetBookingById(param.BookingId);
 
@@ -46,26 +48,33 @@ namespace CinemaService.DomainLogic
             {
                 booking.Status = param.Status;
 
-                foreach (var seat in showtimeSeats)
+                foreach (var seat in seatsToUpdate)
                 {
                     seat.Status = "available";
                     seat.BookingId = null;
                 }
+
+                var bookingItem = await _bookingItemRepository.GetBookingItemsByBookingId(booking.Id);
+
+                if (bookingItem.Any()) 
+                {
+                    await _bookingItemRepository.DeleteBookingItemsByBooking(booking.Id);
+                }
             }
             
             await _bookingRepository.UpdateBooking(booking);
-            await _showtimeSeatRepository.UpdateSeatsAsync(showtimeSeats.ToList());
+            await _showtimeSeatRepository.UpdateSeatsAsync(seatsToUpdate);
 
-            return new UpdateBookingResultData
+            return new UpdateBookingStatusResultData
             {
                 Result = true,
                 Message = "Update Booking Successfully",
                 StatusCode = StatusCodeEnum.Success,
-                Data = new UpdateBookingDataResult
+                Data = new UpdateBookingStatusDataResult
                 {
                     BookingId = booking.Id,
                     Status = booking.Status,
-                    BookingSeats = showtimeSeats.Select(sts => new UpdateBookingSeatsDataResult
+                    BookingSeats = seatsToUpdate.Select(sts => new UpdateBookingSeatsDataResult
                     {
                         SeatId = sts.Id,
                         Status = sts.Status,

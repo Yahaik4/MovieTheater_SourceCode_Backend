@@ -29,7 +29,7 @@ namespace PaymentService.Providers
             var txnRef = $"{param.BookingId:N}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
 
             var pay = new VnPayLibrary();
-            var urlCallBack = _configuration["Vnpay:PaymentBackReturnUrl"];
+            var urlCallBack = _configuration["Vnpay:ReturnUrl"];
 
             pay.AddRequestData("vnp_Version", _configuration["Vnpay:Version"]);
             pay.AddRequestData("vnp_Command", _configuration["Vnpay:Command"]);

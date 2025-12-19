@@ -8,6 +8,7 @@
     public class CreateBookingDataResult
     {
         public Guid BookingId { get; set; }
+        public Guid? PromotionId { get; set; }
         public string CinemaName { get; set; }
         public string MovieName { get; set; }
         public int RoomNumber { get; set; }

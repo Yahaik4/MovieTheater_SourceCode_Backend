@@ -117,5 +117,18 @@ namespace CinemaService.Infrastructure.Repositories
 
             return false;
         }
+
+        public async Task MarkSeatsAsAvailable(Guid showtimeId, List<Guid> seatIds)
+        {
+            var showtimeseats = await _context.ShowtimeSeats.Where(x => x.ShowTimeId == showtimeId && seatIds.Contains(x.SeatId)).ToListAsync();
+                
+            foreach(var showtimeseat in showtimeseats)
+            {
+                showtimeseat.Status = "available";
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

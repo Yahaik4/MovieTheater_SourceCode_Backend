@@ -2,12 +2,12 @@
 
 namespace CinemaService.DataTransferObject.ResultData
 {
-    public class UpdateBookingResultData : BaseResultData
+    public class UpdateBookingStatusResultData : BaseResultData
     {
-        public UpdateBookingDataResult Data { get; set; }
+        public UpdateBookingStatusDataResult Data { get; set; }
     }
 
-    public class UpdateBookingDataResult
+    public class UpdateBookingStatusDataResult
     {
         public Guid BookingId { get; set; }
         public string Status { get; set; }

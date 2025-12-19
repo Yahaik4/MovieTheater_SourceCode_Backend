@@ -11,5 +11,6 @@ namespace CinemaService.Infrastructure.Repositories.Interfaces
         Task<IEnumerable<ShowtimeSeat>> CreateShowtimeSeats(Guid showtimeId, List<Guid> seatIds, decimal basePriceRoom);
         Task<bool> DeleteShowtimeSeatsByShowtimeId(Guid showtimeId);
         Task UpdateSeatsAsync(List<ShowtimeSeat> seats);
+        Task MarkSeatsAsAvailable(Guid showtimeId, List<Guid> seatIds);
     }
 }
