@@ -55,6 +55,7 @@ namespace CinemaService.Services
         private readonly GetPromotionsLogic _getPromotionsLogic;
         private readonly CreatePromotionLogic _createPromotionLogic;
         private readonly UpdatePromotionLogic _updatePromotionLogic;
+        private readonly SearchPromotionLogic _searchPromotionLogic;
 
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
@@ -98,7 +99,8 @@ namespace CinemaService.Services
                                     UpdateHolidayLogic updateHolidayLogic,
                                     GetPromotionsLogic getPromotionsLogic,
                                     CreatePromotionLogic createPromotionLogic,
-                                    UpdatePromotionLogic updatePromotionLogic) 
+                                    UpdatePromotionLogic updatePromotionLogic,
+                                    SearchPromotionLogic searchPromotionLogic) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -144,6 +146,7 @@ namespace CinemaService.Services
             _getPromotionsLogic = getPromotionsLogic;
             _createPromotionLogic = createPromotionLogic;
             _updatePromotionLogic = updatePromotionLogic;
+            _searchPromotionLogic = searchPromotionLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -595,6 +598,7 @@ namespace CinemaService.Services
             {
                 UserId = Guid.Parse(request.UserId),
                 ShowtimeId = Guid.Parse(request.ShowtimeId),
+                PromotionId = string.IsNullOrWhiteSpace(request.PromotionId) ? null : Guid.Parse(request.PromotionId),
                 ShowtimeSeatIds = request.ShowtimeSeatIds.Select(s => Guid.Parse(s)).ToList(),
             };
 
@@ -889,6 +893,16 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<UpdatePromotionGrpcReplyDTO>(result);
+        }
+
+        public override async Task<SearchPromotionGrpcReplyDTO> SearchPromotion(SearchPromotionGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _searchPromotionLogic.Execute(new SearchPromotionParam
+            {
+                Code = request.Code
+            });
+
+            return _mapper.Map<SearchPromotionGrpcReplyDTO>(result);
         }
     }
 }

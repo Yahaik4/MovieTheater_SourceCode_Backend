@@ -134,6 +134,7 @@ void RegisterRepository()
     services.AddScoped<CreateHolidayLogic>();
     services.AddScoped<UpdateHolidayLogic>();
 
+    services.AddScoped<SearchPromotionLogic>();
     services.AddScoped<GetPromotionsLogic>();
     services.AddScoped<CreatePromotionLogic>();
     services.AddScoped<UpdatePromotionLogic>();

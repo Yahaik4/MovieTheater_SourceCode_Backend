@@ -146,6 +146,8 @@ namespace CinemaService.Helper
 
             CreateMap<UpdatePromotionResultData, UpdatePromotionGrpcReplyDTO>();
             CreateMap<UpdatePromotionDataResult, UpdatePromotionGrpcReplyDataDTO>();
+
+            CreateMap<SearchPromotionResultData, SearchPromotionGrpcReplyDTO>();
         }
     }
 }

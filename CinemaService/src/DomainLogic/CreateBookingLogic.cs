@@ -151,10 +151,6 @@ namespace CinemaService.DomainLogic
                 }
 
                 totalPrice = Math.Max(0, totalPrice);
-
-                promotion.UsedCount += 1;
-
-                await _promotionRepository.UpdatePromotion(promotion);
             }
 
             var booking = new Booking

@@ -12,12 +12,17 @@ namespace CinemaService.DomainLogic
         private readonly IBookingRepository _bookingRepository;
         private readonly IShowtimeSeatRepository _showtimeSeatRepository;
         private readonly IBookingItemRepository _bookingItemRepository;
+        private readonly IPromotionRepository _promotionRepository;
 
-        public UpdateBookingStatusLogic(IBookingRepository bookingRepository, IShowtimeSeatRepository showtimeSeatRepository, IBookingItemRepository bookingItemRepository)
+        public UpdateBookingStatusLogic(IBookingRepository bookingRepository, 
+                                        IShowtimeSeatRepository showtimeSeatRepository, 
+                                        IBookingItemRepository bookingItemRepository, 
+                                        IPromotionRepository promotionRepository)
         {
             _bookingRepository = bookingRepository;
             _showtimeSeatRepository = showtimeSeatRepository;
             _bookingItemRepository = bookingItemRepository;
+            _promotionRepository = promotionRepository;
         }
 
         public async Task<UpdateBookingStatusResultData> Execute(UpdateBookingStatusParam param)
@@ -41,6 +46,13 @@ namespace CinemaService.DomainLogic
                 foreach (var seat in seatsToUpdate)
                 {
                     seat.Status = "booked";
+                }
+
+                if (booking.PromotionId != null) 
+                {
+                    var promotion = await _promotionRepository.GetPromotionById(booking.PromotionId.Value);
+                    promotion.UsedCount++;
+                    await _promotionRepository.UpdatePromotion(promotion);
                 }
             }
 

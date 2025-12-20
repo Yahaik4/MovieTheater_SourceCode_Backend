@@ -57,6 +57,7 @@ service CinemaGrpcService {
 	rpc CreateHoliday (CreateHolidayGrpcRequestDTO) returns (CreateHolidayGrpcReplyDTO);
 	rpc UpdateHoliday (UpdateHolidayGrpcRequestDTO) returns (UpdateHolidayGrpcReplyDTO);
 
+	rpc SearchPromotion (SearchPromotionGrpcRequestDTO) returns (SearchPromotionGrpcReplyDTO);
 	rpc GetPromotions (GetPromotionsGrpcRequestDTO) returns (GetPromotionsGrpcReplyDTO);
 	rpc CreatePromotion (CreatePromotionGrpcRequestDTO) returns (CreatePromotionGrpcReplyDTO);
 	rpc UpdatePromotion (UpdatePromotionGrpcRequestDTO) returns (UpdatePromotionGrpcReplyDTO);
@@ -939,6 +940,17 @@ message UpdateHolidayGrpcReplyDataDTO {
 	int32 day = 3;
 	int32 month = 4;
 	string extraPrice = 5;
+}
+
+message SearchPromotionGrpcRequestDTO {
+	string code = 1;
+}
+
+message SearchPromotionGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	GetPromotionsGrpcReplyDataDTO Data = 4;
 }
 
 message GetPromotionsGrpcRequestDTO {

@@ -62,5 +62,10 @@ namespace CinemaService.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return promotion;
         }
+
+        public async Task<Promotion?> SearchPromotionByCode(string code)
+        {
+            return await _context.Promotions.Where(p => p.Code == code && p.EndDate > DateTime.Now && p.IsActive && !p.IsDeleted).FirstOrDefaultAsync();
+        }
     }
 }

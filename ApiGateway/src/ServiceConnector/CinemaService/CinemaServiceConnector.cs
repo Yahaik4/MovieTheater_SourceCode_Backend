@@ -756,5 +756,18 @@ namespace ApiGateway.ServiceConnector.CinemaService
 
             return await client.UpdatePromotionAsync(request);
         }
+
+        public async Task<SearchPromotionGrpcReplyDTO> SearchPromotion(string code)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new SearchPromotionGrpcRequestDTO
+            {
+                Code = code,
+            };
+
+            return await client.SearchPromotionAsync(request);
+        }
     }
 }

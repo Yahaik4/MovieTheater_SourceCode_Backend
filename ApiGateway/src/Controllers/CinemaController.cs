@@ -1366,5 +1366,48 @@ namespace ApiGateway.Controllers
                 };
             }
         }
+
+        [HttpGet("search-promotion/{code}")]
+        public async Task<SearchPromotionResultDTO> SearchPromotion(string code)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.SearchPromotion(code);
+
+                return new SearchPromotionResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new GetPromotionsDataResult
+                    {
+                        Id = Guid.Parse(result.Data.Id),
+                        Code = result.Data.Code,
+                        Description = result.Data.Description,
+                        DiscountType = result.Data.DiscountType,
+                        DiscountValue = decimal.Parse(result.Data.DiscountValue),
+                        StartDate = result.Data.StartDate,
+                        EndDate = result.Data.EndDate,
+                        LimitPerUser = result.Data.LimitPerUser,
+                        LimitTotalUse = result.Data.LimitTotalUse,
+                        MinOrderValue = result.Data.MinOrderValue != null ? decimal.Parse(result.Data.MinOrderValue) : null,
+                        UsedCount = result.Data.UsedCount,
+                        IsActive = result.Data.IsActive
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetAllFoodDrinks Error: {message}");
+
+                return new SearchPromotionResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode
+                };
+            }
+        }
     }
 }

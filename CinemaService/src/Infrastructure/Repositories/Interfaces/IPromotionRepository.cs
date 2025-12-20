@@ -9,5 +9,6 @@ namespace CinemaService.Infrastructure.Repositories.Interfaces
         Task<Promotion?> GetPromotionByCode (string code);
         Task<Promotion> CreatePromotion(Promotion promotion);
         Task<Promotion> UpdatePromotion(Promotion promotion);
+        Task<Promotion?> SearchPromotionByCode(string code);
     }
 }
