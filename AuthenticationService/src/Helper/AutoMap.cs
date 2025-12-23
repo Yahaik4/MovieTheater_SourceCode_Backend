@@ -56,6 +56,9 @@ namespace AuthenticationService.Helper
 
             CreateMap<UpdateCustomerResultData, UpdateCustomerGrpcReplyDTO>();
             CreateMap<UpdateStaffResultData, UpdateStaffGrpcReplyDTO>();
+
+            CreateMap<GetEmailResultData, GetEmailGrpcReplyDTO>();
+            CreateMap<GetEmailDataResult, GetEmailGrpcReplyDataDTO>();
         }
         
     }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Connections;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NotificationService.Services;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -10,49 +10,39 @@ namespace CinemaService.Messaging
 {
     public class NotificationConsumer : BackgroundService
     {
-        private IConnection _connection;
-        private IModel _channel;
-        private readonly IEmailService _emailService;
+        private readonly IConnection _connection;
+        private readonly IModel _channel;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public NotificationConsumer(IEmailService emailService)
+        private const string Exchange = "notification.exchange";
+        private const string Queue = "notification.email.queue";
+        private const string RoutingKey = "notification.email.otp";
+
+        public NotificationConsumer(
+            IConnection connection,
+            IServiceScopeFactory scopeFactory) // ✅ ĐÚNG
         {
-            _emailService = emailService;
+            _connection = connection;
+            _scopeFactory = scopeFactory;
+
+            _channel = _connection.CreateModel();
+
+            _channel.ExchangeDeclare(Exchange, ExchangeType.Direct, durable: true);
+            _channel.QueueDeclare(Queue, durable: true, exclusive: false, autoDelete: false);
+            _channel.QueueBind(Queue, Exchange, RoutingKey);
+            _channel.BasicQos(0, 1, false);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var factory = new ConnectionFactory()
-            {
-                HostName = "localhost",
-                Port = 5673,
-                UserName = "admin",
-                Password = "123"
-            };
-
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
-
-            string exchange = "notification.exchange";
-            string queue = "notification.email.queue";
-            string routingKey = "notification.email.otp";
-
-            _channel.ExchangeDeclare(exchange, ExchangeType.Direct, durable: true);
-
-            _channel.QueueDeclare(
-                queue,
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
-
-            _channel.QueueBind(
-                queue,
-                exchange,
-                routingKey);
-
             var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += async (sender, args) =>
+
+            consumer.Received += async (_, args) =>
             {
+                using var scope = _scopeFactory.CreateScope();
+                var emailService = scope.ServiceProvider
+                                        .GetRequiredService<IEmailService>();
+
                 try
                 {
                     var body = Encoding.UTF8.GetString(args.Body.ToArray());
@@ -60,46 +50,41 @@ namespace CinemaService.Messaging
 
                     if (message == null)
                     {
-                        Console.WriteLine("[MESSAGE RECEIVED] Null message!");
+                        _channel.BasicAck(args.DeliveryTag, false);
                         return;
                     }
 
-                    Console.WriteLine($"[MESSAGE RECEIVED] Email:{message.Email}, Purpose:{message.Purpose}");
-
-                    // Phân loại xử lý theo Purpose
                     var purpose = message.Purpose?.ToLowerInvariant();
+
                     switch (purpose)
                     {
                         case "register":
                         case "forgotpassword":
                         case "reset_password":
                             if (!string.IsNullOrEmpty(message.Otp))
-                                await _emailService.SendOtpAsync(message.Email, message.Otp);
-                            break;
-                        //case "BookingConfirmation":
-                        //    SendBookingEmail(message.Email, message.Otp);
-                        //    break;
-
-                        //case "General":
-                        //    if (!string.IsNullOrEmpty(message.Content))
-                        //        SendNotificationEmail(message.Email, message.Content);
-                        //    break;
-
-                        default:
-                            Console.WriteLine($"[UNKNOWN PURPOSE] Email:{message.Email}, Purpose:{message.Purpose}");
+                                await emailService.SendOtpAsync(
+                                    message.Email,
+                                    message.Otp);
                             break;
                     }
+
+                    _channel.BasicAck(args.DeliveryTag, false);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[ERROR] Failed to process message: {ex.Message}");
+                    Console.WriteLine($"[ERROR] {ex.Message}");
+                    _channel.BasicNack(args.DeliveryTag, false, true);
                 }
             };
 
-            _channel.BasicConsume(queue, autoAck: true, consumer: consumer);
-
+            _channel.BasicConsume(Queue, autoAck: false, consumer);
             return Task.CompletedTask;
         }
-    }
 
+        public override void Dispose()
+        {
+            _channel?.Dispose();
+            base.Dispose();
+        }
+    }
 }

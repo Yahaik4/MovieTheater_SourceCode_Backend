@@ -119,11 +119,13 @@ namespace CinemaService.DomainLogic
                 StatusCode = StatusCodeEnum.Success,
                 Data = new UpdateRoomDataResult
                 {
+                    Id = room.Id,
                     RoomNumber = room.RoomNumber,
                     TotalRow = room.Total_Row,
                     TotalColumn = room.Total_Column,
                     Status = room.Status,
-                    Type = room.RoomType.Type,
+                    RoomType = room.RoomType.Type,
+                    Cinema = room.Cinema.Name,
                 }
             };
         }

@@ -130,7 +130,7 @@ namespace CinemaService.DomainLogic
                         DisplayNumber = row * room.Total_Column + col,
                         SeatCode = $"{room.RoomNumber}-{rowLetter}{col}",
                         isActive = true,
-                        Status = "Available",
+                        Status = "available",
                         SeatTypeId = seatTypeId,
                         RoomId = room.Id
                     });

@@ -359,8 +359,9 @@ message GetAllRoomsGrpcReplyDataDTO {
     string Status = 3;
     int32 TotalColumn = 4;
     int32 TotalRow = 5;
-    string RoomType = 6;
-    string CreatedBy = 7;
+	string RoomTypeId = 6;
+    string RoomType = 7;
+    string CreatedBy = 8;
 }
 
 message UpdateRoomGrpcRequestDTO {
@@ -381,11 +382,13 @@ message UpdateRoomGrpcReplyDTO {
 }
 
 message UpdateRoomGrpcReplyDataDTO {
-	int32 RoomNumber = 1;
-	string Status = 2;
-	int32 TotalColumn = 3;
-	int32 TotalRow = 4;
-	string Type = 5;
+	string Id = 1;
+    int32 RoomNumber = 2;
+    string Status = 3; 
+    int32 TotalColumn = 4;
+	int32 TotalRow = 5;
+    string RoomType = 6;
+    string Cinema = 7;
 }
 
 message DeleteRoomGrpcRequestDTO {

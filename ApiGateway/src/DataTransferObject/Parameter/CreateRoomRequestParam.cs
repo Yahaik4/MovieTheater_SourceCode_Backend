@@ -10,8 +10,8 @@ namespace ApiGateway.DataTransferObject.Parameter
         public int RoomNumber { get; set; }
 
         [Required(ErrorMessage = "Status is required.")]
-        [RegularExpression("^(Active|Inactive|Maintenance)$",
-            ErrorMessage = "Status must be 'Active', 'Inactive' or 'Maintenance'.")]
+        [RegularExpression("^(active|inactive|maintenance)$",
+            ErrorMessage = "Status must be 'active', 'inactive' or 'maintenance'.")]
         public string Status { get; set; }
 
         [Required(ErrorMessage = "Total_Column is required.")]

@@ -359,8 +359,9 @@ message GetAllRoomsGrpcReplyDataDTO {
     string Status = 3;
     int32 TotalColumn = 4;
     int32 TotalRow = 5;
-    string RoomType = 6;
-    string CreatedBy = 7;
+	string RoomTypeId = 6;
+    string RoomType = 7;
+    string CreatedBy = 8;
 }
 
 message UpdateRoomGrpcRequestDTO {
@@ -381,11 +382,13 @@ message UpdateRoomGrpcReplyDTO {
 }
 
 message UpdateRoomGrpcReplyDataDTO {
-	int32 RoomNumber = 1;
-	string Status = 2;
-	int32 TotalColumn = 3;
-	int32 TotalRow = 4;
-	string Type = 5;
+	string Id = 1;
+    int32 RoomNumber = 2;
+    string Status = 3; 
+    int32 TotalColumn = 4;
+	int32 TotalRow = 5;
+    string RoomType = 6;
+    string Cinema = 7;
 }
 
 message DeleteRoomGrpcRequestDTO {
@@ -661,14 +664,26 @@ message GetBookingGrpcReplyDTO {
 }
 
 message GetBookingGrpcReplyDataDTO {
-	string bookingId = 1;     
-    string userId = 2;        
-    string movieId = 3;      
+	string bookingId = 1;
+	string userId = 2;
+	string movieId = 3;
 	string movieName = 4;
-    string startTime = 5;     
-    string endTime = 6;       
-    string status = 7;        
-    string totalPrice = 8; 
+	string startTime = 5;
+	string endTime = 6;
+	string status = 7;
+	string cinemaId = 8;
+	string cinema = 9;
+	string address = 10;
+	int32 roomNumber = 11;
+	string roomType = 12;
+	string totalPrice = 13;
+	repeated GetSeatsBookingGrpc seats = 14;
+}
+
+message GetSeatsBookingGrpc {
+	string id = 1;
+	string label = 2;
+	string seatType = 3;
 }
 
 message UpdateBookingStatusGrpcRequestDTO {

@@ -66,7 +66,8 @@ namespace PaymentService.DomainLogic
             var message = new PaymentStatusChangedMessage
             {
                 TransactionId = transaction.Id,
-                BookingId = transaction.BookingId,
+                BookingId = transaction.BookingId,  
+                UserId = transaction.UserId,
                 Provider = "VNPAY",
                 Status = status,
                 Amount = transaction.Amount,

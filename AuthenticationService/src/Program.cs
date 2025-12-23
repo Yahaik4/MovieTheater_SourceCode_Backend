@@ -62,6 +62,7 @@ void RegisterRepository()
     services.AddScoped<DeleteUserLogic>();
     services.AddScoped<UpdateCustomerLogic>();
     services.AddScoped<UpdateStaffLogic>();
+    services.AddScoped<GetEmailLogic>();
 }
 
 void RegisterGrpcServicePublish()

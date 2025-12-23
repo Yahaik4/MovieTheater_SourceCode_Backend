@@ -463,6 +463,7 @@ namespace ApiGateway.Controllers
                         Status = r.Status,
                         TotalColumn = r.TotalColumn,
                         TotalRow = r.TotalRow,
+                        RoomTypeId = Guid.Parse(r.RoomTypeId),
                         RoomType = r.RoomType,
                         CreatedBy = r.CreatedBy,
                     }).ToList()
@@ -505,17 +506,17 @@ namespace ApiGateway.Controllers
                         RoomType = result.Data.RoomType,
                         Cinema = result.Data.Cinema,
                         CreatedBy = result.Data.CreatedBy,
-                        Seats = result.Data.Seats.Select(s => new CreateSeatDataResult
-                        {
-                            Id = Guid.Parse(s.Id),
-                            Label = s.Label,
-                            ColumnIndex = s.ColumnIndex,
-                            DisplayNumber = s.DisplayNumber,
-                            SeatCode = s.SeatCode,
-                            isActive = s.IsActive,
-                            Status = s.Status,
-                            SeatType = s.SeatType,
-                        }).ToList()
+                        //Seats = result.Data.Seats.Select(s => new CreateSeatDataResult
+                        //{
+                        //    Id = Guid.Parse(s.Id),
+                        //    Label = s.Label,
+                        //    ColumnIndex = s.ColumnIndex,
+                        //    DisplayNumber = s.DisplayNumber,
+                        //    SeatCode = s.SeatCode,
+                        //    isActive = s.IsActive,
+                        //    Status = s.Status,
+                        //    SeatType = s.SeatType,
+                        //}).ToList()
                     }
                 };
             }
@@ -539,7 +540,7 @@ namespace ApiGateway.Controllers
         {
             try
             {
-                var result = await _cinemaServiceConnector.UpdateRoom(id, param.RoomNumber, param.Status,param.Total_Column,param.Total_Row, param.RoomTypeId, param.CinemaId);
+                var result = await _cinemaServiceConnector.UpdateRoom(id, param.RoomNumber, param.Status,param.TotalColumn,param.TotalRow, param.RoomTypeId, param.CinemaId);
 
                 return new UpdateRoomResultDTO
                 {
@@ -548,11 +549,13 @@ namespace ApiGateway.Controllers
                     StatusCode = result.StatusCode,
                     Data = new UpdateRoomDataResult
                     {
+                        Id = Guid.Parse(result.Data.Id),
                         RoomNumber = result.Data.RoomNumber,
-                        Total_Column = result.Data.TotalColumn,
-                        Total_Row = result.Data.TotalRow,
-                        Type = result.Data.Type,
-                        Status = result.Data.Status
+                        TotalColumn = result.Data.TotalColumn,
+                        TotalRow = result.Data.TotalRow,
+                        RoomType = result.Data.RoomType,
+                        Status = result.Data.Status,
+                        Cinema = result.Data.Cinema
                     }
                 };
             }
@@ -1321,6 +1324,7 @@ namespace ApiGateway.Controllers
                     Data = result.Data.Select(b => new CreateBookingDataResult
                     {
                         BookingId = Guid.Parse(b.BookingId),
+                        PromotionId = string.IsNullOrWhiteSpace(b.PromotionId) ? null : Guid.Parse(b.PromotionId),
                         CinemaName = b.CinemaName,
                         MovieName = b.MovieName,
                         RoomNumber = b.RoomNumber,

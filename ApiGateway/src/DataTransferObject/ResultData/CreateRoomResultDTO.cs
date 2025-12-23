@@ -15,7 +15,7 @@
         public string RoomType { get; set; }
         public string Cinema { get; set; }
         public string CreatedBy { get; set; }
-        public List<CreateSeatDataResult> Seats { get; set; }
+        //public List<CreateSeatDataResult> Seats { get; set; }
     }
 
     public class CreateSeatDataResult

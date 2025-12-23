@@ -1,8 +1,9 @@
 ﻿using AuthenticationGrpc;
+using AuthenticationService.DataTransferObject.Parameter;
 using AuthenticationService.DomainLogic;
 using AutoMapper;
 using Grpc.Core;
-using AuthenticationService.DataTransferObject.Parameter;
+using System.Net;
 
 namespace AuthenticationService.Services
 {
@@ -22,6 +23,7 @@ namespace AuthenticationService.Services
         private readonly DeleteUserLogic _deleteUserLogic;
         private readonly UpdateCustomerLogic _updateCustomerLogic;
         private readonly UpdateStaffLogic _updateStaffLogic;
+        private readonly GetEmailLogic _getEmailLogic;
         public AuthenticationGrpcServiceImpl(IMapper mapper, 
                                             LoginLogic loginLogic, 
                                             RefreshTokenLogic refreshTokenLogic, 
@@ -35,7 +37,8 @@ namespace AuthenticationService.Services
                                             GetStaffsLogic getStaffsLogic,
                                             DeleteUserLogic deleteUserLogic,
                                             UpdateCustomerLogic updateCustomerLogic,
-                                            UpdateStaffLogic updateStaffLogic
+                                            UpdateStaffLogic updateStaffLogic,
+                                            GetEmailLogic getEmailLogic
                                             ) 
         {
             _mapper = mapper;
@@ -52,6 +55,7 @@ namespace AuthenticationService.Services
             _deleteUserLogic = deleteUserLogic;
             _updateCustomerLogic = updateCustomerLogic;
             _updateStaffLogic = updateStaffLogic;
+            _getEmailLogic = getEmailLogic;
         }
 
         public override async Task<LoginGrpcReplyDTO> Login(LoginGrpcRequestDTO request, ServerCallContext context)
@@ -271,6 +275,16 @@ namespace AuthenticationService.Services
 
             var result = await _updateStaffLogic.Execute(param);
             return _mapper.Map<UpdateStaffGrpcReplyDTO>(result);
+        }
+
+        public async override Task<GetEmailGrpcReplyDTO> GetEmail(GetEmailGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getEmailLogic.Execute(new GetEmailParam
+            {
+                UserId = Guid.Parse(request.UserId)
+            });
+
+            return _mapper.Map<GetEmailGrpcReplyDTO>(result);
         }
     }
 }

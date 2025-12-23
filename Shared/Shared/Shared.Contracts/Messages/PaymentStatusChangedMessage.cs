@@ -10,6 +10,7 @@ namespace src.Shared.Contracts.Messages
     {
         public Guid TransactionId { get; set; }
         public Guid BookingId { get; set; }
+        public Guid UserId { get; set; }
         public string Provider { get; set; } // Momo / VnPay / Stripe
         public string Status { get; set; }   // Paid | Failed
         public decimal Amount { get; set; }

@@ -94,6 +94,7 @@ namespace CinemaService.Helper
 
             CreateMap<GetBookingResultData, GetBookingGrpcReplyDTO>();
             CreateMap<GetBookingDataResult, GetBookingGrpcReplyDataDTO>();
+            CreateMap<GetSeatsBooking, GetSeatsBookingGrpc>();
 
             CreateMap<CreateBookingResultData, CreateBookingGrpcReplyDTO>();
             CreateMap<CreateBookingDataResult, CreateBookingGrpcReplyDataDTO>();

@@ -5,6 +5,7 @@ using CinemaService.Infrastructure.Repositories.Interfaces;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
+using System.Text.Json;
 
 namespace CinemaService.DomainLogic
 {
@@ -12,11 +13,15 @@ namespace CinemaService.DomainLogic
     {
         private readonly MovieServiceConnector _movieServiceConnector;
         private readonly IBookingRepository _bookingRepository;
+        private readonly IShowtimeRepository _showtimeRepository;
+        private readonly IRoomRepository _roomRepository;
 
-        public GetBookingLogic(IBookingRepository bookingRepository, MovieServiceConnector movieServiceConnector)
+        public GetBookingLogic(IBookingRepository bookingRepository, MovieServiceConnector movieServiceConnector, IShowtimeRepository showtimeRepository, IRoomRepository roomRepository)
         {
             _bookingRepository = bookingRepository;
             _movieServiceConnector = movieServiceConnector;
+            _showtimeRepository = showtimeRepository;
+            _roomRepository = roomRepository;
         }
 
         public async Task<GetBookingResultData> Execute(GetBookingParam param)
@@ -30,13 +35,24 @@ namespace CinemaService.DomainLogic
 
             var movie = await _movieServiceConnector.GetMovies(booking.Showtime.MovieId, null, null, null);
 
-            //Console.WriteLine("Movie:", movie.Data.First().Name);
             if(movie == null || !movie.Result || movie.Data.Count() <= 0)
             {
                 throw new NotFoundException("Movie Not Found");
             }
 
-            var showtimeSeats = await _bookingRepository.GetBookingById(param.BookingId);
+            var showtime = await _showtimeRepository.GetShowtimeById(booking.ShowtimeId);
+            var room = await _roomRepository.GetRoomById(showtime.RoomId);
+
+            var json = JsonSerializer.Serialize(booking.BookingSeats);
+
+            var seats = JsonSerializer.Deserialize<List<BookingSeatJson>>(json)
+            .Select(s => new GetSeatsBooking
+            {
+                Id = s.SeatId,
+                Label = s.Label,
+                SeatType = s.SeatType
+            })
+            .ToList();
 
             return new GetBookingResultData
             {
@@ -52,7 +68,13 @@ namespace CinemaService.DomainLogic
                     StartTime = booking.Showtime.StartTime,
                     EndTime = booking.Showtime.EndTime,
                     Status = booking.Status,
-                    TotalPrice = booking.TotalPrice
+                    CinemaId = room.CinemaId,
+                    Cinema = room.Cinema.Name,
+                    Address = room.Cinema.Address,
+                    RoomNumber = room.RoomNumber,
+                    RoomType = room.RoomType.Type,
+                    TotalPrice = booking.TotalPrice,
+                    Seats = seats
                 }
             };
         }

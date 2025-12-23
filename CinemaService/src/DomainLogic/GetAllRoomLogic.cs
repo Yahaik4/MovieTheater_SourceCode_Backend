@@ -31,6 +31,7 @@ namespace CinemaService.DomainLogic
                     TotalColumn = c.Total_Column,
                     TotalRow = c.Total_Row,
                     Status = c.Status,
+                    RoomTypeId = c.RoomType.Id,
                     RoomType = c.RoomType.Type,
                     CreatedBy = c.CreatedBy,
                 }).ToList(),

@@ -14,6 +14,7 @@ namespace CinemaService.DataTransferObject.ResultData
         public string Status { get; set; }
         public int TotalColumn { get; set; }
         public int TotalRow { get; set; }
+        public Guid RoomTypeId { get; set; }
         public string RoomType { get; set; }
         public string CreatedBy { get; set; }
     }

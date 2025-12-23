@@ -14,10 +14,12 @@ service AuthenticationGrpcService {
 	rpc VerifyResetPassword(ResetPasswordRequest) returns (ResetpassWordReply);
 	rpc AddUser (AddUserGrpcRequestDTO) returns (RegisterGrpcReplyDTO);
 	rpc GetCustomers (GetUsersGrpcRequestDTO) returns (GetCustomersGrpcReplyDTO);
-  rpc GetStaffs    (GetUsersGrpcRequestDTO) returns (GetStaffsGrpcReplyDTO);
-  rpc DeleteUser (DeleteUserGrpcRequestDTO) returns (DeleteUserGrpcReplyDTO);
-  rpc UpdateCustomer (UpdateCustomerGrpcRequestDTO) returns (UpdateCustomerGrpcReplyDTO);
-  rpc UpdateStaff    (UpdateStaffGrpcRequestDTO)    returns (UpdateStaffGrpcReplyDTO);
+	rpc GetStaffs    (GetUsersGrpcRequestDTO) returns (GetStaffsGrpcReplyDTO);
+	rpc DeleteUser (DeleteUserGrpcRequestDTO) returns (DeleteUserGrpcReplyDTO);
+	rpc UpdateCustomer (UpdateCustomerGrpcRequestDTO) returns (UpdateCustomerGrpcReplyDTO);
+	rpc UpdateStaff    (UpdateStaffGrpcRequestDTO)    returns (UpdateStaffGrpcReplyDTO);
+
+	rpc GetEmail(GetEmailGrpcRequestDTO) returns (GetEmailGrpcReplyDTO);
 }
 
 message LoginGrpcRequestDTO {
@@ -221,4 +223,19 @@ message UpdateStaffGrpcReplyDTO {
   bool   Result     = 1;
   string Message    = 2;
   int32  StatusCode = 3;
+}
+
+message GetEmailGrpcRequestDTO {
+	string userId = 1;
+}
+
+message GetEmailGrpcReplyDTO {
+	bool result = 1;
+	string message = 2;
+	int32 statusCode = 3;
+	GetEmailGrpcReplyDataDTO data = 4;
+}
+
+message GetEmailGrpcReplyDataDTO {
+	string email = 1;
 }

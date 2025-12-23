@@ -1,6 +1,6 @@
 ﻿using Grpc.Net.Client;
 
-namespace PaymentService.ServiceConnector
+namespace NotificationService.ServiceConnector
 {
     public class ServiceConnectorConfigOption
     {
@@ -9,8 +9,8 @@ namespace PaymentService.ServiceConnector
 
     public class ServiceConnectorConfig
     {
+        public ServiceConnectorConfigOption AuthenticationService { get; set; } = new ServiceConnectorConfigOption();
         public ServiceConnectorConfigOption CinemaService { get; set; } = new ServiceConnectorConfigOption();
-
     }
     public class BaseServiceConnector
     {
@@ -25,6 +25,10 @@ namespace PaymentService.ServiceConnector
         {
             return new ServiceConnectorConfig
             {
+                AuthenticationService = new ServiceConnectorConfigOption
+                {
+                    Endpoint = _configuration["ServiceConnector:AuthService:Endpoint"] ?? string.Empty
+                },
                 CinemaService = new ServiceConnectorConfigOption
                 {
                     Endpoint = _configuration["ServiceConnector:CinemaService:Endpoint"] ?? string.Empty
@@ -47,8 +51,10 @@ namespace PaymentService.ServiceConnector
                 MaxSendMessageSize = 50 * 1024 * 1024
             });
         }
+
+        protected GrpcChannel GetAuthenticationServiceChannel()
+            => GetGrpcChannel(GetServiceConnectorConfig().AuthenticationService.Endpoint);
         protected GrpcChannel GetCinemaServiceChannel()
            => GetGrpcChannel(GetServiceConnectorConfig().CinemaService.Endpoint);
-
     }
 }

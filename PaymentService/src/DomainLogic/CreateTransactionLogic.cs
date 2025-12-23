@@ -37,6 +37,8 @@ namespace PaymentService.DomainLogic
 
             // Lấy thông tin booking
             var booking = await _cinemaServiceConnector.GetBooking(param.BookingId);
+
+            Console.WriteLine("Huy");
             if (booking == null || !booking.Result)
                 throw new ValidationException("Booking not found");
             if (booking.Data.Status != "pending")

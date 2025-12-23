@@ -2,6 +2,7 @@
 {
     using System.Net;
     using System.Net.Mail;
+    using System.Net.Mime;
 
     public class Mailer
     {
@@ -54,5 +55,53 @@
             }
         }
 
+        public async Task<bool> SendMailWithInlineImage(string email,
+                                                        string subject,
+                                                        string htmlContent,
+                                                        byte[] imageBytes
+                                                        )
+        {
+            var fromEmail = new MailAddress(_configuration["MailSettings:Email"], "Your Display Name");
+            var toEmail = new MailAddress(email);
+            string password = _configuration["MailSettings:Password"];
+
+            using var client = new SmtpClient("smtp.gmail.com", 587)
+            {
+                EnableSsl = true,
+                Credentials = new NetworkCredential(fromEmail.Address, password)
+            };
+
+            using var mailMessage = new MailMessage
+            {
+                From = fromEmail,
+                Subject = subject,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(toEmail);
+
+            // HTML view
+            var htmlView = AlternateView.CreateAlternateViewFromString(
+                htmlContent,
+                null,
+                MediaTypeNames.Text.Html
+            );
+
+            // Inline QR
+            var qrImage = new LinkedResource(
+                new MemoryStream(imageBytes),
+                MediaTypeNames.Image.Png
+            )
+            {
+                ContentId = "qrcode",
+                TransferEncoding = TransferEncoding.Base64
+            };
+
+            htmlView.LinkedResources.Add(qrImage);
+            mailMessage.AlternateViews.Add(htmlView);
+
+            await client.SendMailAsync(mailMessage);
+            return true;
+        }
     }
 }

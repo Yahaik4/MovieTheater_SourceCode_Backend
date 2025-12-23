@@ -43,6 +43,7 @@ namespace CinemaService.DomainLogic
                 var dto = new CreateBookingDataResult
                 {
                     BookingId = booking.Id,
+                    PromotionId = booking.PromotionId,
                     CinemaName = booking.Showtime.Room.Cinema.Name,
                     MovieName = movie != null ? movie.Data.First().Name : string.Empty, // fallback nếu null
                     RoomNumber = booking.Showtime.Room.RoomNumber,

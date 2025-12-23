@@ -154,7 +154,9 @@ namespace ApiGateway.Controllers
             }
         }
 
+
         [HttpGet("customers")]
+        [Authorize(Policy = "OperationsManagerOnly")]
         public async Task<GetCustomersResultDTO> GetCustomers([FromQuery] Guid? userId)
         {
             try

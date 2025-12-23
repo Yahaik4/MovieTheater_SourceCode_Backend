@@ -1,6 +1,6 @@
 ﻿using CinemaGrpc;
 
-namespace PaymentService.ServiceConnector.CinemaService
+namespace NotificationService.ServiceConnector.CinemaService
 {
     public class CinemaServiceConnector : BaseServiceConnector
     {
