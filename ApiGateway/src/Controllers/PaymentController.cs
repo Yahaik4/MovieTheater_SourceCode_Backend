@@ -10,11 +10,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 
 namespace ApiGateway.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api")]
     public class PaymentController : ControllerBase
@@ -28,7 +29,6 @@ namespace ApiGateway.Controllers
 
         private string GetIpAddress(HttpContext context)
         {
-            var ipAddress = string.Empty;
             try
             {
                 var remoteIpAddress = context.Connection.RemoteIpAddress;
@@ -37,13 +37,15 @@ namespace ApiGateway.Controllers
                 {
                     if (remoteIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
                     {
-                        remoteIpAddress = Dns.GetHostEntry(remoteIpAddress).AddressList
+                        remoteIpAddress = Dns.GetHostEntry(remoteIpAddress)
+                            .AddressList
                             .FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
                     }
 
-                    if (remoteIpAddress != null) ipAddress = remoteIpAddress.ToString();
-
-                    return ipAddress;
+                    if (remoteIpAddress != null)
+                    {
+                        return remoteIpAddress.ToString();
+                    }
                 }
             }
             catch (Exception ex)
@@ -55,16 +57,23 @@ namespace ApiGateway.Controllers
         }
 
         [HttpPost("transaction")]
-        public async Task<CreateTransactionResultDTO> CreateTransaction(CreateTransactionRequestParam param)
+        public async Task<CreateTransactionResultDTO> CreateTransaction(
+            CreateTransactionRequestParam param)
         {
             try
             {
-                var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
-                     ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userId =
+                    User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                    ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 string clientIp = GetIpAddress(HttpContext);
 
-                var result = await _paymentServiceConnector.CreateTransaction(userId, param.BookingId, param.PaymentGateway, clientIp);
+                var result = await _paymentServiceConnector.CreateTransaction(
+                    userId,
+                    param.BookingId,
+                    param.PaymentGateway,
+                    clientIp
+                );
 
                 return new CreateTransactionResultDTO
                 {
@@ -82,14 +91,14 @@ namespace ApiGateway.Controllers
                         CreatedAt = DateTime.Parse(result.Data.CreatedAt),
                         PaymentUrl = result.Data.PaymentUrl,
                         Provider = result.Data.Provider,
-                        ProviderMeta = result.Data.ProviderMeta,
+                        ProviderMeta = result.Data.ProviderMeta
                     }
                 };
             }
             catch (RpcException ex)
             {
                 var (statusCode, message) = RpcExceptionParser.Parse(ex);
-                Log.Error($"Login Error: {message}");
+                Log.Error($"CreateTransaction Error: {message}");
 
                 return new CreateTransactionResultDTO
                 {
@@ -100,30 +109,130 @@ namespace ApiGateway.Controllers
             }
         }
 
+        [HttpGet("transaction/status")]
+        public async Task<TransactionStatusResultDTO> GetTransactionStatus(
+            [FromQuery] string txnRef)
+        {
+            var res = await _paymentServiceConnector.GetTransactionStatus(txnRef);
+
+            return new TransactionStatusResultDTO
+            {
+                Result = res.Result,
+                Message = res.Message,
+                StatusCode = res.StatusCode,
+                Data = res.Data == null
+                    ? null
+                    : new TransactionStatusData
+                    {
+                        TxnRef = res.Data.TxnRef,
+                        Status = res.Data.Status,
+                        UpdatedAt = DateTime.Parse(res.Data.UpdatedAt)
+                    }
+            };
+        }
+
         [HttpGet("callback/vnpay")]
-        public async Task<IActionResult> VnPayCallback([FromQuery] HandleVnpayCallbackParam param)
+        public async Task<IActionResult> VnPayCallback(
+            [FromQuery] HandleVnpayCallbackParam param)
         {
             var result = await _paymentServiceConnector.HanldeVnpayCallback(param);
 
-            return Ok(result);
+            bool isSuccess =
+                param.vnp_ResponseCode == "00"
+                && param.vnp_TransactionStatus == "00";
+
+            string title = isSuccess
+                ? "Thanh toán thành công"
+                : "Thanh toán thất bại";
+
+            string message = isSuccess
+                ? "Giao dịch đã được ghi nhận. Bạn có thể quay lại ứng dụng."
+                : "Giao dịch không thành công. Vui lòng quay lại ứng dụng để thử lại.";
+
+            string html = $@"
+            <!DOCTYPE html>
+            <html lang='vi'>
+            <head>
+                <meta charset='utf-8' />
+                <title>{title}</title>
+                <style>
+                    body {{
+                        font-family: Arial, sans-serif;
+                        background: #0b1220;
+                        color: #e5e7eb;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100vh;
+                        margin: 0;
+                    }}
+                    .box {{
+                        max-width: 420px;
+                        padding: 24px;
+                        background: rgba(255,255,255,0.06);
+                        border-radius: 14px;
+                        text-align: center;
+                    }}
+                    .title {{
+                        font-size: 22px;
+                        margin-bottom: 10px;
+                    }}
+                    .desc {{
+                        opacity: 0.9;
+                        margin-bottom: 14px;
+                    }}
+                    .countdown {{
+                        font-size: 14px;
+                        opacity: 0.7;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class='box'>
+                    <div class='title'>{title}</div>
+                    <div class='desc'>{message}</div>
+                    <div class='countdown'>
+                        Trang sẽ tự đóng sau <b id='sec'>5</b> giây
+                    </div>
+                </div>
+
+                <script>
+                    let s = 5;
+                    const el = document.getElementById('sec');
+
+                    const timer = setInterval(() => {{
+                        s--;
+                        el.innerText = s;
+
+                        if (s <= 0) {{
+                            clearInterval(timer);
+                            window.close();
+                            setTimeout(() => {{
+                                location.href = 'about:blank';
+                            }}, 200);
+                        }}
+                    }}, 1000);
+                </script>
+            </body>
+            </html>";
+
+            Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate";
+            return Content(html, "text/html; charset=utf-8");
         }
 
-        //[HttpPost("callback/momo")]
-        //public async Task<IActionResult> MomoCallback([FromBody] MomoCallbackRequest body)
-        //{
-        //
-        // await _paymentClient.HandleMomoCallbackAsync(body);
-        //    return Ok(); // momo yêu cầu trả về 200 OK
-        //}
+        // [HttpPost("callback/momo")]
+        // public async Task<IActionResult> MomoCallback([FromBody] MomoCallbackRequest body)
+        // {
+        //     return Ok(); // momo yêu cầu trả về 200 OK
+        // }
 
-        //[HttpPost("callback/stripe")]
-        //public async Task<IActionResult> StripeWebhook()
-        //{
-        //    using var reader = new StreamReader(Request.Body);
-        //    var json = await reader.ReadToEndAsync();
-
-        //    await _paymentClient.HandleStripeWebhook(json);
-        //    return Ok();
-        //}
+        // [HttpPost("callback/stripe")]
+        // public async Task<IActionResult> StripeWebhook()
+        // {
+        //     using var reader = new StreamReader(Request.Body);
+        //     var json = await reader.ReadToEndAsync();
+        //     await _paymentClient.HandleStripeWebhook(json);
+        //     return Ok();
+        // }
     }
 }

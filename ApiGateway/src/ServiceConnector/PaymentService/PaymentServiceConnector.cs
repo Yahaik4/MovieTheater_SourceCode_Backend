@@ -29,6 +29,17 @@ namespace ApiGateway.ServiceConnector.PaymentService
             return await client.CreateTransactionAsync(request);
         }
 
+        public async Task<GetTransactionStatusGrpcReplyDTO> GetTransactionStatus(string txnRef)
+        {
+            using var channel = GetPaymentServiceChannel();
+            var client = new PaymentGrpcService.PaymentGrpcServiceClient(channel);
+
+            return await client.GetTransactionStatusAsync(new GetTransactionStatusGrpcRequestDTO
+            {
+                TxnRef = txnRef
+            });
+        }
+
         public async Task<HanldeVnpayCallbackGrpcReplyDTO> HanldeVnpayCallback(HandleVnpayCallbackParam param)
         {
             using var channel = GetPaymentServiceChannel();

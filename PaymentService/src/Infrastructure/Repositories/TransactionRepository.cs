@@ -21,9 +21,9 @@ namespace PaymentService.Infrastructure.Repositories
             return transaction;
         }
 
-        public Task<Transaction?> GetTransactionById(Guid transactionId)
+        public async Task<Transaction?> GetTransactionById(Guid transactionId)
         {
-            throw new NotImplementedException();
+           return await  _context.Transactions.FirstOrDefaultAsync(t => t.Id == transactionId);;
         }
 
         public async Task<Transaction?> GetTransactionTxnRef(string txnRef)

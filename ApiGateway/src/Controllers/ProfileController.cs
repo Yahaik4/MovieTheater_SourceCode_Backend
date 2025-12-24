@@ -1,6 +1,7 @@
 ﻿using ApiGateway.DataTransferObject.ResultData;
 using ApiGateway.ServiceConnector.ProfileService;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Utils;
@@ -11,6 +12,7 @@ namespace ApiGateway.Controllers
 {
     [ApiController]
     [Route("api")]
+    [Authorize]
     public class ProfileController : ControllerBase
     {
         private readonly ProfileServiceConnector _profileServiceConnector;

@@ -9,6 +9,7 @@ package Payment;
 service PaymentGrpcService {
 	rpc CreateTransaction(CreateTransactionGrpcRequestDTO) returns (CreateTransactionGrpcReplyDTO);
 	rpc HanldeVnpayCallback(HanldeVnpayCallbackGrpcRequestDTO) returns (HanldeVnpayCallbackGrpcReplyDTO);
+	rpc GetTransactionStatus(GetTransactionStatusGrpcRequestDTO) returns (GetTransactionStatusGrpcReplyDTO);
 }
 
 message CreateTransactionGrpcRequestDTO {
@@ -58,3 +59,21 @@ message HanldeVnpayCallbackGrpcReplyDTO {
 	string message = 2;
 	int32 statusCode = 3;
 }
+
+message GetTransactionStatusGrpcRequestDTO {
+  string txnRef = 1;
+}
+
+message GetTransactionStatusGrpcReplyDTO {
+  bool result = 1;
+  string message = 2;
+  int32 statusCode = 3;
+  TransactionStatusGrpcDataDTO data = 4;
+}
+
+message TransactionStatusGrpcDataDTO {
+  string txnRef = 1;
+  string status = 2;
+  string updatedAt = 3;
+}
+

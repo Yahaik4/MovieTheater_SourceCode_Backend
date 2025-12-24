@@ -50,7 +50,7 @@ void RegisterRepository()
 
     services.AddScoped<CreateTransactionLogic>();
     services.AddScoped<HandleVnpayCallbackLogic>();
-
+    services.AddScoped<GetTransactionStatusLogic>();
     services.AddScoped<CinemaServiceConnector>();
     services.AddHttpContextAccessor();
 }

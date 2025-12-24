@@ -12,12 +12,15 @@ namespace PaymentService.Services
         private readonly IMapper _mapper;
         private readonly CreateTransactionLogic _createTransactionLogic;
         private readonly HandleVnpayCallbackLogic _hanldeVnpayCallbackLogic;
-        public PaymentGrpcServiceImpl(IMapper mapper, CreateTransactionLogic createTransactionLogic, HandleVnpayCallbackLogic hanldeVnpayCallbackLogic)
+        private readonly GetTransactionStatusLogic _getTransactionStatusLogic;
+
+        public PaymentGrpcServiceImpl(IMapper mapper, GetTransactionStatusLogic getTransactionStatusLogic, CreateTransactionLogic createTransactionLogic, HandleVnpayCallbackLogic hanldeVnpayCallbackLogic)
 
         {
             _mapper = mapper;
             _createTransactionLogic = createTransactionLogic;
             _hanldeVnpayCallbackLogic = hanldeVnpayCallbackLogic;
+            _getTransactionStatusLogic = getTransactionStatusLogic;
         }
 
         public override async Task<CreateTransactionGrpcReplyDTO> CreateTransaction(CreateTransactionGrpcRequestDTO request, ServerCallContext context)
@@ -64,6 +67,28 @@ namespace PaymentService.Services
             });
 
             return _mapper.Map<HanldeVnpayCallbackGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetTransactionStatusGrpcReplyDTO> GetTransactionStatus(
+            GetTransactionStatusGrpcRequestDTO request,
+            ServerCallContext context)
+        {
+            if (string.IsNullOrWhiteSpace(request.TxnRef))
+                throw new ValidationException("TxnRef is required");
+
+            var (txnRef, status, updatedAt) = await _getTransactionStatusLogic.Execute(request.TxnRef);
+
+            return new GetTransactionStatusGrpcReplyDTO
+            {
+                Result = true,
+                Message = "OK",
+                StatusCode = 200,
+                Data = new TransactionStatusGrpcDataDTO {
+                    TxnRef = txnRef,
+                    Status = status,
+                    UpdatedAt = updatedAt.ToString("O")
+                }
+            };
         }
     }
 }
