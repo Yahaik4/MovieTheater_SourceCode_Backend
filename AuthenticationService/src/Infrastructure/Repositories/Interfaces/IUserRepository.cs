@@ -12,5 +12,6 @@ namespace AuthenticationService.Infrastructure.Repositories.Interfaces
         Task<bool> DeleteUser(User user);
         Task<bool> RemoveUser(User user);
         Task<List<User>> GetUsers(Guid? userId, string? role);
+        Task<User> GetNotRegisterdUserByEmail(string email);
     }
 }

@@ -70,5 +70,10 @@ namespace AuthenticationService.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<User> GetNotRegisterdUserByEmail(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email &&  u.IsDeleted == false);
+        }
     }
 }

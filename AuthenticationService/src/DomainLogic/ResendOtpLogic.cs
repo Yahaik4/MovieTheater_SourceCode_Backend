@@ -3,6 +3,7 @@ using AuthenticationService.Infrastructure.Repositories.Interfaces;
 using AuthenticationService.ServiceConnector;
 using AuthenticationService.ServiceConnector.ProfileService;
 using OTPGrpc;
+using Shared.Contracts.Constants;
 using Shared.Contracts.Exceptions;
 using src.Shared.Contracts.Messages;
 
@@ -23,8 +24,14 @@ public class ResendOtpLogic
     }
 
     public async Task<ResendOTPReply> Execute(string email, string purpose)
-    {
+    {   
         var user = await _userRepository.GetUserByEmail(email);
+
+        if(purpose.Equals(OtpPurposeConstants.Register))
+        {
+            user = await _userRepository.GetNotRegisterdUserByEmail(email);
+        }
+        
         if (user == null || string.IsNullOrWhiteSpace(user.Email))
         {
             return new ResendOTPReply
