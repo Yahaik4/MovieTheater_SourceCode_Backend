@@ -1,9 +1,6 @@
 ﻿using ApiGateway.DataTransferObject.Parameter;
 using ApiGateway.Helper;
-using AuthenticationGrpc;
 using CinemaGrpc;
-using Grpc.Core;
-using System.Xml.Linq;
 
 namespace ApiGateway.ServiceConnector.CinemaService
 {
@@ -323,6 +320,21 @@ namespace ApiGateway.ServiceConnector.CinemaService
                 request.SeatTypeId = seatTypeId.Value.ToString();
 
             return await client.UpdateSeatsAsync(request);
+        }
+
+        public async Task<GetShowtimesByRoomGrpcReplyDTO> GetShowtimesByRoom(Guid roomId, DateOnly from, DateOnly to)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetShowtimesByRoomGrpcRequestDTO
+            {
+                Id = roomId.ToString(),
+                From = from.ToString(),
+                To = to.ToString(),
+            };
+
+            return await client.GetShowtimesByRoomAsync(request);
         }
 
         public async Task<GetShowtimesGrpcReplyDTO> GetShowtimes(Guid? id, Guid movieId, DateOnly date, string? country)

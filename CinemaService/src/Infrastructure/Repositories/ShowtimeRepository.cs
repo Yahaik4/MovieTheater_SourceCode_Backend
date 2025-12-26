@@ -31,6 +31,22 @@ namespace CinemaService.Infrastructure.Repositories
             return await _context.Showtimes.Where(st => st.RoomId == roomId).ToListAsync();
         }
 
+        public async Task<IEnumerable<Showtime>> GetShowtimesByRoomIdInDateRange(Guid roomId, DateOnly fromDate, DateOnly toDate)
+        {
+            var fromLocal = fromDate.ToDateTime(TimeOnly.MinValue, DateTimeKind.Local);
+
+            var toLocal = toDate.ToDateTime(TimeOnly.MaxValue, DateTimeKind.Local);
+
+            var fromUtc = fromLocal.ToUniversalTime();
+            var toUtc = toLocal.ToUniversalTime();
+
+            return await _context.Showtimes
+                .Where(x => x.RoomId == roomId &&
+                            x.StartTime >= fromUtc &&
+                            x.StartTime <= toUtc)
+                .ToListAsync();
+        }
+
         public async Task<Showtime> UpdateShowtime(Showtime showtime)
         {
             _context.Showtimes.Update(showtime);

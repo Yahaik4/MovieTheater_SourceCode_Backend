@@ -1,5 +1,5 @@
 ﻿using OTPGrpc;
-using Shared.Contracts.Constants;
+using Shared.Contracts.Enums;
 
 namespace AuthenticationService.ServiceConnector.ProfileService
 {

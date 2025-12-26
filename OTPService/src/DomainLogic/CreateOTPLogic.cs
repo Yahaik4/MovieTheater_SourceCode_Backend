@@ -1,7 +1,7 @@
 ﻿using OTPService.DataTransferObject.Parameter;
 using OTPService.DataTransferObject.ResultData;
 using OTPService.Infrastructure.Repositories.Interfaces;
-using Shared.Contracts.Constants;
+using Shared.Contracts.Enums;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;

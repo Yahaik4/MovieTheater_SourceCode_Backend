@@ -8,7 +8,7 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using Shared.Contracts.Constants;
+using Shared.Contracts.Enums;
 using Shared.Contracts.Enums;
 using Shared.Utils;
 using System.IdentityModel.Tokens.Jwt;
@@ -514,6 +514,45 @@ namespace ApiGateway.Controllers
                 };
             }
         }
+
+        [Authorize(Policy = "CinemaManagerOrHigher")]
+        [HttpGet("showtimes/{roomId}")]
+        public async Task<GetShowtimesByRoomResultDTO> GetShowtimesByRoom(Guid roomId, [FromQuery] GetShowtimesByRoomRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetShowtimesByRoom(roomId, param.From, param.To);
+
+                return new GetShowtimesByRoomResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = result.Data.Select(st => new GetShowtimeByRoomDataResult
+                    {
+                        ShowtimeId = Guid.Parse(st.ShowtimeId),
+                        Status = st.Status,
+                        StartTime = DateTimeOffset.Parse(st.StartTime),
+                        EndTime = DateTimeOffset.Parse(st.EndTime),
+                        MovieId = Guid.Parse(st.MovieId),
+                        MovieName = st.MovieName
+                    }).ToList()
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new GetShowtimesByRoomResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
 
         [Authorize(Policy = "StaffOrHigher")]
         [HttpGet("holidays")]

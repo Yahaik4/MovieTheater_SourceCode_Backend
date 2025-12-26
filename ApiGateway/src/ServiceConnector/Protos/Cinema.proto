@@ -30,6 +30,7 @@ service CinemaGrpcService {
 	rpc UpdateSeatType(UpdateSeatTypeGrpcRequestDTO) returns (UpdateSeatTypeGrpcReplyDTO);
 	rpc DeleteSeatType(DeleteSeatTypeGrpcRequestDTO) returns (DeleteSeatTypeGrpcReplyDTO);
 
+	rpc GetShowtimesByRoom(GetShowtimesByRoomGrpcRequestDTO) returns (GetShowtimesByRoomGrpcReplyDTO);
 	rpc GetShowtimes(GetShowtimesGrpcRequestDTO) returns (GetShowtimesGrpcReplyDTO);
 	rpc GetShowtimesByCinema(GetShowtimesByCinemaGrpcRequestDTO) returns (GetShowtimesByCinemaGrpcReplyDTO);
 	rpc GetShowtimeDetails(GetShowtimeDetailsGrpcRequestDTO) returns (GetShowtimeDetailsGrpcReplyDTO);
@@ -444,6 +445,28 @@ message UpdateSeatsGrpcReplyDataDTO {
     bool isActive = 5;
     string Status = 6;
     string SeatType = 7;
+}
+
+message GetShowtimesByRoomGrpcRequestDTO {
+	string id = 1;
+	string from = 2;
+	string to = 3;
+}
+
+message GetShowtimesByRoomGrpcReplyDTO {
+	bool Result = 1;
+	string Message = 2;
+	int32 StatusCode = 3;
+	repeated GetShowtimesByRoomGrpcReplyDataDTO Data = 4;
+}
+
+message GetShowtimesByRoomGrpcReplyDataDTO {
+	string showtimeId = 1;
+	string status = 2;
+	string startTime = 3;
+	string endTime = 4;
+	string movieId = 5;
+	string movieName = 6;
 }
 
 message GetShowtimesGrpcRequestDTO {

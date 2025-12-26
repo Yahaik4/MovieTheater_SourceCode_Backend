@@ -1,4 +1,4 @@
-﻿using Shared.Contracts.Constants;
+﻿using Shared.Contracts.Enums;
 using Shared.Contracts.Interfaces;
 
 namespace OTPService.DataTransferObject.Parameter

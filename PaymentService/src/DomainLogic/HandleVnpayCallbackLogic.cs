@@ -6,7 +6,7 @@ using PaymentService.ServiceConnector;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Interfaces;
-using src.Shared.Contracts.Messages;
+using Shared.Contracts.Messages;
 
 namespace PaymentService.DomainLogic
 {

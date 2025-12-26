@@ -2,7 +2,7 @@
 using OTPService.Data;
 using OTPService.Infrastructure.EF.Models;
 using OTPService.Infrastructure.Repositories.Interfaces;
-using Shared.Contracts.Constants;
+using Shared.Contracts.Enums;
 
 namespace OTPService.Infrastructure.Repositories
 {

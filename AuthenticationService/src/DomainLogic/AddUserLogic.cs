@@ -8,7 +8,6 @@ using Shared.Contracts.Enums;
 using Shared.Contracts.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
-using System.Runtime.Intrinsics.Arm;
 
 namespace AuthenticationService.DomainLogic
 {

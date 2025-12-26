@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using RabbitMQ.Client;
 using Shared.Utils;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,25 @@ var services = builder.Services;
     {
         options.EnableDetailedErrors = true;
         options.Interceptors.Add<BaseExceptionInterceptor>();
+    });
+
+    services.AddQuartz(q =>
+    {
+        var jobKey = new JobKey("DailyRevenueJob");
+
+        q.AddJob<CalculateDailyRevenueService>(opts => opts.WithIdentity(jobKey));
+
+        q.AddTrigger(opts => opts
+            .ForJob(jobKey)
+            .WithIdentity("DailyRevenueJob-trigger")
+            .WithCronSchedule("0 */1 23-0 * * ?",
+                x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")))
+        );
+    });
+
+    services.AddQuartzHostedService(opt =>
+    {
+        opt.WaitForJobsToComplete = true;
     });
 }
 
@@ -81,6 +101,7 @@ void RegisterRepository()
     services.AddScoped<IPriceRuleRepository, PriceRuleRepository>();
     services.AddScoped<IPromotionRepository, PromotionRepository>();
     services.AddScoped<IBookingItemRepository, BookingItemRepository>();
+    services.AddScoped<IDailyRevenueReportRepository, DailyRevenueReportRepository>();
 
     // logic DJ
     services.AddScoped<GetAllCinemaLogic>();
@@ -106,6 +127,7 @@ void RegisterRepository()
     services.AddScoped<UpdateSeatTypeLogic>();
     services.AddScoped<DeleteSeatTypeLogic>();
 
+    services.AddScoped<GetShowtimeByRoomLogic>();
     services.AddScoped<GetShowtimesByMovieLogic>();
     services.AddScoped<GetShowtimesByCinemaLogic>();
     services.AddScoped<GetShowtimeDetailsLogic>();

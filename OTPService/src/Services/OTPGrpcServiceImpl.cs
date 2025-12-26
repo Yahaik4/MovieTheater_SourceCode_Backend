@@ -3,7 +3,7 @@ using Grpc.Core;
 using OTPGrpc;
 using OTPService.DataTransferObject.Parameter;
 using OTPService.DomainLogic;
-using Shared.Contracts.Constants;
+using Shared.Contracts.Enums;
 using System.Text.Json;
 
 namespace OTPService.Services

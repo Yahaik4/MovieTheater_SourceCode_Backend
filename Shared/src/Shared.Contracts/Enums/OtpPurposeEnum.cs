@@ -1,4 +1,4 @@
-namespace Shared.Contracts.Constants
+namespace Shared.Contracts.Enums
 {
     public static class OtpPurposeConstants
     {

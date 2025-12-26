@@ -1,7 +1,7 @@
 ﻿using ApiGateway.DataTransferObject.Parameter;
 using ApiGateway.Helper;
 using OTPGrpc;
-using Shared.Contracts.Constants;
+using Shared.Contracts.Enums;
 
 namespace ApiGateway.ServiceConnector.OTPService
 {

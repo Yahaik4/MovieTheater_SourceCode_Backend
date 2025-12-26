@@ -39,6 +39,6 @@
     <Folder Include="DataTransferObject\DataMessage\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Shared\src.csproj" />
+    <ProjectReference Include="..\..\Shared\src\src.csproj" />
   </ItemGroup>
 </Project>

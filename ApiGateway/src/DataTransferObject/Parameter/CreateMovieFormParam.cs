@@ -14,7 +14,7 @@ namespace ApiGateway.DataTransferObject.Parameter
         public string Country { get; set; }
         public string Language { get; set; }
 
-        public IFormFile PosterFile { get; set; }
+        public IFormFile Poster { get; set; }
 
         public string TrailerUrl { get; set; }
         public string Status { get; set; }

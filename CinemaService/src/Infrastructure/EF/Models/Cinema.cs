@@ -13,5 +13,8 @@ namespace CinemaService.Infrastructure.EF.Models
         public TimeOnly Close_Time { get; set; }
         public string Status { get; set; }
         public ICollection<Room> Rooms { get; set; }
+        public ICollection<DailyRevenueReport> DailyRevenueReports { get; set; }
+        public ICollection<MovieRevenueReport> MovieRevenueReports { get; set; }
+        public ICollection<FoodDrinkRevenueReport> FoodDrinkRevenueReports { get; set; }
     }
 }

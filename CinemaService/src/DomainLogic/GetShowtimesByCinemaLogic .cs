@@ -48,7 +48,6 @@ namespace CinemaService.DomainLogic
 
             var final = movieIds.Select(movieId =>
             {
-                // N?u reply.Data kh�ng null th� m?i t�m
                 var movie = reply.Data?
                     .FirstOrDefault(m =>
                         !string.IsNullOrWhiteSpace(m.Id) &&
@@ -57,7 +56,7 @@ namespace CinemaService.DomainLogic
                     );
 
                 var showtimesOfMovie = showtimes
-                    .Where(s => s != null && s.MovieId == movieId) // s kh�ng null
+                    .Where(s => s != null && s.MovieId == movieId)
                     .ToList();
 
                 return new GetShowtimesByCinemaDataResult

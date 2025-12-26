@@ -1,5 +1,5 @@
 ﻿using RabbitMQ.Client;
-using src.Shared.Contracts.Messages;
+using Shared.Contracts.Messages;
 using System.Text;
 using System.Text.Json;
 

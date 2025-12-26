@@ -3,9 +3,9 @@ using AuthenticationService.Infrastructure.Repositories.Interfaces;
 using AuthenticationService.ServiceConnector;
 using AuthenticationService.ServiceConnector.ProfileService;
 using OTPGrpc;
-using Shared.Contracts.Constants;
+using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
-using src.Shared.Contracts.Messages;
+using Shared.Contracts.Messages;
 
 public class ResendOtpLogic
 {

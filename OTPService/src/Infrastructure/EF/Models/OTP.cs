@@ -1,4 +1,4 @@
-﻿using Shared.Contracts.Constants;
+﻿using Shared.Contracts.Enums;
 using Shared.Infrastructure;
 
 namespace OTPService.Infrastructure.EF.Models

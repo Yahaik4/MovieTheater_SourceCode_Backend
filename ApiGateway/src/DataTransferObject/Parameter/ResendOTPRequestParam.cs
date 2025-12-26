@@ -1,4 +1,4 @@
-using Shared.Contracts.Constants;
+using Shared.Contracts.Enums;
 
 namespace ApiGateway.DataTransferObject.Parameter
 {

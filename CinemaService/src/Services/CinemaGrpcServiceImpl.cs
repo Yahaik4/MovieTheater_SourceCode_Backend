@@ -3,6 +3,7 @@ using CinemaGrpc;
 using CinemaService.DataTransferObject.Parameter;
 using CinemaService.DataTransferObject.ResultData;
 using CinemaService.DomainLogic;
+using CinemaService.Infrastructure.EF.Models;
 using Grpc.Core;
 using System;
 using System.Globalization;
@@ -56,6 +57,7 @@ namespace CinemaService.Services
         private readonly CreatePromotionLogic _createPromotionLogic;
         private readonly UpdatePromotionLogic _updatePromotionLogic;
         private readonly SearchPromotionLogic _searchPromotionLogic;
+        private readonly GetShowtimeByRoomLogic _getShowtimeByRoomLogic;
 
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
@@ -76,6 +78,7 @@ namespace CinemaService.Services
                                     DeleteRoomLogic deleteRoomLogic,
                                     GetAllSeatLogic getAllSeatLogic,
                                     UpdateSeatLogic updateSeatLogic,
+                                    GetShowtimeByRoomLogic getShowtimeByRoomLogic,
                                     GetShowtimesByMovieLogic getShowtimesByMovieLogic,
                                     GetShowtimesByCinemaLogic getShowtimesByCinemaLogic,
                                     CreateShowtimeLogic createShowtimeLogic,
@@ -100,7 +103,8 @@ namespace CinemaService.Services
                                     GetPromotionsLogic getPromotionsLogic,
                                     CreatePromotionLogic createPromotionLogic,
                                     UpdatePromotionLogic updatePromotionLogic,
-                                    SearchPromotionLogic searchPromotionLogic) 
+                                    SearchPromotionLogic searchPromotionLogic
+                                    ) 
         {
             _mapper = mapper;
             _createCinemaLogic = createCinemaLogic;
@@ -121,6 +125,7 @@ namespace CinemaService.Services
             _deleteRoomLogic = deleteRoomLogic;
             _getAllSeatLogic = getAllSeatLogic;
             _updateSeatLogic = updateSeatLogic;
+            _getShowtimeByRoomLogic = getShowtimeByRoomLogic;
             _getShowtimesByMovieLogic = getShowtimesByMovieLogic;
             _getShowtimesByCinemaLogic = getShowtimesByCinemaLogic;
             _getShowtimeDetailsLogic = getShowtimeDetailsLogic;
@@ -445,6 +450,18 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<UpdateSeatsGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetShowtimesByRoomGrpcReplyDTO> GetShowtimesByRoom(GetShowtimesByRoomGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getShowtimeByRoomLogic.Execute(new GetShowtimeByRoomParam
+            {
+                RoomId = Guid.Parse(request.Id),
+                From = DateOnly.Parse(request.From),
+                To = DateOnly.Parse(request.To),
+            });
+
+            return _mapper.Map<GetShowtimesByRoomGrpcReplyDTO>(result);
         }
 
         public override async Task<GetShowtimesGrpcReplyDTO> GetShowtimes(GetShowtimesGrpcRequestDTO request, ServerCallContext context)

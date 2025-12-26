@@ -80,6 +80,9 @@ namespace CinemaService.Helper
             CreateMap<GetShowtimesByCinemaResultData, GetShowtimesByCinemaGrpcReplyDTO>();
             CreateMap<GetShowtimesByCinemaDataResult, GetShowtimesByCinemaGrpcReplyDataDTO>();
 
+            CreateMap<GetShowtimeByRoomResultData, GetShowtimesByRoomGrpcReplyDTO>();
+            CreateMap<GetShowtimeByRoomDataResult, GetShowtimesByRoomGrpcReplyDataDTO>();
+
             CreateMap<GetShowtimeDetailsResultData, GetShowtimeDetailsGrpcReplyDTO>();
             CreateMap<GetShowtimeDetailsDataResult, GetShowtimeDetailsGrpcReplyDataDTO>();
 

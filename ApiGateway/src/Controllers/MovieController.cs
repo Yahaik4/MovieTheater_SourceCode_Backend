@@ -433,10 +433,10 @@ namespace ApiGateway.Controllers
             {
                 string posterBase64 = null;
 
-                if (form.PosterFile != null && form.PosterFile.Length > 0)
+                if (form.Poster != null && form.Poster.Length > 0)
                 {
                     using var ms = new MemoryStream();
-                    await form.PosterFile.CopyToAsync(ms);
+                    await form.Poster.CopyToAsync(ms);
                     var bytes = ms.ToArray();
                     posterBase64 = Convert.ToBase64String(bytes);
                 }
@@ -473,7 +473,7 @@ namespace ApiGateway.Controllers
                         Status = result.Data.Status,
                         Duration = TimeSpan.Parse(result.Data.Duration),
                         Language = result.Data.Language,
-                        Poster = result.Data.Poster,
+                        Poster = $"{Request.Scheme}://{Request.Host}/api/movies/{result.Data.Id}/poster",
                         Publisher = result.Data.Publisher,
                         ReleaseDate = DateOnly.Parse(result.Data.ReleaseDate),
                         TrailerUrl = result.Data.TrailerUrl,
@@ -507,10 +507,36 @@ namespace ApiGateway.Controllers
 
         [Authorize(Policy = "OperationsManagerOnly")]
         [HttpPatch("movie/{id}")]
-        public async Task<UpdateMovieResultDTO> UpdateMovie(Guid id, UpdateMovieRequestParam param)
+        public async Task<UpdateMovieResultDTO> UpdateMovie(Guid id, [FromForm] UpdateMovieFormParam form)
         {
             try
             {
+                string posterBase64 = null;
+
+                if (form.Poster != null && form.Poster.Length > 0)
+                {
+                    using var ms = new MemoryStream();
+                    await form.Poster.CopyToAsync(ms);
+                    var bytes = ms.ToArray();
+                    posterBase64 = Convert.ToBase64String(bytes);
+                }
+
+                var param = new UpdateMovieRequestParam
+                {
+                    Name = form.Name,
+                    Description = form.Description,
+                    ReleaseDate = form.ReleaseDate,
+                    Duration = form.Duration,
+                    Publisher = form.Publisher,
+                    Country = form.Country,
+                    Language = form.Language,
+                    Poster = posterBase64,
+                    TrailerUrl = form.TrailerUrl,
+                    Status = form.Status,
+                    Genres = form.Genres,
+                    Persons = form.Persons
+                };
+
                 var result = await _movieServiceConnector.UpdateMovie(id, param);
 
                 return new UpdateMovieResultDTO
@@ -527,7 +553,7 @@ namespace ApiGateway.Controllers
                         Status = result.Data.Status,
                         Duration = TimeSpan.Parse(result.Data.Duration),
                         Language = result.Data.Language,
-                        Poster = result.Data.Poster,
+                        Poster = $"{Request.Scheme}://{Request.Host}/api/movies/{result.Data.Id}/poster",
                         Publisher = result.Data.Publisher,
                         ReleaseDate = DateOnly.Parse(result.Data.ReleaseDate),
                         TrailerUrl = result.Data.TrailerUrl,

@@ -1,7 +1,7 @@
 // AuthenticationService.DomainLogic/ResetPasswordLogic.cs
 using AuthenticationService.Infrastructure.Repositories.Interfaces;
 using OTPGrpc;
-using Shared.Contracts.Constants;
+using Shared.Contracts.Enums;
 using Shared.Contracts.Exceptions;
 using Shared.Contracts.Enums;
 using Grpc.Core;

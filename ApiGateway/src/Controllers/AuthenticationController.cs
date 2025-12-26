@@ -5,7 +5,7 @@ using ApiGateway.ServiceConnector.OTPService;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using Shared.Contracts.Constants;
+using Shared.Contracts.Enums;
 using Shared.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Shared.Contracts.Enums;

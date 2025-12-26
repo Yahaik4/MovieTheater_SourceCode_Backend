@@ -25,6 +25,10 @@ namespace CinemaService.Data
         public DbSet<FoodDrink> FoodDrinks { get; set; }
         public DbSet<BookingItem> BookingItems { get; set; }
 
+        public DbSet<DailyRevenueReport> DailyRevenueReports { get; set; }
+        public DbSet<MovieRevenueReport> MovieRevenueReports { get; set; }
+        public DbSet<FoodDrinkRevenueReport> FoodDrinkRevenueReports { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // ROOM

@@ -1077,7 +1077,7 @@ namespace ApiGateway.Controllers
                         Type = result.Data.Type,
                         Size = result.Data.Size,
                         Price = decimal.Parse(result.Data.Price),
-                        Image = string.IsNullOrWhiteSpace(result.Data.Image) ? null : result.Data.Image,
+                        Image = $"{Request.Scheme}://{Request.Host}/api/food-drinks/{Guid.Parse(result.Data.Id)}/image",
                         Description = string.IsNullOrWhiteSpace(result.Data.Description) ? null : result.Data.Description,
                         CreatedBy = string.IsNullOrWhiteSpace(result.Data.CreatedBy) ? null : result.Data.CreatedBy
                     }
