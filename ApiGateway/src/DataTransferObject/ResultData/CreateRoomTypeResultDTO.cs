@@ -9,7 +9,7 @@
     {
         public Guid Id { get; set; }
         public string Type { get; set; }
-        public decimal BasePrice { get; set; }
+        public decimal ExtraPrice { get; set; }
         public string CreatedBy { get; set; }
     }
 }

@@ -17,8 +17,11 @@ namespace CinemaService.Services
             var vnZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             var vnNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnZone);
 
-            var reportDate = DateOnly.FromDateTime(vnNow.Date.AddDays(-1));
+            var reportDate = DateOnly.FromDateTime(vnNow.Date);
+
             await _dailyRevenueReportRepository.CreateDailyRevenueReports(reportDate);
+            await _dailyRevenueReportRepository.CreateMovieRevenueReports(reportDate);
+            await _dailyRevenueReportRepository.CreateFoodDrinkRevenueReports(reportDate);
         }
     }
 }

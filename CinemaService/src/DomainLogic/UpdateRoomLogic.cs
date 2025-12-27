@@ -99,7 +99,7 @@ namespace CinemaService.DomainLogic
                             SeatCode = $"{room.RoomNumber}-{rowLetter}{col}",
                             SeatTypeId = seatType.Id,
                             isActive = true,
-                            Status = "Available",
+                            Status = "available",
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow,
                             IsDeleted = false

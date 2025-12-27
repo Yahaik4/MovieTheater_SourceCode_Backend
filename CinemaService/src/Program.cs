@@ -7,7 +7,6 @@ using CinemaService.Infrastructure.Repositories.Implementations;
 using CinemaService.Infrastructure.Repositories.Interfaces;
 using CinemaService.ServiceConnector;
 using CinemaService.Messaging;
-
 using CinemaService.Services;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -41,7 +40,7 @@ var services = builder.Services;
         q.AddTrigger(opts => opts
             .ForJob(jobKey)
             .WithIdentity("DailyRevenueJob-trigger")
-            .WithCronSchedule("0 */1 23-0 * * ?",
+            .WithCronSchedule("0 59 23 * * ?",
                 x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")))
         );
     });

@@ -196,7 +196,7 @@ namespace ApiGateway.Controllers
                     {
                         Id = Guid.Parse(rt.Id),
                         Type = rt.Type,
-                        BasePrice = decimal.Parse(rt.BasePrice)
+                        ExtraPrice = decimal.Parse(rt.BasePrice)
                     }).ToList()
                 };
             }
@@ -220,7 +220,7 @@ namespace ApiGateway.Controllers
         {
             try
             {
-                var result = await _cinemaServiceConnector.CreateRoomType(param.Type, param.BasePrice);
+                var result = await _cinemaServiceConnector.CreateRoomType(param.Type, param.ExtraPrice);
 
                 return new CreateRoomTypeResultDTO
                 {
@@ -231,7 +231,7 @@ namespace ApiGateway.Controllers
                     {
                         Id = Guid.Parse(result.Data.Id),
                         Type = result.Data.Type,
-                        BasePrice = decimal.Parse(result.Data.BasePrice),
+                        ExtraPrice = decimal.Parse(result.Data.BasePrice),
                         CreatedBy = result.Data.CreatedBy
                     }
                 };
@@ -256,7 +256,7 @@ namespace ApiGateway.Controllers
         {
             try
             {
-                var result = await _cinemaServiceConnector.UpdateRoomType(id, param.Type, param.BasePrice);
+                var result = await _cinemaServiceConnector.UpdateRoomType(id, param.Type, param.ExtraPrice);
 
                 return new UpdateRoomTypeResultDTO
                 {
@@ -266,7 +266,7 @@ namespace ApiGateway.Controllers
                     Data = new UpdateRoomTypeDataResult
                     {
                         Type = result.Data.Type,
-                        BasePrice = decimal.Parse(result.Data.BasePrice),
+                        ExtraPrice = decimal.Parse(result.Data.BasePrice),
                     }
                 };
             }
