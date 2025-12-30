@@ -45,8 +45,8 @@ namespace AuthenticationService.DomainLogic
                 throw new UnauthorizedException("Account locked.");
 
             // TODO: bật lại khi hết DEV
-            // if (!VerifyPassword(param.Password, user.Password))
-            //     return new LoginResultData { Result = false, Message = "Invalid password" };
+            if (!VerifyPassword(param.Password, user.Password))
+                return new LoginResultData { Result = false, Message = "Invalid password" };
 
             string? position = null;
             Guid? cinemaId = null;

@@ -3,13 +3,12 @@ using ApiGateway.DataTransferObject.ResultData;
 using ApiGateway.Helper;
 using ApiGateway.ServiceConnector.AuthenticationService;
 using ApiGateway.ServiceConnector.CinemaService;
-using ApiGateway.ServiceConnector.OTPService;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Contracts.Enums;
-using Shared.Contracts.Enums;
+using Shared.Contracts.Exceptions;
 using Shared.Utils;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -894,6 +893,102 @@ namespace ApiGateway.Controllers
                 Log.Error($"GetShowtimes Error: {message}");
 
                 return new UpdatePromotionResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "OperationsManagerOnly")]
+        [HttpGet("daily-revenue-reports")]
+        public async Task<GetDailyRevenueReportsResultDTO> GetDailyRevenueReports([FromQuery] GetDailyRevenueReportsRequestParam param)
+        {
+            try
+            {
+                var result = await _cinemaServiceConnector.GetDailyRevenueReports(param.From, param.To, param.CinemaId);
+
+                return new GetDailyRevenueReportsResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new GetDailyRevenueReportsDataResult
+                    {
+                        Sales = decimal.Parse(result.Data.Sales),
+                        TicketSold = result.Data.TicketSold,
+                        ProjectedProfit = decimal.Parse(result.Data.ProjectedProfit),
+                        SalesChangePercent = decimal.Parse(result.Data.SalesChangePercent),
+                        TicketSoldChangePercent = decimal.Parse(result.Data.TicketSoldChangePercent),
+                        ProjectedProfitChangePercent = decimal.Parse(result.Data.ProjectedProfitChangePercent)
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new GetDailyRevenueReportsResultDTO
+                {
+                    Result = false,
+                    Message = message,
+                    StatusCode = (int)statusCode,
+                };
+            }
+        }
+
+        [Authorize(Policy = "CinemaManagerOrHigher")]
+        [HttpGet("daily-revenue-reports-cinema")]
+        public async Task<GetDailyRevenueReportsResultDTO> GetDailyRevenueReportsCinema([FromQuery] GetDailyRevenueReportsRequestParam param)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                     ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (userId == null)
+                {
+                    throw new Exception("Not found userId in Token");
+                }
+
+                var data = await _authenticationConnector.GetStaffs(userId, null);
+
+                var staff = data?.Staffs?.FirstOrDefault();
+
+                if (staff == null)
+                    throw new UnauthorizedException("Unauthorized");
+
+                var cinemaId = staff.CinemaId;
+
+                if (cinemaId == null)
+                    throw new UnauthorizedException("Staff is not assigned to any cinema");
+
+                var result = await _cinemaServiceConnector.GetDailyRevenueReports(param.From, param.To, Guid.Parse(cinemaId));
+
+                return new GetDailyRevenueReportsResultDTO
+                {
+                    Result = result.Result,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode,
+                    Data = new GetDailyRevenueReportsDataResult
+                    {
+                        Sales = decimal.Parse(result.Data.Sales),
+                        TicketSold = result.Data.TicketSold,
+                        ProjectedProfit = decimal.Parse(result.Data.ProjectedProfit),
+                        SalesChangePercent = decimal.Parse(result.Data.SalesChangePercent),
+                        TicketSoldChangePercent = decimal.Parse(result.Data.TicketSoldChangePercent),
+                        ProjectedProfitChangePercent = decimal.Parse(result.Data.ProjectedProfitChangePercent)
+                    }
+                };
+            }
+            catch (RpcException ex)
+            {
+                var (statusCode, message) = RpcExceptionParser.Parse(ex);
+                Log.Error($"GetShowtimes Error: {message}");
+
+                return new GetDailyRevenueReportsResultDTO
                 {
                     Result = false,
                     Message = message,

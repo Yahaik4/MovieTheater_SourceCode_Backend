@@ -781,5 +781,20 @@ namespace ApiGateway.ServiceConnector.CinemaService
 
             return await client.SearchPromotionAsync(request);
         }
+
+        public async Task<GetDailyRevenueReportsGrpcReplyDTO> GetDailyRevenueReports(DateOnly from, DateOnly to, Guid? cinemaId)
+        {
+            using var channel = GetCinemaServiceChannel();
+            var client = new CinemaGrpcService.CinemaGrpcServiceClient(channel);
+
+            var request = new GetDailyRevenueReportsGrpcRequestDTO
+            {
+                From = from.ToString(),
+                To = to.ToString(),
+                CinemaId = cinemaId.ToString()
+            };
+
+            return await client.GetDailyRevenueReportsAsync(request);
+        }
     }
 }

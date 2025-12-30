@@ -5,7 +5,6 @@ using ApiGateway.ServiceConnector.CinemaService;
 using ApiGateway.ServiceConnector.MovieService;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Utils;

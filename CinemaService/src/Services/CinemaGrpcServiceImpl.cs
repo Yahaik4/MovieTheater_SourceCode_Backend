@@ -58,6 +58,7 @@ namespace CinemaService.Services
         private readonly UpdatePromotionLogic _updatePromotionLogic;
         private readonly SearchPromotionLogic _searchPromotionLogic;
         private readonly GetShowtimeByRoomLogic _getShowtimeByRoomLogic;
+        private readonly GetDailyRevenueReportsLogic _getDailyRevenueReportsLogic;
 
         public CinemaGrpcServiceImpl(IMapper mapper, 
                                     CreateCinemaLogic createCinemaLogic, 
@@ -103,7 +104,8 @@ namespace CinemaService.Services
                                     GetPromotionsLogic getPromotionsLogic,
                                     CreatePromotionLogic createPromotionLogic,
                                     UpdatePromotionLogic updatePromotionLogic,
-                                    SearchPromotionLogic searchPromotionLogic
+                                    SearchPromotionLogic searchPromotionLogic,
+                                    GetDailyRevenueReportsLogic getDailyRevenueReportsLogic
                                     ) 
         {
             _mapper = mapper;
@@ -152,6 +154,7 @@ namespace CinemaService.Services
             _createPromotionLogic = createPromotionLogic;
             _updatePromotionLogic = updatePromotionLogic;
             _searchPromotionLogic = searchPromotionLogic;
+            _getDailyRevenueReportsLogic = getDailyRevenueReportsLogic;
         }
 
         public override async Task<GetAllCinemasGrpcReplyDTO> GetAllCinemas(GetAllCinemasGrpcRequestDTO request, ServerCallContext context)
@@ -920,6 +923,18 @@ namespace CinemaService.Services
             });
 
             return _mapper.Map<SearchPromotionGrpcReplyDTO>(result);
+        }
+
+        public override async Task<GetDailyRevenueReportsGrpcReplyDTO> GetDailyRevenueReports(GetDailyRevenueReportsGrpcRequestDTO request, ServerCallContext context)
+        {
+            var result = await _getDailyRevenueReportsLogic.Execute(new GetDailyRevenueReportsParam
+            {
+                From = DateOnly.Parse(request.From),
+                To = DateOnly.Parse(request.To),
+                CinemaId = string.IsNullOrEmpty(request.CinemaId) ? null : Guid.Parse(request.CinemaId)
+            });
+
+            return _mapper.Map<GetDailyRevenueReportsGrpcReplyDTO>(result);
         }
     }
 }

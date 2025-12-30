@@ -1,6 +1,7 @@
 ﻿using CinemaService.Data;
 using CinemaService.Infrastructure.EF.Models;
 using CinemaService.Infrastructure.Repositories.Interfaces;
+using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinemaService.Infrastructure.Repositories
@@ -158,6 +159,36 @@ namespace CinemaService.Infrastructure.Repositories
             }
 
             return reports;
+        }
+
+        public async Task<IEnumerable<DailyRevenueReport>> GetDailyRevenueReports(DateOnly from, DateOnly to, Guid? cinemaId)
+        {
+            var query = _context.DailyRevenueReports.Where(x => x.Date >= from && x.Date <= to && x.IsDeleted == false);
+
+            if (cinemaId.HasValue)
+                query = query.Where(x => x.CinemaId == cinemaId.Value);
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<FoodDrinkRevenueReport>> GetFoodDrinkRevenueReports(DateOnly from, DateOnly to, Guid? cinemaId)
+        {
+            var query = _context.FoodDrinkRevenueReports.Where(x => x.Date >= from && x.Date <= to && x.IsDeleted == false);
+
+            if (cinemaId.HasValue)
+                query = query.Where(x => x.CinemaId == cinemaId.Value);
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<MovieRevenueReport>> GetMovieRevenueReports(DateOnly from, DateOnly to, Guid? cinemaId)
+        {
+            var query = _context.MovieRevenueReports.Where(x => x.Date >= from && x.Date <= to && x.IsDeleted == false);
+
+            if (cinemaId.HasValue)
+                query = query.Where(x => x.CinemaId == cinemaId.Value);
+
+            return await query.ToListAsync();
         }
     }
 }

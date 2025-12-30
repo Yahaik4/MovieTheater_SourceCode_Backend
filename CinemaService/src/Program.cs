@@ -162,6 +162,8 @@ void RegisterRepository()
 
     services.AddScoped<ProfileServiceConnector>();
     services.AddScoped<MovieServiceConnector>();
+
+    services.AddScoped<GetDailyRevenueReportsLogic>();
     services.AddHttpContextAccessor();
 }
 

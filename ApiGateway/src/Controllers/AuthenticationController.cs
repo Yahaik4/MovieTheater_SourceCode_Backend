@@ -8,7 +8,6 @@ using Serilog;
 using Shared.Contracts.Enums;
 using Shared.Utils;
 using Microsoft.AspNetCore.Authorization;
-using Shared.Contracts.Enums;
 using ApiGateway.Helper;
 
 namespace ApiGateway.Controllers
